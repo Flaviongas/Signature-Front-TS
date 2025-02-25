@@ -1,6 +1,6 @@
-import { Heading, Link, SkeletonText, VStack } from "@chakra-ui/react";
+import { Heading, Input, Link, SkeletonText, VStack } from "@chakra-ui/react";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Major, MajorResponse } from "../types";
 
 type Props = { onSelectMajors: (category: string) => void };
@@ -9,6 +9,7 @@ function SideNav({ onSelectMajors }: Props) {
   const url = "http://127.0.0.1:8000/categories";
   const [data, setData] = useState<Major[]>([]);
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState<Major>({ name: "" });
 
   useEffect(() => {
     const controller = new AbortController();
@@ -24,6 +25,11 @@ function SideNav({ onSelectMajors }: Props) {
     return () => controller.abort();
   }, []);
 
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    console.log(search);
+  };
+
   return loading ? (
     <SkeletonText mt="1" noOfLines={8} spacing="6" skeletonHeight="2" />
   ) : (
@@ -31,20 +37,32 @@ function SideNav({ onSelectMajors }: Props) {
       <Heading color="blue.400" fontSize={12} fontWeight="bold" mb={4}>
         CARRERAS
       </Heading>
+      <form onSubmit={handleSubmit}>
+        <Input
+          value={search.name}
+          onChange={(e) => setSearch({ ...search, name: e.target.value })}
+          mb={2}
+          placeholder="Buscar Carrera"
+        />
+      </form>
       {loading ? <p>Cargando...</p> : null}
       <VStack align="stretch">
-        {data.map((c) => (
-          <Link
-            px={2}
-            py={1}
-            borderRadius={5}
-            key={c.name}
-            _hover={{ textDecoration: "none" }}
-            onClick={() => onSelectMajors(c.name)}
-          >
-            {c.name}
-          </Link>
-        ))}
+        {data
+          .filter((c) =>
+            c.name.toLowerCase().includes(search.name.toLowerCase())
+          )
+          .map((c) => (
+            <Link
+              px={2}
+              py={1}
+              borderRadius={5}
+              key={c.name}
+              _hover={{ textDecoration: "none" }}
+              onClick={() => onSelectMajors(c.name)}
+            >
+              {c.name}
+            </Link>
+          ))}
       </VStack>
     </>
   );
