@@ -1,4 +1,4 @@
-import { Heading, Link, VStack } from "@chakra-ui/react";
+import { Heading, Link, SkeletonText, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Major, MajorResponse } from "../types";
@@ -6,12 +6,9 @@ import { Major, MajorResponse } from "../types";
 type Props = { onSelectMajors: (category: string) => void };
 
 function SideNav({ onSelectMajors }: Props) {
-  const majors = ["carrera1", "carrera2"];
   const url = "http://127.0.0.1:8000/categories";
   const [data, setData] = useState<Major[]>([]);
   const [loading, setLoading] = useState(false);
-
-  // este useEffect lo dejo para cuando pueda realizar la consulta a la api
 
   useEffect(() => {
     const controller = new AbortController();
@@ -27,9 +24,9 @@ function SideNav({ onSelectMajors }: Props) {
     return () => controller.abort();
   }, []);
 
-  // despues seria remplazar data por carreras
-
-  return (
+  return loading ? (
+    <SkeletonText mt="1" noOfLines={8} spacing="6" skeletonHeight="2" />
+  ) : (
     <>
       <Heading color="blue.400" fontSize={12} fontWeight="bold" mb={4}>
         CARRERAS
