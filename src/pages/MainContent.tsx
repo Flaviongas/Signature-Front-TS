@@ -1,9 +1,12 @@
 import { Grid, GridItem } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
+import SideNav from "../components/SideNav";
+import Dashboard from "../components/Dashboard";
 
 type Props = {};
 
 function MainContent({}: Props) {
+  const [selectedCarrera, setSelectedCarrera] = useState<string>("");
   return (
     <Grid
       templateAreas={`"header header"
@@ -35,10 +38,10 @@ function MainContent({}: Props) {
         bg="gray.800"
         color="gray.50"
       >
-        Nav
+        <SideNav onSelectCarrera={setSelectedCarrera} />
       </GridItem>
       <GridItem p="4" bg="gray.100" area={"main"}>
-        Main
+        <Dashboard carrera={selectedCarrera} />
       </GridItem>
     </Grid>
   );
