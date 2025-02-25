@@ -6,7 +6,7 @@ import Dashboard from "../components/Dashboard";
 type Props = {};
 
 function MainContent({}: Props) {
-  const [selectedCarrera, setSelectedCarrera] = useState<string>("");
+  const [selectedMajors, setSelectedMajors] = useState<string>("");
   return (
     <Grid
       templateAreas={`"header header"
@@ -39,10 +39,10 @@ function MainContent({}: Props) {
         bg="gray.800"
         color="gray.50"
       >
-        <SideNav onSelectCarrera={setSelectedCarrera} />
+        <SideNav onSelectMajors={setSelectedMajors} />
       </GridItem>
       <GridItem p="4" bg="gray.100" area={"main"}>
-        <Dashboard carrera={selectedCarrera} />
+        <Dashboard majors={selectedMajors} />
       </GridItem>
     </Grid>
   );

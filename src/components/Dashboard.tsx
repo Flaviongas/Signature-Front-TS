@@ -1,16 +1,14 @@
 import React from "react";
 
 type Props = {
-  carrera: string;
+  majors: string;
 };
 
-function Dashboard({ carrera }: Props) {
+function Dashboard({ majors }: Props) {
   return (
     <div className="flex-1 p-4">
       <h1 className="text-2xl font-bold">
-        {carrera
-          ? `Carrera seleccionada: ${carrera}`
-          : "Seleccione una Carrera"}
+        {majors ? `Carrera seleccionada: ${majors}` : "Seleccione una Carrera"}
       </h1>
     </div>
   );

@@ -1,5 +1,5 @@
-export type Carrera = {
-    id:number,
-    name:string,
-    faculty:string,
-}
+export type Major = {
+    name: string;
+};
+
+export type MajorResponse = Major[]; 
