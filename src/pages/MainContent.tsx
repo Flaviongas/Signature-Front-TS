@@ -1,4 +1,4 @@
-import { Grid, GridItem } from "@chakra-ui/react";
+import { Center, Grid, GridItem } from "@chakra-ui/react";
 import React, { useState } from "react";
 import SideNav from "../components/SideNav";
 import Dashboard from "../components/Dashboard";
@@ -24,8 +24,9 @@ function MainContent({}: Props) {
         pt="7px"
         bg="red.600"
         area={"header"}
+        textAlign="center"
       >
-        Header
+        Signature
       </GridItem>
       <GridItem
         pos="sticky"
