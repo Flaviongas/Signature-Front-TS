@@ -2,11 +2,15 @@ import { Center, Grid, GridItem } from "@chakra-ui/react";
 import React, { useState } from "react";
 import SideNav from "../components/SideNav";
 import Dashboard from "../components/Dashboard";
+import { MajorShort } from "../types";
 
 type Props = {};
 
 function MainContent({}: Props) {
-  const [selectedMajors, setSelectedMajors] = useState<string>("");
+  const [selectedMajors, setSelectedMajors] = useState<MajorShort>({
+    id: 0,
+    name: "",
+  });
   return (
     <Grid
       templateAreas={`"header header"

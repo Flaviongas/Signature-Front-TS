@@ -1,22 +1,22 @@
 import { Heading, Input, Link, SkeletonText, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { FormEvent, useEffect, useState } from "react";
-import { Major, MajorResponse } from "../types";
+import { Major, MajorResponse, MajorShort, MajorShortResponse } from "../types";
 
-type Props = { onSelectMajors: (category: string) => void };
+type Props = { onSelectMajors: (category: MajorShort) => void };
 
 function SideNav({ onSelectMajors }: Props) {
-  const url = "http://127.0.0.1:8000/categories";
-  const [data, setData] = useState<Major[]>([]);
+  const url = "https://signature.gidua.xyz/api/majors/getMajors/ ";
+  const [data, setData] = useState<MajorShort[]>([]);
   const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState<Major>({ name: "" });
+  const [search, setSearch] = useState<MajorShort>({ id: 0, name: "" });
 
   useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
     setLoading(true);
     axios
-      .get<MajorResponse>(url, { signal })
+      .get<MajorShortResponse>(url, { signal })
       .then(({ data }) => {
         setData(data);
         console.log("Datos recibidos en .then():", data);
@@ -58,7 +58,7 @@ function SideNav({ onSelectMajors }: Props) {
               borderRadius={5}
               key={c.name}
               _hover={{ textDecoration: "none" }}
-              onClick={() => onSelectMajors(c.name)}
+              onClick={() => onSelectMajors(c)}
             >
               {c.name}
             </Link>
