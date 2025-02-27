@@ -1,7 +1,7 @@
 import { Heading, Input, Link, SkeletonText, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { FormEvent, useEffect, useState } from "react";
-import { Major, MajorResponse, MajorShort, MajorShortResponse } from "../types";
+import { MajorShort, MajorShortResponse } from "../types";
 
 type Props = { onSelectMajors: (category: MajorShort) => void };
 
@@ -56,7 +56,7 @@ function SideNav({ onSelectMajors }: Props) {
               px={2}
               py={1}
               borderRadius={5}
-              key={c.name}
+              key={c.id}
               _hover={{ textDecoration: "none" }}
               onClick={() => onSelectMajors(c)}
             >

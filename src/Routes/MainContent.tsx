@@ -1,5 +1,5 @@
-import { Center, Grid, GridItem } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { Grid, GridItem } from "@chakra-ui/react";
+import { useState } from "react";
 import SideNav from "../components/SideNav";
 import Dashboard from "../components/Dashboard";
 import { MajorShort } from "../types";
