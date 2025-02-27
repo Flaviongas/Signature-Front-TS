@@ -1,28 +1,22 @@
+import { useState } from "react";
 import { MajorShort } from "../types";
+import MenuSelection from "./MenuSelection";
 
 import SubjectGrid from "./SubjectGrid";
+import Tool from "./Tool";
 
 type Props = {
   majors: MajorShort;
 };
 
 function Dashboard({ majors }: Props) {
-  const isEmpty = majors.id === 0 && majors.name === "";
-
+  const [mostrar, setMostrar] = useState(true);
   return (
-    <div className="flex-1 p-4">
-      {isEmpty ? (
-        <>
-          <p className="text-gray-500">No hay nada seleccionado</p>
-          <p className="text-gray-500">Seleccione una Carrera</p>
-        </>
+    <div>
+      {mostrar ? (
+        <MenuSelection majors={majors} cambiarVista={() => setMostrar(false)} />
       ) : (
-        <>
-          <p className="text-2xl font-bold">
-            Carrera seleccionada: {majors.name}
-          </p>
-          <SubjectGrid majors={majors} />
-        </>
+        <Tool regresar={() => setMostrar(true)} />
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import MainContent from "./pages/MainContent";
+import MainContent from "./Routes/MainContent";
 
 function App() {
   return <MainContent />;

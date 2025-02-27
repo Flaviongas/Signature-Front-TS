@@ -15,9 +15,10 @@ import { MajorShort, Subject, SubjectList } from "../types";
 
 type Props = {
   majors: MajorShort;
+  cambiarVista: () => void;
 };
 
-function SubjectGrid({ majors }: Props) {
+function SubjectGrid({ majors, cambiarVista }: Props) {
   const url = "https://signature.gidua.xyz/api/subjects/";
   const [data, setData] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(false);
@@ -38,7 +39,7 @@ function SubjectGrid({ majors }: Props) {
   }, []);
   return (
     <SimpleGrid columns={2} spacing={10}>
-      {filteredSubjects.length === 0 ? ( // 🔹 Si no hay materias, mostramos un mensaje
+      {filteredSubjects.length === 0 ? (
         <Text>No hay materias disponibles para esta carrera.</Text>
       ) : (
         filteredSubjects.map((e) => (
@@ -52,7 +53,9 @@ function SubjectGrid({ majors }: Props) {
                   <Text></Text>
                 </CardBody>
                 <CardFooter>
-                  <Button>Ver aquí</Button>
+                  <Button colorScheme="blue" onClick={cambiarVista}>
+                    Asistencia
+                  </Button>
                 </CardFooter>
               </Card>
             </SimpleGrid>
