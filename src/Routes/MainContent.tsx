@@ -2,8 +2,9 @@ import { Grid, GridItem } from "@chakra-ui/react";
 import { useState } from "react";
 import SideNav from "../components/SideNav";
 import Dashboard from "../components/Dashboard";
-import { MajorShort } from "../types";
+import { MajorShort, Subject, SubjectList } from "../types";
 import MajorContext from "../contexts/MajorContext";
+import SubjectContext from "../contexts/SubjectContext";
 
 type Props = {};
 
@@ -12,6 +13,7 @@ function MainContent({}: Props) {
     id: 0,
     name: "",
   });
+  const [SubjectData, setSubjectData] = useState<Subject[]>([]);
   return (
     <Grid
       templateAreas={`"header header"
@@ -34,22 +36,24 @@ function MainContent({}: Props) {
         Signature
       </GridItem>
       <MajorContext.Provider value={{ selectedMajors, setSelectedMajors }}>
-        <GridItem
-          pos="sticky"
-          top="60px"
-          left={0}
-          p="5"
-          area={"nav"}
-          height="calc(100vh - 60px)"
-          overflowY="auto"
-          bg="gray.800"
-          color="gray.50"
-        >
-          <SideNav onSelectMajors={setSelectedMajors} />
-        </GridItem>
-        <GridItem p="4" bg="gray.100" area={"main"}>
-          <Dashboard />
-        </GridItem>
+        <SubjectContext.Provider value={{ SubjectData, setSubjectData }}>
+          <GridItem
+            pos="sticky"
+            top="60px"
+            left={0}
+            p="5"
+            area={"nav"}
+            height="calc(100vh - 60px)"
+            overflowY="auto"
+            bg="gray.800"
+            color="gray.50"
+          >
+            <SideNav />
+          </GridItem>
+          <GridItem p="4" bg="gray.100" area={"main"}>
+            <Dashboard />
+          </GridItem>
+        </SubjectContext.Provider>
       </MajorContext.Provider>
     </Grid>
   );

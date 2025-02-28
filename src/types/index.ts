@@ -9,7 +9,7 @@ export type Student = {
     id:number;
     rut:string;
     dv:string;
-    firstname:string;
+    first_name:string;
     second_name:string;
     last_name:string;
     major:number
