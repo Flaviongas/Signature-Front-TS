@@ -1,25 +1,12 @@
-import { useState } from "react";
+import React, { useContext } from "react";
+import MajorContext from "../contexts/MajorContext";
 import { MajorShort } from "../types";
-import MenuSelection from "./MenuSelection";
 
-import SubjectGrid from "./SubjectGrid";
-import Tool from "./Tool";
+type Props = {};
 
-type Props = {
-  majors: MajorShort;
-};
-
-function Dashboard({ majors }: Props) {
-  const [mostrar, setMostrar] = useState(true);
-  return (
-    <div>
-      {mostrar ? (
-        <MenuSelection majors={majors} cambiarVista={() => setMostrar(false)} />
-      ) : (
-        <Tool regresar={() => setMostrar(true)} />
-      )}
-    </div>
-  );
+function Dashboard({}: Props) {
+  const { selectedMajors } = useContext(MajorContext);
+  return selectedMajors.name;
 }
 
 export default Dashboard;

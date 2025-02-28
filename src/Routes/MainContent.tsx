@@ -3,6 +3,7 @@ import { useState } from "react";
 import SideNav from "../components/SideNav";
 import Dashboard from "../components/Dashboard";
 import { MajorShort } from "../types";
+import MajorContext from "../contexts/MajorContext";
 
 type Props = {};
 
@@ -32,22 +33,24 @@ function MainContent({}: Props) {
       >
         Signature
       </GridItem>
-      <GridItem
-        pos="sticky"
-        top="60px"
-        left={0}
-        p="5"
-        area={"nav"}
-        height="calc(100vh - 60px)"
-        overflowY="auto"
-        bg="gray.800"
-        color="gray.50"
-      >
-        <SideNav onSelectMajors={setSelectedMajors} />
-      </GridItem>
-      <GridItem p="4" bg="gray.100" area={"main"}>
-        <Dashboard majors={selectedMajors} />
-      </GridItem>
+      <MajorContext.Provider value={{ selectedMajors, setSelectedMajors }}>
+        <GridItem
+          pos="sticky"
+          top="60px"
+          left={0}
+          p="5"
+          area={"nav"}
+          height="calc(100vh - 60px)"
+          overflowY="auto"
+          bg="gray.800"
+          color="gray.50"
+        >
+          <SideNav onSelectMajors={setSelectedMajors} />
+        </GridItem>
+        <GridItem p="4" bg="gray.100" area={"main"}>
+          <Dashboard />
+        </GridItem>
+      </MajorContext.Provider>
     </Grid>
   );
 }

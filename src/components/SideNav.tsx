@@ -1,15 +1,17 @@
 import { Heading, Input, Link, SkeletonText, VStack } from "@chakra-ui/react";
 import axios from "axios";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useContext, useEffect, useState } from "react";
 import { MajorShort, MajorShortResponse } from "../types";
+import MajorContext from "../contexts/MajorContext";
 
-type Props = { onSelectMajors: (category: MajorShort) => void };
+type Props = {};
 
-function SideNav({ onSelectMajors }: Props) {
+function SideNav({}: Props) {
   const url = "https://signature.gidua.xyz/api/majors/getMajors/ ";
   const [data, setData] = useState<MajorShort[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState<MajorShort>({ id: 0, name: "" });
+  const { setSelectedMajors } = useContext(MajorContext);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -58,7 +60,7 @@ function SideNav({ onSelectMajors }: Props) {
               borderRadius={5}
               key={c.id}
               _hover={{ textDecoration: "none" }}
-              onClick={() => onSelectMajors(c)}
+              onClick={() => setSelectedMajors(c)}
             >
               {c.name}
             </Link>
