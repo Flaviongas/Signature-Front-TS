@@ -10,11 +10,14 @@ import {
   Heading,
   SimpleGrid,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import MajorContext from "../contexts/MajorContext";
-import { MajorShort, MajorShortResponse, Subject, SubjectList } from "../types";
+import { Subject, SubjectList } from "../types";
 import axios from "axios";
 import SubjectContext from "../contexts/SubjectContext";
+import RecipeModal from "./RecipeModal";
+
 type Props = {};
 
 function SubjectsGrid({}: Props) {
@@ -23,9 +26,18 @@ function SubjectsGrid({}: Props) {
   const url = "https://signature.gidua.xyz/api/subjects/";
   const [data, setData] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const filteredSubjects = data.filter((e) =>
     e.major.includes(selectedMajors.id)
   );
+
+  useEffect(() => {
+    const filteredSubjects = data.filter((e) =>
+      e.major.includes(selectedMajors.id)
+    );
+    setSubjectData(filteredSubjects);
+  }, [selectedMajors, data, setSubjectData]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -51,25 +63,33 @@ function SubjectsGrid({}: Props) {
             No hay materias disponibles para esta carrera.
           </Text>
         ) : (
-          filteredSubjects.map((e) => (
-            <Card key={e.id} boxShadow="md" borderRadius="lg" p={4}>
-              <CardHeader>
-                <Heading size="md">{e.name}</Heading>
-              </CardHeader>
-              <CardBody>
-                <Text color="gray.500">
-                  Cantidad de Alumnos {e.students.length}
-                </Text>
-              </CardBody>
-              <CardFooter>
-                <Button colorScheme="blue" w="full">
-                  Asistencia
-                </Button>
-              </CardFooter>
-            </Card>
-          ))
+          filteredSubjects.map((e) => {
+            const filteredStudents = e.students.filter(
+              (student) => student.major === selectedMajors.id
+            );
+
+            return (
+              <Card key={e.id} boxShadow="md" borderRadius="lg" p={4}>
+                <CardHeader>
+                  <Heading size="md">{e.name}</Heading>
+                </CardHeader>
+                <CardBody>
+                  <Text color="gray.500">
+                    Cantidad de Alumnos {filteredStudents.length}
+                  </Text>
+                </CardBody>
+                <CardFooter>
+                  <Button colorScheme="blue" w="full" onClick={onOpen}>
+                    Asistencia
+                  </Button>
+                </CardFooter>
+              </Card>
+            );
+          })
         )}
       </SimpleGrid>
+
+      <RecipeModal isOpen={isOpen} onClose={onClose} />
     </>
   );
 }

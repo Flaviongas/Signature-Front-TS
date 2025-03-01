@@ -1,29 +1,50 @@
 import React, { useContext } from "react";
 import SubjectContext from "../contexts/SubjectContext";
-import { li } from "framer-motion/client";
+import MajorContext from "../contexts/MajorContext";
 
 type Props = {};
 
 function Asistencia({}: Props) {
   const { SubjectData } = useContext(SubjectContext);
-  console.log("SubjectData:", SubjectData);
+  const { selectedMajors } = useContext(MajorContext);
 
-  if (SubjectData.length === 0) return <p>Cargando...</p>;
+  if (!SubjectData || SubjectData.length === 0) {
+    return <p>Cargando...</p>;
+  }
+
+  const filteredSubjects = SubjectData.filter((subject) =>
+    subject.major.includes(selectedMajors.id)
+  );
 
   return (
     <div>
-      <ul>
-        {SubjectData.map((e) => (
-          <li key={e.id}>
-            {e.name}
-            <ul>
-              {e.students.map((f) => (
-                <li key={f.id}>{f.first_name}</li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+      <h2>Asistencia para {selectedMajors.name}</h2>
+      {filteredSubjects.length === 0 ? (
+        <p>No hay materias para esta carrera.</p>
+      ) : (
+        <ul>
+          {filteredSubjects.map((subject) => {
+            const filteredStudents = subject.students.filter(
+              (student) => student.major === selectedMajors.id
+            );
+
+            return (
+              <li key={subject.id}>
+                {subject.name}
+                {filteredStudents.length === 0 ? (
+                  <p>No hay estudiantes en esta materia.</p>
+                ) : (
+                  <ul>
+                    {filteredStudents.map((student) => (
+                      <li key={student.id}>{student.first_name}</li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }
