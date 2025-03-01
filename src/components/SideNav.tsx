@@ -4,9 +4,9 @@ import { FormEvent, useContext, useEffect, useState } from "react";
 import { MajorShort, MajorShortResponse } from "../types";
 import MajorContext from "../contexts/MajorContext";
 
-type Props = {};
+// type Props = {};
 
-function SideNav({}: Props) {
+function SideNav() {
   const url = "https://signature.gidua.xyz/api/majors/getMajors/ ";
   const [data, setData] = useState<MajorShort[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,20 +35,20 @@ function SideNav({}: Props) {
   return loading ? (
     <SkeletonText mt="1" noOfLines={8} spacing="6" skeletonHeight="2" />
   ) : (
-    <>
-      <Heading color="blue.400" fontSize={12} fontWeight="bold" mb={4}>
-        CARRERAS
-      </Heading>
+    <nav className="p-4 h-[90vh] overflow-y-auto">
+      <a onClick={() => { setSelectedMajors({ id: 0, name: "" }) }} >
+      </a>
       <form onSubmit={handleSubmit}>
         <Input
           value={search.name}
           onChange={(e) => setSearch({ ...search, name: e.target.value })}
           mb={2}
+          textAlign={"center"}
           placeholder="Buscar Carrera"
         />
       </form>
       {loading ? <p>Cargando...</p> : null}
-      <VStack align="stretch">
+      <VStack align="stretch" className="w-full">
         {data
           .filter((c) =>
             c.name.toLowerCase().includes(search.name.toLowerCase())
@@ -56,17 +56,18 @@ function SideNav({}: Props) {
           .map((c) => (
             <Link
               px={2}
-              py={1}
+              py={2}
               borderRadius={5}
               key={c.id}
-              _hover={{ textDecoration: "none" }}
               onClick={() => setSelectedMajors(c)}
+              textAlign={"center"}
+              _hover={{ textDecoration: "none", bg: "blue.600", color: "white" }}
             >
-              {c.name}
+              <p className="cursor-pointer transition-transform duration-100 hover:scale-105 p-0 m-0"> {c.name} </p>
             </Link>
           ))}
       </VStack>
-    </>
+    </nav>
   );
 }
 

@@ -16,9 +16,9 @@ import axios from "axios";
 import SubjectContext from "../contexts/SubjectContext";
 import RecipeModal from "./RecipeModal";
 
-type Props = {};
+// type Props = {};
 
-function SubjectsGrid({}: Props) {
+function SubjectsGrid() {
   const { selectedMajors } = useContext(MajorContext);
   const { setSubjectData } = useContext(SubjectContext);
   const url = "https://signature.gidua.xyz/api/subjects/";
@@ -56,47 +56,47 @@ function SubjectsGrid({}: Props) {
     setModalStudents(students);
     onOpen();
   };
+  if (loading) {
+    return <Text>Cargando...</Text>;
+  }
   return (
-    <>
-      <h1>Carrera: {selectedMajors.name}</h1>
-      <SimpleGrid columns={{ base: 1, md: 2 }} spacing={20} p={4}>
-        {filteredSubjects.length === 0 ? (
-          <Text fontSize="lg" fontWeight="bold" color="gray.600">
-            No hay materias disponibles para esta carrera.
-          </Text>
-        ) : (
-          filteredSubjects.map((e) => {
-            const filteredStudents = e.students.filter(
+    <div className="p-4 text-center">
+      <h1>{selectedMajors.name !== "" ? `Carrera: ${selectedMajors.name}` : "Seleccione una carrera"}</h1>
+      {filteredSubjects.length === 0 && !loading ? (
+        <Text fontSize="lg" fontWeight="bold" color="gray.600">
+          No hay materias disponibles para esta carrera.
+        </Text>
+      ) : (
+        <div className="flex flex-row flex-wrap" >
+          {filteredSubjects.map((Subject) => {
+            const filteredStudents = Subject.students.filter(
               (student) => student.major === selectedMajors.id
             );
 
             return (
-              <Card key={e.id} boxShadow="md" borderRadius="lg" p={4}>
-                <CardHeader>
-                  <Heading size="md">{e.name}</Heading>
-                </CardHeader>
-                <CardBody>
-                  <Text color="gray.500">
-                    Cantidad de Alumnos {filteredStudents.length}
-                  </Text>
-                </CardBody>
-                <CardFooter>
-                  <Button
-                    colorScheme="blue"
-                    w="full"
-                    onClick={() => handleOpenModal(filteredStudents)}
-                  >
-                    Asistencia
-                  </Button>
-                </CardFooter>
+              <Card boxShadow="lg" minWidth={250} key={Subject.id} margin={5} className="transition-transform duration-100 hover:scale-105 ">
+                <div className="flex flex-col">
+                  <div className="flex h-1/2 w-full min-h-24 mx-auto">
+                    <p className="text-center text-xl pt-3 w-72 m-auto">{Subject.name}</p>
+                  </div>
+                  <p className="text-center text-gray-500">
+                    Cantidad de Alumnos:  {filteredStudents.length}
+                  </p>
+
+                  <CardFooter className="flex h-1/2">
+                    <Button colorScheme="blue" w="full" onClick={onOpen}>
+                      Asistencia
+                    </Button>
+                  </CardFooter>
+                </div>
               </Card>
             );
-          })
-        )}
-      </SimpleGrid>
+          })}
+        </div>
+      )}
 
       <RecipeModal data={modalStudents} isOpen={isOpen} onClose={onClose} />
-    </>
+    </div>
   );
 }
 

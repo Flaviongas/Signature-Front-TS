@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -10,6 +9,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { Student, Asistencia } from "../types";
+import { useState } from "react";
 
 type Props = { isOpen: boolean; onClose: () => void; data: Student[] };
 
