@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { Subject, SubjectList } from "../types"
+import { Subject} from "../types"
 
 type SubjectContext ={
     SubjectData: Subject[]

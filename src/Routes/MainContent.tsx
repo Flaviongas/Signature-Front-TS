@@ -2,7 +2,7 @@ import { Grid, GridItem } from "@chakra-ui/react";
 import { useState } from "react";
 import SideNav from "../components/SideNav";
 import Dashboard from "../components/Dashboard";
-import { MajorShort, Subject, SubjectList } from "../types";
+import { MajorShort, Subject } from "../types";
 import MajorContext from "../contexts/MajorContext";
 import SubjectContext from "../contexts/SubjectContext";
 

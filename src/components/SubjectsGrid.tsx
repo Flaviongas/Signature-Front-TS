@@ -1,19 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
-  Box,
   Button,
   Card,
   CardBody,
   CardFooter,
   CardHeader,
-  Center,
   Heading,
   SimpleGrid,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import MajorContext from "../contexts/MajorContext";
-import { Subject, SubjectList } from "../types";
+import { Student, Subject, SubjectList } from "../types";
 import axios from "axios";
 import SubjectContext from "../contexts/SubjectContext";
 import RecipeModal from "./RecipeModal";
@@ -27,6 +25,7 @@ function SubjectsGrid({}: Props) {
   const [data, setData] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalStudents, setModalStudents] = useState<Student[]>([]);
 
   const filteredSubjects = data.filter((e) =>
     e.major.includes(selectedMajors.id)
@@ -53,7 +52,10 @@ function SubjectsGrid({}: Props) {
       .finally(() => setLoading(false));
     return () => controller.abort();
   }, []);
-
+  const handleOpenModal = (students: Student[]) => {
+    setModalStudents(students);
+    onOpen();
+  };
   return (
     <>
       <h1>Carrera: {selectedMajors.name}</h1>
@@ -79,7 +81,11 @@ function SubjectsGrid({}: Props) {
                   </Text>
                 </CardBody>
                 <CardFooter>
-                  <Button colorScheme="blue" w="full" onClick={onOpen}>
+                  <Button
+                    colorScheme="blue"
+                    w="full"
+                    onClick={() => handleOpenModal(filteredStudents)}
+                  >
                     Asistencia
                   </Button>
                 </CardFooter>
@@ -89,7 +95,7 @@ function SubjectsGrid({}: Props) {
         )}
       </SimpleGrid>
 
-      <RecipeModal isOpen={isOpen} onClose={onClose} />
+      <RecipeModal data={modalStudents} isOpen={isOpen} onClose={onClose} />
     </>
   );
 }

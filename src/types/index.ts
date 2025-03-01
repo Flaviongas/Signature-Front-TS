@@ -12,6 +12,7 @@ export type Student = {
     first_name:string;
     second_name:string;
     last_name:string;
+    second_last_name:string;
     major:number
 }
 
@@ -28,6 +29,10 @@ export type Subject = {
     major: MajorShort["id"][];
     students:Student[]
 
+}
+export type Asistencia = {
+    fecha: Date;
+    Students:Student[];
 }
 
 export type SubjectList = Subject[]; 
