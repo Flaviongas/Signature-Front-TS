@@ -60,14 +60,14 @@ function SubjectsGrid() {
     return <Text>Cargando...</Text>;
   }
   return (
-    <div className="p-4 text-center">
+    <div className="p-4 text-center mx-auto ">
       <h1>{selectedMajors.name !== "" ? `Carrera: ${selectedMajors.name}` : "Seleccione una carrera"}</h1>
       {filteredSubjects.length === 0 && !loading ? (
         <Text fontSize="lg" fontWeight="bold" color="gray.600">
           No hay materias disponibles para esta carrera.
         </Text>
       ) : (
-        <div className="flex flex-row flex-wrap" >
+        <div className="flex flex-row flex-wrap justify-center" >
           {filteredSubjects.map((Subject) => {
             const filteredStudents = Subject.students.filter(
               (student) => student.major === selectedMajors.id
@@ -84,7 +84,12 @@ function SubjectsGrid() {
                   </p>
 
                   <CardFooter className="flex h-1/2">
-                    <Button colorScheme="blue" w="full" onClick={onOpen}>
+
+                    <Button
+                      colorScheme="blue"
+                      w="full"
+                      onClick={() => handleOpenModal(filteredStudents)}
+                    >
                       Asistencia
                     </Button>
                   </CardFooter>
