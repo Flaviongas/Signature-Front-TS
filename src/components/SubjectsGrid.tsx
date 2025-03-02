@@ -2,11 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import {
   Button,
   Card,
-  CardBody,
   CardFooter,
-  CardHeader,
-  Heading,
-  SimpleGrid,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
