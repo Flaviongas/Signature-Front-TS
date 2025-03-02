@@ -3,17 +3,17 @@ export type MajorShort = {
     name: string;
 };
 
-export type MajorShortResponse = MajorShort[]; 
+export type MajorShortResponse = MajorShort[];
 
 export type Student = {
-    id:number;
-    rut:string;
-    dv:string;
-    first_name:string;
-    second_name:string;
-    last_name:string;
-    second_last_name:string;
-    major:number
+    id: number;
+    rut: string;
+    dv: string;
+    first_name: string;
+    second_name: string;
+    last_name: string;
+    second_last_name: string;
+    major: number
 }
 
 export type Major = {
@@ -24,15 +24,15 @@ export type Major = {
 }
 
 export type Subject = {
-    id:number;
-    name:string;
+    id: number;
+    name: string;
     major: MajorShort["id"][];
-    students:Student[]
+    students: Student[]
 
 }
 export type Asistencia = {
-    fecha: Date;
-    Students:Student[];
+    fecha: string;
+    Students: Student[];
 }
 
 export type SubjectList = Subject[]; 

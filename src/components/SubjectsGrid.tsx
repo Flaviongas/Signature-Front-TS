@@ -23,6 +23,7 @@ function SubjectsGrid() {
   const { setSubjectData } = useContext(SubjectContext);
   const url = "https://signature.gidua.xyz/api/subjects/";
   const [data, setData] = useState<Subject[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [modalStudents, setModalStudents] = useState<Student[]>([]);
@@ -52,8 +53,9 @@ function SubjectsGrid() {
       .finally(() => setLoading(false));
     return () => controller.abort();
   }, []);
-  const handleOpenModal = (students: Student[]) => {
+  const handleOpenModal = (students: Student[], name: string) => {
     setModalStudents(students);
+    setSelectedSubject(name)
     onOpen();
   };
   if (loading) {
@@ -88,7 +90,7 @@ function SubjectsGrid() {
                     <Button
                       colorScheme="blue"
                       w="full"
-                      onClick={() => handleOpenModal(filteredStudents)}
+                      onClick={() => handleOpenModal(filteredStudents, Subject.name)}
                     >
                       Asistencia
                     </Button>
@@ -100,7 +102,7 @@ function SubjectsGrid() {
         </div>
       )}
 
-      <RecipeModal data={modalStudents} isOpen={isOpen} onClose={onClose} />
+      <RecipeModal data={modalStudents} isOpen={isOpen} onClose={onClose} selectedSubject={selectedSubject} />
     </div>
   );
 }
