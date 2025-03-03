@@ -15,6 +15,9 @@ import { Student, Subject, SubjectList } from "../types";
 import axios from "axios";
 import SubjectContext from "../contexts/SubjectContext";
 import RecipeModal from "./RecipeModal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import RecipeModalMajor from "./RecipeModalMajor";
 
 // type Props = {};
 
@@ -24,7 +27,17 @@ function SubjectsGrid() {
   const url = "https://signature.gidua.xyz/api/subjects/";
   const [data, setData] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenFirst,
+    onOpen: onOpenFirst,
+    onClose: onCloseFirst,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenSecond,
+    onOpen: onOpenSecond,
+    onClose: onCloseSecond,
+  } = useDisclosure();
   const [modalStudents, setModalStudents] = useState<Student[]>([]);
 
   const filteredSubjects = data.filter((e) =>
@@ -54,37 +67,57 @@ function SubjectsGrid() {
   }, []);
   const handleOpenModal = (students: Student[]) => {
     setModalStudents(students);
-    onOpen();
+    onOpenFirst();
+  };
+  const handleOpenModalMajor = () => {
+    onOpenSecond();
   };
   if (loading) {
     return <Text>Cargando...</Text>;
   }
-  return (
+  return selectedMajors && selectedMajors.name !== "" ? (
     <div className="p-4 text-center mx-auto ">
-      <h1>{selectedMajors.name !== "" ? `Carrera: ${selectedMajors.name}` : "Seleccione una carrera"}</h1>
+      <h1>Carrera: {selectedMajors.name}</h1>
+
       {filteredSubjects.length === 0 && !loading ? (
-        <Text fontSize="lg" fontWeight="bold" color="gray.600">
-          No hay materias disponibles para esta carrera.
-        </Text>
+        <>
+          <Text fontSize="lg" fontWeight="bold" color="gray.600">
+            No hay materias disponibles para esta carrera.
+          </Text>
+
+          <FontAwesomeIcon
+            className="bg-yellow-300 text-black p-2 rounded-4 hover:bg-yellow-200 hover:text-white"
+            fontSize={20}
+            icon={faPlus}
+            onClick={handleOpenModalMajor}
+          />
+        </>
       ) : (
-        <div className="flex flex-row flex-wrap justify-center" >
+        <div className="flex flex-row flex-wrap justify-center">
           {filteredSubjects.map((Subject) => {
             const filteredStudents = Subject.students.filter(
               (student) => student.major === selectedMajors.id
             );
 
             return (
-              <Card boxShadow="lg" minWidth={250} key={Subject.id} margin={5} className="transition-transform duration-100 hover:scale-105 ">
+              <Card
+                boxShadow="lg"
+                minWidth={250}
+                key={Subject.id}
+                margin={5}
+                className="transition-transform duration-100 hover:scale-105 "
+              >
                 <div className="flex flex-col">
                   <div className="flex h-1/2 w-full min-h-24 mx-auto">
-                    <p className="text-center text-xl pt-3 w-72 m-auto">{Subject.name}</p>
+                    <p className="text-center text-xl pt-3 w-72 m-auto">
+                      {Subject.name}
+                    </p>
                   </div>
                   <p className="text-center text-gray-500">
-                    Cantidad de Alumnos:  {filteredStudents.length}
+                    Cantidad de Alumnos: {filteredStudents.length}
                   </p>
 
                   <CardFooter className="flex h-1/2">
-
                     <Button
                       colorScheme="blue"
                       w="full"
@@ -100,7 +133,18 @@ function SubjectsGrid() {
         </div>
       )}
 
-      <RecipeModal data={modalStudents} isOpen={isOpen} onClose={onClose} />
+      <RecipeModal
+        data={modalStudents}
+        isOpen={isOpenFirst}
+        onClose={onCloseFirst}
+      />
+      <RecipeModalMajor isOpen={isOpenSecond} onClose={onCloseSecond} />
+    </div>
+  ) : (
+    <div className="p-4 text-center mx-auto ">
+      <Text fontSize="50" fontWeight="bold" color="gray.600">
+        Seleccione una Carrera
+      </Text>
     </div>
   );
 }

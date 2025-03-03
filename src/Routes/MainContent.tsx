@@ -5,7 +5,7 @@ import { MajorShort, Subject } from "../types";
 import MajorContext from "../contexts/MajorContext";
 import SubjectContext from "../contexts/SubjectContext";
 
-import logo from '../assets/signature.svg'
+import logo from "../assets/signature.svg";
 
 // type Props = {};
 
@@ -18,8 +18,7 @@ function MainContent() {
   return (
     <MajorContext.Provider value={{ selectedMajors, setSelectedMajors }}>
       <SubjectContext.Provider value={{ SubjectData, setSubjectData }}>
-        <div className="flex flex-row w-full">
-
+        <div className=" h-screen flex flex-row w-full">
           <div className="w-1/4 min-w-56 bg-blue-900 text-white">
             <img src={logo} alt="logo" className="w-40 h-40 mx-auto my-2" />
             <SideNav />
