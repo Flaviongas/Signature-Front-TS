@@ -130,7 +130,7 @@ function RecipeModal({ isOpen, onClose, data, selectedSubject }: Props) {
   return (
     <Modal isOpen={isOpen} onClose={cleanup} size="6x1">
       <ModalOverlay />
-      <ModalContent maxW="90vw">
+      <ModalContent maxW="70vw">
         <ModalHeader>Asistencia</ModalHeader>
         <ModalCloseButton />
         <ModalBody maxHeight="70vh" overflowY="auto">
