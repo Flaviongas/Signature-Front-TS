@@ -10,7 +10,7 @@ import {
   ModalFooter,
   Button,
 } from "@chakra-ui/react";
-import { Student, Asistencia } from "../types";
+import { Student, Attendance } from "../types";
 import { useEffect, useState } from "react";
 import * as ExcelJS from "exceljs";
 import MajorContext from '../contexts/MajorContext';
@@ -47,11 +47,11 @@ function RecipeModal({ isOpen, onClose, data, selectedSubject }: Props) {
     const currentDate = new Date();
     const DAYS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
     const ISODate = currentDate.toISOString()
-    const asistenciaData: Asistencia = {
+    const asistenciaData: Attendance = {
       fecha: selectedDate ? new Date(selectedDate).toISOString() : ISODate,
       Students: checkedStudents,
     };
-    console.log("Asistencia data:", asistenciaData);
+    console.log("Attendance data:", asistenciaData);
     const headers = [
       "FECHA", "RUT (sin puntos)", "DV", "NOMBRES", "APELLIDOS", "SECCIÓN", "ASIGNATURA (Nombre de malla curricular) / NIVEL"
     ]
@@ -131,7 +131,7 @@ function RecipeModal({ isOpen, onClose, data, selectedSubject }: Props) {
     <Modal isOpen={isOpen} onClose={cleanup} size="6x1">
       <ModalOverlay />
       <ModalContent maxW="70vw">
-        <ModalHeader>Asistencia</ModalHeader>
+        <ModalHeader>Attendance</ModalHeader>
         <ModalCloseButton />
         <ModalBody maxHeight="70vh" overflowY="auto">
           <input
@@ -145,7 +145,7 @@ function RecipeModal({ isOpen, onClose, data, selectedSubject }: Props) {
             <thead>
               <tr className='text-center'>
                 <th className="text-center" scope="col">
-                  Asistencia
+                  Attendance
                 </th>
                 <th scope="col">Rut</th>
                 <th scope="col">DV</th>

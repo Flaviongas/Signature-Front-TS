@@ -6,6 +6,7 @@ import MajorContext from "../contexts/MajorContext";
 import SubjectContext from "../contexts/SubjectContext";
 
 import logo from '../assets/signature.svg'
+import { Button } from "@chakra-ui/react";
 
 // type Props = {};
 
@@ -15,6 +16,12 @@ function MainContent() {
     name: "",
   });
   const [SubjectData, setSubjectData] = useState<Subject[]>([]);
+
+  const logOut = () => {
+    localStorage.setItem("Token", "");
+    location.reload()
+  }
+
   return (
     <MajorContext.Provider value={{ selectedMajors, setSelectedMajors }}>
       <SubjectContext.Provider value={{ SubjectData, setSubjectData }}>
@@ -23,9 +30,12 @@ function MainContent() {
           <div className="w-1/4 min-w-56 bg-blue-900 text-white max-w-72">
             <img src={logo} alt="logo" className="w-40 h-40 mx-auto my-2" />
             <SideNav />
-          </div>
-          <div className="w-full bg-gray-100">
-            <Dashboard />
+            <div className="felx text-center justify-center">
+              <Button className="flex my-3 align-middle justify-center text-center" onClick={logOut} >Cerrar sesión</Button>
+            </div>
+            <div className="w-full bg-gray-100">
+              <Dashboard />
+            </div>
           </div>
         </div>
       </SubjectContext.Provider>
