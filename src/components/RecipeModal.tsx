@@ -32,7 +32,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [place, setPlace] = useState(false);
   const [textBoton, setTextBoton] = useState<String>("Agregar Estudiantes");
-
+  const [students, setStudents] = useState<Student[]>([]);
   useEffect(() => {
     if (isOpen) {
       setPlace(false);
@@ -42,6 +42,10 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
   useEffect(() => {
     console.log("Checked students:", checkedStudents);
   }, [checkedStudents]);
+
+  useEffect(() => {
+    setStudents(data);
+  }, [data]);
 
   const handleCheckboxChange = (student: Student) => {
     setCheckedStudents((prev) => {
@@ -211,6 +215,12 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
     setCheckedStudents([]);
     onClose();
   }
+
+  const handleStudentAdded = (newStudent: Student) => {
+    console.log("Nuevo estudiante agregado:", newStudent);
+    setStudents((prevStudents) => [...prevStudents, newStudent]);
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={cleanup} size="6x1">
       <ModalOverlay />
@@ -228,7 +238,14 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
           />
           <Button onClick={handlePlace}>{textBoton}</Button>
 
-          {place ? <Form subjectId={shortSubject.id}></Form> : ""}
+          {place ? (
+            <Form
+              subjectId={shortSubject.id}
+              onStudentAdded={handleStudentAdded}
+            ></Form>
+          ) : (
+            ""
+          )}
           <table className="table">
             <thead>
               <tr className="text-center">
@@ -244,7 +261,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
               </tr>
             </thead>
             <tbody>
-              {data.map((student) => (
+              {students.map((student) => (
                 <tr key={student.id}>
                   <td className="text-center">
                     <input

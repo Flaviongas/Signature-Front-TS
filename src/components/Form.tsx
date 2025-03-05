@@ -2,10 +2,14 @@ import { Button } from "@chakra-ui/react";
 import React, { FormEvent, useContext, useRef, useState } from "react";
 import MajorContext from "../contexts/MajorContext";
 import axios from "axios";
+import { Student } from "../types";
 
-type Props = { subjectId: number | null };
+type Props = {
+  subjectId: number | null;
+  onStudentAdded: (newStudent: Student) => void;
+};
 
-function Form({ subjectId }: Props) {
+function Form({ subjectId, onStudentAdded }: Props) {
   const rutRef = useRef<HTMLInputElement>(null);
   const dvRef = useRef<HTMLInputElement>(null);
   const first_nameRef = useRef<HTMLInputElement>(null);
@@ -56,6 +60,7 @@ function Form({ subjectId }: Props) {
           },
         }
       );
+      onStudentAdded(response.data);
       setData(response.data);
       setError(null);
     } catch (err) {
