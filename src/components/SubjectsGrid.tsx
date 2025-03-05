@@ -27,6 +27,9 @@ function SubjectsGrid() {
   const url = "https://signature.gidua.xyz/api/subjects/";
   const [data, setData] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(
+    null
+  );
   const {
     isOpen: isOpenFirst,
     onOpen: onOpenFirst,
@@ -65,32 +68,35 @@ function SubjectsGrid() {
       .finally(() => setLoading(false));
     return () => controller.abort();
   }, []);
-  const handleOpenModal = (students: Student[]) => {
+  const handleOpenModal = (students: Student[], subjectId: number) => {
     setModalStudents(students);
+    setSelectedSubjectId(subjectId);
     onOpenFirst();
   };
+
   const handleOpenModalMajor = () => {
     onOpenSecond();
   };
   if (loading) {
     return <Text>Cargando...</Text>;
   }
+
   return selectedMajors && selectedMajors.name !== "" ? (
     <div className="p-4 text-center mx-auto ">
       <h1>Carrera: {selectedMajors.name}</h1>
-
+      <div className="flex justify-end">
+        <FontAwesomeIcon
+          className="bg-yellow-300 text-black p-2 rounded-4 hover:bg-yellow-200 hover:text-white"
+          fontSize={20}
+          icon={faPlus}
+          onClick={handleOpenModalMajor}
+        />
+      </div>
       {filteredSubjects.length === 0 && !loading ? (
         <>
           <Text fontSize="lg" fontWeight="bold" color="gray.600">
             No hay materias disponibles para esta carrera.
           </Text>
-
-          <FontAwesomeIcon
-            className="bg-yellow-300 text-black p-2 rounded-4 hover:bg-yellow-200 hover:text-white"
-            fontSize={20}
-            icon={faPlus}
-            onClick={handleOpenModalMajor}
-          />
         </>
       ) : (
         <div className="flex flex-row flex-wrap justify-center">
@@ -100,34 +106,36 @@ function SubjectsGrid() {
             );
 
             return (
-              <Card
-                boxShadow="lg"
-                minWidth={250}
-                key={Subject.id}
-                margin={5}
-                className="transition-transform duration-100 hover:scale-105 "
-              >
-                <div className="flex flex-col">
-                  <div className="flex h-1/2 w-full min-h-24 mx-auto">
-                    <p className="text-center text-xl pt-3 w-72 m-auto">
-                      {Subject.name}
+              <div key={Subject.id}>
+                <Card
+                  boxShadow="lg"
+                  minWidth={250}
+                  margin={5}
+                  className="transition-transform duration-100 hover:scale-105 "
+                >
+                  <div className="flex flex-col">
+                    <div className="flex h-1/2 w-full min-h-24 mx-auto">
+                      <p className="text-center text-xl pt-3 w-72 m-auto">
+                        {Subject.name}
+                      </p>
+                    </div>
+                    <p className="text-center text-gray-500">
+                      Cantidad de Alumnos: {filteredStudents.length}
                     </p>
+                    <CardFooter className="flex h-1/2">
+                      <Button
+                        colorScheme="blue"
+                        w="full"
+                        onClick={() =>
+                          handleOpenModal(filteredStudents, Subject.id)
+                        }
+                      >
+                        Asistencia
+                      </Button>
+                    </CardFooter>
                   </div>
-                  <p className="text-center text-gray-500">
-                    Cantidad de Alumnos: {filteredStudents.length}
-                  </p>
-
-                  <CardFooter className="flex h-1/2">
-                    <Button
-                      colorScheme="blue"
-                      w="full"
-                      onClick={() => handleOpenModal(filteredStudents)}
-                    >
-                      Asistencia
-                    </Button>
-                  </CardFooter>
-                </div>
-              </Card>
+                </Card>
+              </div>
             );
           })}
         </div>
@@ -137,6 +145,7 @@ function SubjectsGrid() {
         data={modalStudents}
         isOpen={isOpenFirst}
         onClose={onCloseFirst}
+        subjectId={selectedSubjectId}
       />
       <RecipeModalMajor isOpen={isOpenSecond} onClose={onCloseSecond} />
     </div>
