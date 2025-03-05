@@ -2,16 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import {
   Button,
   Card,
-  CardBody,
   CardFooter,
-  CardHeader,
-  Heading,
-  SimpleGrid,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import MajorContext from "../contexts/MajorContext";
-import { Student, Subject, SubjectList } from "../types";
+import { ShortSubject, Student, Subject, SubjectList } from "../types";
 import axios from "axios";
 import SubjectContext from "../contexts/SubjectContext";
 import RecipeModal from "./RecipeModal";
@@ -26,10 +22,13 @@ function SubjectsGrid() {
   const { setSubjectData } = useContext(SubjectContext);
   const url = "https://signature.gidua.xyz/api/subjects/";
   const [data, setData] = useState<Subject[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(
-    null
-  );
+  const [shortSubject, setShortSubject] = useState<ShortSubject>({
+    id: 0,
+    name: "",
+  });
+
   const {
     isOpen: isOpenFirst,
     onOpen: onOpenFirst,
@@ -68,9 +67,13 @@ function SubjectsGrid() {
       .finally(() => setLoading(false));
     return () => controller.abort();
   }, []);
-  const handleOpenModal = (students: Student[], subjectId: number) => {
+  const handleOpenModal = (
+    students: Student[],
+    subjectId: number,
+    name: string
+  ) => {
     setModalStudents(students);
-    setSelectedSubjectId(subjectId);
+    setShortSubject({ id: subjectId, name: name });
     onOpenFirst();
   };
 
@@ -127,7 +130,11 @@ function SubjectsGrid() {
                         colorScheme="blue"
                         w="full"
                         onClick={() =>
-                          handleOpenModal(filteredStudents, Subject.id)
+                          handleOpenModal(
+                            filteredStudents,
+                            Subject.id,
+                            Subject.name
+                          )
                         }
                       >
                         Asistencia
@@ -145,7 +152,7 @@ function SubjectsGrid() {
         data={modalStudents}
         isOpen={isOpenFirst}
         onClose={onCloseFirst}
-        subjectId={selectedSubjectId}
+        shortSubject={shortSubject}
       />
       <RecipeModalMajor isOpen={isOpenSecond} onClose={onCloseSecond} />
     </div>

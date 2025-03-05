@@ -1,4 +1,4 @@
-import { Heading, Input, Link, SkeletonText, VStack } from "@chakra-ui/react";
+import { Input, Link, SkeletonText, VStack } from "@chakra-ui/react";
 import axios from "axios";
 import { FormEvent, useContext, useEffect, useState } from "react";
 import { MajorShort, MajorShortResponse } from "../types";
