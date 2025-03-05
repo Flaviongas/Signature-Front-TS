@@ -36,8 +36,11 @@ function SideNav() {
     <SkeletonText mt="1" noOfLines={8} spacing="6" skeletonHeight="2" />
   ) : (
     <nav className="p-4 h-[90vh] overflow-y-auto">
-      <a onClick={() => { setSelectedMajors({ id: 0, name: "" }) }} >
-      </a>
+      <a
+        onClick={() => {
+          setSelectedMajors({ id: 0, name: "" });
+        }}
+      ></a>
       <form onSubmit={handleSubmit}>
         <Input
           value={search.name}
@@ -61,9 +64,16 @@ function SideNav() {
               key={c.id}
               onClick={() => setSelectedMajors(c)}
               textAlign={"center"}
-              _hover={{ textDecoration: "none", bg: "blue.600", color: "white" }}
+              _hover={{
+                textDecoration: "none",
+                bg: "blue.600",
+                color: "white",
+              }}
             >
-              <p className="cursor-pointer transition-transform duration-100 hover:scale-105 p-0 m-0"> {c.name} </p>
+              <p className="cursor-pointer transition-transform duration-100 hover:scale-105 p-0 m-0">
+                {" "}
+                {c.name}{" "}
+              </p>
             </Link>
           ))}
       </VStack>

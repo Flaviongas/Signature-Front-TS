@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { Student, Asistencia, ShortSubject } from "../types";
 import { useContext, useEffect, useState } from "react";
-import SubjectContext from "../contexts/SubjectContext";
+
 import axios from "axios";
 import Form from "./Form";
 import * as ExcelJS from "exceljs";
@@ -28,7 +28,6 @@ type Props = {
 function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [checkedStudents, setCheckedStudents] = useState<Student[]>([]);
   const { selectedMajors } = useContext(MajorContext);
-  const { SubjectData } = useContext(SubjectContext);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [place, setPlace] = useState(false);
@@ -223,6 +222,8 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
             type="date"
             className="form-control mb-3"
             value={selectedDate}
+            id="date-input"
+            name="selectedDate"
             onChange={handleDateChange}
           />
           <Button onClick={handlePlace}>{textBoton}</Button>
