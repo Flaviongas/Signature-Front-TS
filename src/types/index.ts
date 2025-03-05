@@ -36,3 +36,8 @@ export type Asistencia = {
 }
 
 export type SubjectList = Subject[]; 
+
+export type ShortSubject = {
+    id:number;
+    name:string;
+}
