@@ -17,6 +17,8 @@ import axios from "axios";
 import Form from "./Form";
 import * as ExcelJS from "exceljs";
 import MajorContext from "../contexts/MajorContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   isOpen: boolean;
@@ -185,6 +187,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
   };
 
   const handleDelete = async () => {
+    alert("Precaucion se eliminara la carrera");
     if (!shortSubject.id) {
       setError("No se ha seleccionado ninguna asignatura para eliminar.");
       return;
@@ -221,6 +224,27 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
     setStudents((prevStudents) => [...prevStudents, newStudent]);
   };
 
+  const handleStudentDelete = async (student: Student) => {
+    console.log(student.id);
+    if (!student.id) {
+      setError("No se ha seleccionado ninguna asignatura para eliminar.");
+      return;
+    }
+
+    try {
+      await axios.delete(
+        `https://signature.gidua.xyz/api/students/${student.id}/`
+      );
+      setStudents((prevStudents) =>
+        prevStudents.filter((s) => s.id !== student.id)
+      );
+      setError(null);
+    } catch (err) {
+      setError("Error al eliminar estudiante");
+      console.error(err);
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={cleanup} size="6x1">
       <ModalOverlay />
@@ -248,16 +272,28 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
           )}
           <table className="table">
             <thead>
-              <tr className="text-center">
+              <tr>
                 <th className="text-center" scope="col">
                   Asistencia
                 </th>
-                <th scope="col">Rut</th>
-                <th scope="col">DV</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Segundo Nombre</th>
-                <th scope="col">Apellido</th>
-                <th scope="col">Segundo Apellido</th>
+                <th className="text-left" scope="col">
+                  Rut
+                </th>
+                <th className="text-left" scope="col">
+                  DV
+                </th>
+                <th className="text-left" scope="col">
+                  Nombre
+                </th>
+                <th className="text-left" scope="col">
+                  Segundo Nombre
+                </th>
+                <th className="text-left" scope="col">
+                  Apellido
+                </th>
+                <th className="text-left" scope="col">
+                  Segundo Apellido
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -278,6 +314,13 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
                   <td>{student.second_name}</td>
                   <td>{student.last_name}</td>
                   <td>{student.second_last_name}</td>
+                  <td>
+                    <FontAwesomeIcon
+                      className="hover:text-red-800"
+                      icon={faTrash}
+                      onClick={() => handleStudentDelete(student)}
+                    />
+                  </td>
                 </tr>
               ))}
             </tbody>

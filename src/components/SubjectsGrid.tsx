@@ -12,13 +12,13 @@ import axios from "axios";
 import SubjectContext from "../contexts/SubjectContext";
 import RecipeModal from "./RecipeModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faArrowsRotate, faPlus } from "@fortawesome/free-solid-svg-icons";
 import RecipeModalMajor from "./RecipeModalMajor";
 
 // type Props = {};
 
 function SubjectsGrid() {
-  const { selectedMajors } = useContext(MajorContext);
+  const { selectedMajors, setSelectedMajors } = useContext(MajorContext);
   const { setSubjectData } = useContext(SubjectContext);
   const url = "https://signature.gidua.xyz/api/subjects/";
   const [data, setData] = useState<Subject[]>([]);
@@ -27,6 +27,8 @@ function SubjectsGrid() {
     id: 0,
     name: "",
   });
+
+  const [refresh, setRefresh] = useState(false);
 
   const {
     isOpen: isOpenFirst,
@@ -65,7 +67,7 @@ function SubjectsGrid() {
       })
       .finally(() => setLoading(false));
     return () => controller.abort();
-  }, []);
+  }, [refresh]);
   const handleOpenModal = (
     students: Student[],
     subjectId: number,
@@ -82,6 +84,9 @@ function SubjectsGrid() {
   if (loading) {
     return <Text>Cargando...</Text>;
   }
+  const handleRefresh = () => {
+    setRefresh((prev) => !prev);
+  };
 
   return selectedMajors && selectedMajors.name !== "" ? (
     <div className="p-4 text-center mx-auto ">
@@ -92,6 +97,11 @@ function SubjectsGrid() {
           fontSize={20}
           icon={faPlus}
           onClick={handleOpenModalMajor}
+        />
+        <FontAwesomeIcon
+          className="ml-5 text-3xl hover:text-stone-600"
+          onClick={handleRefresh}
+          icon={faArrowsRotate}
         />
       </div>
       {filteredSubjects.length === 0 && !loading ? (
