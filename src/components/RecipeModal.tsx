@@ -187,7 +187,13 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
   };
 
   const handleDelete = async () => {
-    alert("Precaucion se eliminara la carrera");
+    const confirmDelete = window.confirm(
+      `¿Estás seguro de que deseas eliminar la asignatura ${shortSubject.name}?`
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
     if (!shortSubject.id) {
       setError("No se ha seleccionado ninguna asignatura para eliminar.");
       return;
@@ -225,6 +231,14 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
   };
 
   const handleStudentDelete = async (student: Student) => {
+    const confirmDelete = window.confirm(
+      `¿Estás seguro de que deseas eliminar al estudiante ${student.first_name} ${student.last_name}?`
+    );
+
+    if (!confirmDelete) {
+      return;
+    }
+
     console.log(student.id);
     if (!student.id) {
       setError("No se ha seleccionado ninguna asignatura para eliminar.");
