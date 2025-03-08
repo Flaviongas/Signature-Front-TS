@@ -61,10 +61,10 @@ function Form({ subjectId, onStudentAdded }: Props) {
             </label>
             <input
               {...register("rut")}
-              type="number"
+              type="text"
               className="form-control"
               id="exampleFormControlInput1"
-              placeholder="Ingresar Rut"
+              placeholder="12345678"
             ></input>
             {errors?.rut?.message ?? <p>{errors?.rut?.message}</p>}
           </div>
@@ -77,7 +77,7 @@ function Form({ subjectId, onStudentAdded }: Props) {
               type="text"
               className="form-control"
               id="exampleFormControlInput1"
-              placeholder="Ingresar Rut"
+              placeholder="Digito verificador"
               maxLength={1}
             ></input>
             {errors?.dv?.message ?? <p>{errors?.dv?.message}</p>}
@@ -86,7 +86,7 @@ function Form({ subjectId, onStudentAdded }: Props) {
 
         <div className="mb-3">
           <label htmlFor="fist_name" className="form-label">
-            First name
+            Primer Nombre
           </label>
           <input
             {...register("first_name")}
@@ -100,7 +100,7 @@ function Form({ subjectId, onStudentAdded }: Props) {
 
         <div className="mb-3">
           <label htmlFor="second_name" className="form-label">
-            Second name
+            Segundo Nombre
           </label>
           <input
             {...register("second_name")}
@@ -116,7 +116,7 @@ function Form({ subjectId, onStudentAdded }: Props) {
 
         <div className="mb-3">
           <label htmlFor="last_name" className="form-label">
-            Last name
+            Apellido
           </label>
           <input
             {...register("last_name")}
@@ -130,7 +130,7 @@ function Form({ subjectId, onStudentAdded }: Props) {
 
         <div className="mb-3">
           <label htmlFor="second_last_name" className="form-label">
-            Second Last name
+            Segundo Apellido
           </label>
           <input
             {...register("second_last_name")}
