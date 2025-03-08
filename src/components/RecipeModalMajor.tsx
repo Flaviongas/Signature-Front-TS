@@ -15,7 +15,9 @@ import {
 import React, { FormEvent, useContext, useRef, useState } from "react";
 import MajorContext from "../contexts/MajorContext";
 import axios from "axios";
-
+import { useForm } from "react-hook-form";
+import { majorForm, majorSchema } from "../schemas/major";
+import { zodResolver } from "@hookform/resolvers/zod";
 type Props = { isOpen: boolean; onClose: () => void };
 
 function RecipeModalMajor({ isOpen, onClose }: Props) {
@@ -23,28 +25,22 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
   const nameRef = useRef<HTMLInputElement>(null);
   const [data, setData] = useState(null);
   const [error, setError] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<majorForm>({ resolver: zodResolver(majorSchema) });
 
   const url = "https://signature.gidua.xyz/api/subjects/";
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-
-    const nameValue = nameRef?.current?.value?.trim();
-    if (!nameValue) {
-      setError("El nombre no puede estar vacío.");
-      return;
-    }
-
-    if (!selectedMajors || !selectedMajors.id) {
-      setError("Debes seleccionar una carrera.");
-      return;
-    }
+  const onSubmit = async (data: majorForm) => {
+    console.log(data);
 
     try {
       const response = await axios.post(
         url,
         {
-          name: nameValue.toUpperCase(),
+          name: data.name.toUpperCase(),
           major: [selectedMajors.id],
         },
         {
@@ -65,7 +61,7 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="6x1">
       <ModalOverlay />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <ModalContent maxW="40vw">
           <ModalHeader>Agregar Asignatura</ModalHeader>
           <ModalCloseButton />
@@ -74,8 +70,14 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
 
             <FormControl>
               <FormLabel htmlFor="name">Ingresar Nombre</FormLabel>
-              <Input ref={nameRef} textTransform="uppercase" type="text" />
-              <FormHelperText>Ricardo estuvo aqui</FormHelperText>
+              <Input
+                {...register("name")}
+                textTransform="uppercase"
+                type="text"
+              />
+              <FormHelperText>
+                {errors?.name?.message ?? <p>{errors?.name?.message}</p>}
+              </FormHelperText>
             </FormControl>
           </ModalBody>
           <ModalFooter>
