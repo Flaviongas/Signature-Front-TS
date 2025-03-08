@@ -53,21 +53,6 @@ function SubjectsGrid() {
     setSubjectData(filteredSubjects);
   }, [selectedMajors, data, setSubjectData]);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const { signal } = controller;
-    setLoading(true);
-    axios
-      .get<SubjectList>(url, { signal })
-      .then(({ data }) => {
-        setData(data);
-        setSubjectData(data);
-        console.log("Datos recibidos en .then():", data);
-      })
-      .finally(() => setLoading(false));
-    return () => controller.abort();
-  }, [refresh]);
-
   const handleOpenModal = (
     students: Student[],
     subjectId: number,
