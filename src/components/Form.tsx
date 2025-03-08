@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/react";
-import React, { FormEvent, useContext, useRef, useState } from "react";
+import { useContext } from "react";
 import MajorContext from "../contexts/MajorContext";
 import axios from "axios";
 import { Student } from "../types";
@@ -15,8 +15,6 @@ type Props = {
 function Form({ subjectId, onStudentAdded }: Props) {
   const { selectedMajors } = useContext(MajorContext);
   const url = " https://signature.gidua.xyz/api/students/";
-  const [data, setData] = useState(null);
-  const [error, setError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -44,10 +42,7 @@ function Form({ subjectId, onStudentAdded }: Props) {
         }
       );
       onStudentAdded(response.data);
-      setData(response.data);
-      setError(null);
     } catch (err) {
-      setError("Error al hacer la petición");
       console.error(err);
     }
   };

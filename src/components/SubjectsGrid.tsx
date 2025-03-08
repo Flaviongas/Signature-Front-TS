@@ -19,7 +19,7 @@ import useGetData from "../hooks/useGetData";
 // type Props = {};
 
 function SubjectsGrid() {
-  const { selectedMajors, setSelectedMajors } = useContext(MajorContext);
+  const { selectedMajors } = useContext(MajorContext);
   const { setSubjectData } = useContext(SubjectContext);
   const url = "https://signature.gidua.xyz/api/subjects/";
   const [refresh, setRefresh] = useState(false);
@@ -53,6 +53,21 @@ function SubjectsGrid() {
     setSubjectData(filteredSubjects);
   }, [selectedMajors, data, setSubjectData]);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    const { signal } = controller;
+    setLoading(true);
+    axios
+      .get<SubjectList>(url, { signal })
+      .then(({ data }) => {
+        setData(data);
+        setSubjectData(data);
+        console.log("Datos recibidos en .then():", data);
+      })
+      .finally(() => setLoading(false));
+    return () => controller.abort();
+  }, [refresh]);
+
   const handleOpenModal = (
     students: Student[],
     subjectId: number,
@@ -69,9 +84,14 @@ function SubjectsGrid() {
   if (loading) {
     return <Text>Cargando...</Text>;
   }
+
   const handleRefresh = () => {
     setRefresh((prev) => !prev);
   };
+  const refreshAndClose = () => {
+    handleRefresh();
+    onCloseSecond();
+  }
 
   return selectedMajors && selectedMajors.name !== "" ? (
     <div className="p-4 text-center mx-auto ">
@@ -148,7 +168,7 @@ function SubjectsGrid() {
         onClose={onCloseFirst}
         shortSubject={shortSubject}
       />
-      <RecipeModalMajor isOpen={isOpenSecond} onClose={onCloseSecond} />
+      <RecipeModalMajor isOpen={isOpenSecond} onClose={refreshAndClose} />
     </div>
   ) : (
     <div className="p-4 text-center mx-auto ">

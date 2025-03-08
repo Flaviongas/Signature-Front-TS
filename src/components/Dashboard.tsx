@@ -1,6 +1,5 @@
 import SubjectsGrid from "./SubjectsGrid";
 
-type Props = {};
 
 function Dashboard() {
   return (

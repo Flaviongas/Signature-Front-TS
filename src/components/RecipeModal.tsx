@@ -31,9 +31,8 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [checkedStudents, setCheckedStudents] = useState<Student[]>([]);
   const { selectedMajors } = useContext(MajorContext);
   const [selectedDate, setSelectedDate] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
   const [place, setPlace] = useState(false);
-  const [textBoton, setTextBoton] = useState<String>("Agregar Estudiantes");
+  const [textBoton, setTextBoton] = useState<string>("Agregar Estudiantes");
   const [students, setStudents] = useState<Student[]>([]);
   useEffect(() => {
     if (isOpen) {
@@ -173,10 +172,10 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
         `REGISTROS DE ASISTENCIA - SAAC ( ${weekday
           .toString()
           .toUpperCase()} ${ISODate.split("T")[0]
-          .split("-")
-          .reverse()
-          .join("-")
-          .slice(0, 5)} ${selectedMajors.name} ).xlsx`
+            .split("-")
+            .reverse()
+            .join("-")
+            .slice(0, 5)} ${selectedMajors.name} ).xlsx`
       );
     }
     exportJsonToExcel();
@@ -195,7 +194,6 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
       return;
     }
     if (!shortSubject.id) {
-      setError("No se ha seleccionado ninguna asignatura para eliminar.");
       return;
     }
 
@@ -203,10 +201,8 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
       await axios.delete(
         `https://signature.gidua.xyz/api/subjects/${shortSubject.id}/`
       );
-      setError(null);
       cleanup();
     } catch (err) {
-      setError("Error al eliminar la asignatura");
       console.error(err);
     }
   };
@@ -241,7 +237,6 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
 
     console.log(student.id);
     if (!student.id) {
-      setError("No se ha seleccionado ninguna asignatura para eliminar.");
       return;
     }
 
@@ -252,9 +247,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
       setStudents((prevStudents) =>
         prevStudents.filter((s) => s.id !== student.id)
       );
-      setError(null);
     } catch (err) {
-      setError("Error al eliminar estudiante");
       console.error(err);
     }
   };

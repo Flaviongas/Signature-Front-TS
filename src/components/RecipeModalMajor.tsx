@@ -12,7 +12,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
-import React, { FormEvent, useContext, useRef, useState } from "react";
+import { useContext } from "react";
 import MajorContext from "../contexts/MajorContext";
 import axios from "axios";
 import { useForm } from "react-hook-form";
@@ -23,8 +23,6 @@ type Props = { isOpen: boolean; onClose: () => void };
 function RecipeModalMajor({ isOpen, onClose }: Props) {
   const { selectedMajors } = useContext(MajorContext);
 
-  const [data, setData] = useState(null);
-  const [error, setError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -37,7 +35,7 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
     console.log(data);
 
     try {
-      const response = await axios.post(
+      await axios.post(
         url,
         {
           name: data.name.toUpperCase(),
@@ -49,10 +47,7 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
           },
         }
       );
-      setData(response.data);
-      setError(null);
     } catch (err) {
-      setError("Error al hacer la petición");
       console.error(err);
     }
 
