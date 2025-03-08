@@ -1,31 +1,18 @@
 import { Input, Link, SkeletonText, VStack } from "@chakra-ui/react";
-import axios from "axios";
+
 import { FormEvent, useContext, useEffect, useState } from "react";
 import { MajorShort, MajorShortResponse } from "../types";
 import MajorContext from "../contexts/MajorContext";
+import useGetData from "../hooks/useGetData";
 
 // type Props = {};
 
 function SideNav() {
   const url = "https://signature.gidua.xyz/api/majors/getMajors/ ";
-  const [data, setData] = useState<MajorShort[]>([]);
-  const [loading, setLoading] = useState(false);
+
+  const { data, error, loading } = useGetData<MajorShort>(url);
   const [search, setSearch] = useState<MajorShort>({ id: 0, name: "" });
   const { setSelectedMajors } = useContext(MajorContext);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const { signal } = controller;
-    setLoading(true);
-    axios
-      .get<MajorShortResponse>(url, { signal })
-      .then(({ data }) => {
-        setData(data);
-        console.log("Datos recibidos en .then():", data);
-      })
-      .finally(() => setLoading(false));
-    return () => controller.abort();
-  }, []);
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();

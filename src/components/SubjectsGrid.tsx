@@ -7,13 +7,14 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import MajorContext from "../contexts/MajorContext";
-import { ShortSubject, Student, Subject, SubjectList } from "../types";
-import axios from "axios";
+import { ShortSubject, Student, Subject } from "../types";
+
 import SubjectContext from "../contexts/SubjectContext";
 import RecipeModal from "./RecipeModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsRotate, faPlus } from "@fortawesome/free-solid-svg-icons";
 import RecipeModalMajor from "./RecipeModalMajor";
+import useGetData from "../hooks/useGetData";
 
 // type Props = {};
 
@@ -21,14 +22,12 @@ function SubjectsGrid() {
   const { selectedMajors, setSelectedMajors } = useContext(MajorContext);
   const { setSubjectData } = useContext(SubjectContext);
   const url = "https://signature.gidua.xyz/api/subjects/";
-  const [data, setData] = useState<Subject[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  const { loading, error, data } = useGetData<Subject>(url, refresh);
   const [shortSubject, setShortSubject] = useState<ShortSubject>({
     id: 0,
     name: "",
   });
-
-  const [refresh, setRefresh] = useState(false);
 
   const {
     isOpen: isOpenFirst,
@@ -54,20 +53,6 @@ function SubjectsGrid() {
     setSubjectData(filteredSubjects);
   }, [selectedMajors, data, setSubjectData]);
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const { signal } = controller;
-    setLoading(true);
-    axios
-      .get<SubjectList>(url, { signal })
-      .then(({ data }) => {
-        setData(data);
-        setSubjectData(data);
-        console.log("Datos recibidos en .then():", data);
-      })
-      .finally(() => setLoading(false));
-    return () => controller.abort();
-  }, [refresh]);
   const handleOpenModal = (
     students: Student[],
     subjectId: number,
