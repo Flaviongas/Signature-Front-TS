@@ -22,7 +22,7 @@ type Props = { isOpen: boolean; onClose: () => void };
 
 function RecipeModalMajor({ isOpen, onClose }: Props) {
   const { selectedMajors } = useContext(MajorContext);
-  const nameRef = useRef<HTMLInputElement>(null);
+
   const [data, setData] = useState(null);
   const [error, setError] = useState<string | null>(null);
   const {
