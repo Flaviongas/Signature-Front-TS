@@ -1,5 +1,4 @@
-import React from "react";
-import * as FileSaver from "file-saver";
+import React, { useContext } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -11,14 +10,14 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { Student, Asistencia, ShortSubject } from "../types";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import useExcel from "../hooks/useExcel";
 
 import axios from "axios";
 import Form from "./Form";
-import * as ExcelJS from "exceljs";
-import MajorContext from "../contexts/MajorContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import MajorContext from "../contexts/MajorContext";
 
 type Props = {
   isOpen: boolean;
@@ -29,11 +28,11 @@ type Props = {
 
 function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [checkedStudents, setCheckedStudents] = useState<Student[]>([]);
-  const { selectedMajors } = useContext(MajorContext);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [place, setPlace] = useState(false);
   const [textBoton, setTextBoton] = useState<string>("Agregar Estudiantes");
   const [students, setStudents] = useState<Student[]>([]);
+  const { selectedMajors } = useContext(MajorContext);
   useEffect(() => {
     if (isOpen) {
       setPlace(false);
@@ -63,122 +62,16 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
     setSelectedDate(event.target.value);
   };
 
-  const handleSubmit = () => {
+  const HandleSubmit = () => {
     const currentDate = new Date();
-    const DAYS = [
-      "Domingo",
-      "Lunes",
-      "Martes",
-      "Miércoles",
-      "Jueves",
-      "Viernes",
-      "Sábado",
-    ];
     const ISODate = currentDate.toISOString();
     const asistenciaData: Asistencia = {
       fecha: selectedDate ? new Date(selectedDate).toISOString() : ISODate,
       Students: checkedStudents,
     };
     console.log("Asistencia data:", asistenciaData);
-    const headers = [
-      "FECHA",
-      "RUT (sin puntos)",
-      "DV",
-      "NOMBRES",
-      "APELLIDOS",
-      "SECCIÓN",
-      "ASIGNATURA (Nombre de malla curricular) / NIVEL",
-    ];
-    async function exportJsonToExcel() {
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet("ASISTENCIA");
-
-      worksheet.columns = headers.map((header_name) => ({
-        header: header_name,
-        key: header_name
-          .replaceAll(" ", "_")
-          .replace("(", "")
-          .replace(")", "")
-          .replace("/", ""),
-      }));
-      ["A1", "B1", "C1", "D1", "E1", "F1", "G1"].map((key) => {
-        worksheet.getCell(key).fill = {
-          type: "pattern",
-          pattern: "solid",
-          fgColor: { argb: "c00000" },
-        };
-        worksheet.getCell(key).font = {
-          color: { argb: "FFFFFF" },
-          bold: true,
-        };
-      });
-
-      asistenciaData.Students.forEach((student) => {
-        worksheet.addRow({
-          FECHA: asistenciaData.fecha
-            .split("T")[0]
-            .replaceAll("-", "/")
-            .split("/")
-            .reverse()
-            .join("/"),
-          RUT_sin_puntos: student.rut.toString(),
-          DV: student.dv,
-          NOMBRES: student.first_name + " " + student.second_name,
-          APELLIDOS: student.last_name + " " + student.second_last_name,
-          SECCIÓN: "1",
-          ASIGNATURA_Nombre_de_malla_curricular__NIVEL:
-            shortSubject?.name.toUpperCase(),
-        });
-      });
-      worksheet.columns.forEach((column) => {
-        if (!column.values) return null;
-        const lengths = column.values.map((v) =>
-          v ? v.toString().length + 7 : 0
-        );
-        const maxLength = Math.max(
-          ...lengths.filter((v) => typeof v === "number")
-        );
-        column.width = maxLength;
-      });
-      workbook.eachSheet((sheet) => {
-        sheet.eachRow((row) => {
-          row.eachCell((cell) => {
-            if (!cell.font?.size) {
-              cell.font = Object.assign(cell.font || {}, { size: 11 });
-            }
-            if (!cell.font?.name) {
-              cell.font = Object.assign(cell.font || {}, {
-                name: "Century Gothic",
-              });
-            }
-            cell.border = {
-              top: { style: "thin" },
-              left: { style: "thin" },
-              bottom: { style: "thin" },
-              right: { style: "thin" },
-            };
-          });
-        });
-      });
-
-      const buffer = await workbook.xlsx.writeBuffer();
-      const weekday_number = new Date(asistenciaData.fecha).getDay();
-      const weekday = DAYS[weekday_number];
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      FileSaver.saveAs(
-        blob,
-        `REGISTROS DE ASISTENCIA - SAAC ( ${weekday
-          .toString()
-          .toUpperCase()} ${ISODate.split("T")[0]
-            .split("-")
-            .reverse()
-            .join("-")
-            .slice(0, 5)} ${selectedMajors.name} ).xlsx`
-      );
-    }
-    exportJsonToExcel();
+    console.log("ShortSubject:", shortSubject);
+    useExcel(asistenciaData, ISODate, shortSubject, selectedMajors);
 
     setCheckedStudents([]);
     setSelectedDate("");
@@ -340,7 +233,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
             </Button>
           </div>
           <div className="flex gap-3">
-            <Button colorScheme="blue" onClick={handleSubmit}>
+            <Button colorScheme="blue" onClick={HandleSubmit}>
               Enviar Asistencia
             </Button>
             <Button ml={3} onClick={onClose}>

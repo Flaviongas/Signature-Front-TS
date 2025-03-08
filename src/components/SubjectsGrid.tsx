@@ -23,7 +23,7 @@ function SubjectsGrid() {
   const { setSubjectData } = useContext(SubjectContext);
   const url = "https://signature.gidua.xyz/api/subjects/";
   const [refresh, setRefresh] = useState(false);
-  const { loading, error, data } = useGetData<Subject>(url, refresh);
+  const { loading, data } = useGetData<Subject>(url, refresh);
   const [shortSubject, setShortSubject] = useState<ShortSubject>({
     id: 0,
     name: "",

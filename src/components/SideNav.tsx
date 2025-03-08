@@ -1,7 +1,7 @@
 import { Input, Link, SkeletonText, VStack } from "@chakra-ui/react";
 
-import { FormEvent, useContext, useEffect, useState } from "react";
-import { MajorShort, MajorShortResponse } from "../types";
+import { FormEvent, useContext, useState } from "react";
+import { MajorShort } from "../types";
 import MajorContext from "../contexts/MajorContext";
 import useGetData from "../hooks/useGetData";
 
@@ -10,7 +10,7 @@ import useGetData from "../hooks/useGetData";
 function SideNav() {
   const url = "https://signature.gidua.xyz/api/majors/getMajors/ ";
 
-  const { data, error, loading } = useGetData<MajorShort>(url);
+  const { data, loading } = useGetData<MajorShort>(url);
   const [search, setSearch] = useState<MajorShort>({ id: 0, name: "" });
   const { setSelectedMajors } = useContext(MajorContext);
 
