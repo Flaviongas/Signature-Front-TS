@@ -76,7 +76,7 @@ function SubjectsGrid() {
   const refreshAndClose = () => {
     handleRefresh();
     onCloseSecond();
-  }
+  };
 
   return selectedMajors && selectedMajors.name !== "" ? (
     <div className="p-4 text-center mx-auto ">
@@ -152,6 +152,7 @@ function SubjectsGrid() {
         isOpen={isOpenFirst}
         onClose={onCloseFirst}
         shortSubject={shortSubject}
+        refresh={handleRefresh}
       />
       <RecipeModalMajor isOpen={isOpenSecond} onClose={refreshAndClose} />
     </div>

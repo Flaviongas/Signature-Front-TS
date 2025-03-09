@@ -24,9 +24,10 @@ type Props = {
   onClose: () => void;
   data: Student[];
   shortSubject: ShortSubject;
+  refresh: () => void;
 };
 
-function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
+function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
   const [checkedStudents, setCheckedStudents] = useState<Student[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [place, setPlace] = useState(false);
@@ -95,6 +96,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject }: Props) {
         `https://signature.gidua.xyz/api/subjects/${shortSubject.id}/`
       );
       cleanup();
+      refresh();
     } catch (err) {
       console.error(err);
     }
