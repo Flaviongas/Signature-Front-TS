@@ -18,7 +18,7 @@ function MainContent() {
   return (
     <MajorContext.Provider value={{ selectedMajors, setSelectedMajors }}>
       <SubjectContext.Provider value={{ SubjectData, setSubjectData }}>
-        <div className="flex flex-row w-full">
+        <div className="flex flex-row w-full h-screen">
           <div className="w-1/4 min-w-56 bg-blue-900 text-white max-w-72">
             <img src={logo} alt="logo" className="w-40 h-40 mx-auto my-2" />
             <SideNav />
