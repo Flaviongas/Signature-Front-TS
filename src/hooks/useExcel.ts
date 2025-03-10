@@ -1,8 +1,6 @@
 import * as FileSaver from "file-saver";
 import * as ExcelJS from "exceljs";
 import { Asistencia, ShortSubject } from "../types";
-import MajorContext from "../contexts/MajorContext";
-import { useContext } from "react";
 const DAYS = [
     "Domingo",
     "Lunes",
