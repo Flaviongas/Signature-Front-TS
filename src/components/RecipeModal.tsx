@@ -151,7 +151,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
     <Modal isOpen={isOpen} onClose={cleanup} size="6x1">
       <ModalOverlay />
       <ModalContent maxW="70vw">
-        <ModalHeader>Asistencia</ModalHeader>
+        <ModalHeader>Attendance</ModalHeader>
         <ModalCloseButton />
         <ModalBody maxHeight="70vh" overflowY="auto">
           <input
@@ -176,7 +176,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
             <thead>
               <tr>
                 <th className="text-center" scope="col">
-                  Asistencia
+                  Attendance
                 </th>
                 <th className="text-left" scope="col">
                   Rut

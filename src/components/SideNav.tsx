@@ -22,12 +22,9 @@ function SideNav() {
   return loading ? (
     <SkeletonText mt="1" noOfLines={8} spacing="6" skeletonHeight="2" />
   ) : (
-    <nav className="p-4 h-[90vh] overflow-y-auto">
-      <a
-        onClick={() => {
-          setSelectedMajors({ id: 0, name: "" });
-        }}
-      ></a>
+    <nav className="p-4 h-[85vh] overflow-y-auto">
+      <a onClick={() => { setSelectedMajors({ id: 0, name: "" }) }} >
+      </a>
       <form onSubmit={handleSubmit}>
         <Input
           value={search.name}

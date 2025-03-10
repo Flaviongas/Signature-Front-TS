@@ -30,7 +30,7 @@ export type Subject = {
     students: Student[]
 
 }
-export type Asistencia = {
+export type Attendance = {
     fecha: string;
     Students: Student[];
 }
