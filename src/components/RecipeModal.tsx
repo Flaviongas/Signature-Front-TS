@@ -176,7 +176,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
             <thead>
               <tr>
                 <th className="text-center" scope="col">
-                  Attendance
+                  Asistencia
                 </th>
                 <th className="text-left" scope="col">
                   Rut
