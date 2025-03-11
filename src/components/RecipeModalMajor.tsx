@@ -29,7 +29,7 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
     formState: { errors },
   } = useForm<majorForm>({ resolver: zodResolver(majorSchema) });
 
-  const url = "https://signature.gidua.xyz/api/subjects/";
+  const url = import.meta.env.VITE_API_URL + "/api/subjects";
 
   const onSubmit = async (data: majorForm) => {
     console.log(data);

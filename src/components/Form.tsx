@@ -14,7 +14,7 @@ type Props = {
 
 function Form({ subjectId, onStudentAdded }: Props) {
   const { selectedMajors } = useContext(MajorContext);
-  const url = " https://signature.gidua.xyz/api/students/";
+  const url = import.meta.env.VITE_API_URL + "/api/students";
   const {
     register,
     handleSubmit,

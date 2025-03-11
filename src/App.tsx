@@ -17,7 +17,7 @@ function App() {
     return <MainContent />;
   } else {
     console.log("no token", token);
-    return <Login onLoginSuccess={onLogin} backLink="https://signature.gidua.xyz" />;
+    return <Login onLoginSuccess={onLogin} backLink={import.meta.env.VITE_API_URL} />;
   }
 }
 

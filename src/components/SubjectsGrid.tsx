@@ -21,7 +21,7 @@ import useGetData from "../hooks/useGetData";
 function SubjectsGrid() {
   const { selectedMajors } = useContext(MajorContext);
   const { setSubjectData } = useContext(SubjectContext);
-  const url = "https://signature.gidua.xyz/api/subjects/";
+  const url = import.meta.env.VITE_API_URL + "/api/subjects";
   const [refresh, setRefresh] = useState(false);
   const { loading, data } = useGetData<Subject>(url, refresh);
   const [shortSubject, setShortSubject] = useState<ShortSubject>({
@@ -79,19 +79,14 @@ function SubjectsGrid() {
   };
 
   return selectedMajors && selectedMajors.name !== "" ? (
-    <div className="p-4 text-center mx-auto ">
+    <div className="p-4 flex flex-col mb-2 text-center mx-auto h-40 ">
       <h1>Carrera: {selectedMajors.name}</h1>
       <div className="flex justify-end">
-        <FontAwesomeIcon
-          className="bg-yellow-300 text-black p-2 rounded-4 hover:bg-yellow-200 hover:text-white"
-          fontSize={20}
-          icon={faPlus}
-          onClick={handleOpenModalMajor}
-        />
         <FontAwesomeIcon
           className="ml-5 text-3xl hover:text-stone-600"
           onClick={handleRefresh}
           icon={faArrowsRotate}
+          cursor={"pointer"}
         />
       </div>
       {filteredSubjects.length === 0 && !loading ? (
@@ -110,8 +105,8 @@ function SubjectsGrid() {
             return (
               <div key={Subject.id}>
                 <Card
+                  display={"flex"}
                   boxShadow="lg"
-                  minWidth={250}
                   margin={5}
                   className="transition-transform duration-100 hover:scale-105 "
                 >
@@ -144,6 +139,26 @@ function SubjectsGrid() {
               </div>
             );
           })}
+
+          <div key="add">
+            <Card
+              display={"flex"}
+              backgroundColor={"gray.100"}
+              margin={5}
+              minHeight={215}
+              minWidth={270}
+              className="transition-transform duration-100 hover:scale-105"
+              cursor={"pointer"}
+            >
+              <FontAwesomeIcon
+                className="text-black my-auto p-2 rounded-4"
+                fontSize={50}
+                icon={faPlus}
+                onClick={handleOpenModalMajor}
+              />
+            </Card>
+          </div>
+
         </div>
       )}
 

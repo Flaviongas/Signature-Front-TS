@@ -8,7 +8,7 @@ import useGetData from "../hooks/useGetData";
 // type Props = {};
 
 function SideNav() {
-  const url = "https://signature.gidua.xyz/api/majors/getMajors/ ";
+  const url = import.meta.env.VITE_API_URL + "/api/majors/getMajors/";
 
   const { data, loading } = useGetData<MajorShort>(url);
   const [search, setSearch] = useState<MajorShort>({ id: 0, name: "" });

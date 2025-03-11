@@ -1,6 +1,6 @@
 import * as FileSaver from "file-saver";
 import * as ExcelJS from "exceljs";
-import { Asistencia, ShortSubject } from "../types";
+import { Attendance, ShortSubject } from "../types";
 const DAYS = [
     "Domingo",
     "Lunes",
@@ -19,7 +19,7 @@ const headers = [
     "SECCIÓN",
     "ASIGNATURA (Nombre de malla curricular) / NIVEL",
 ];
-export default function useExcel(asistenciaData: Asistencia, ISODate: string, shortSubject: ShortSubject, selectedMajors: { id: number, name: string }) {
+export default function useExcel(asistenciaData: Attendance, ISODate: string, shortSubject: ShortSubject, selectedMajors: { id: number, name: string }) {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("ASISTENCIA");
 

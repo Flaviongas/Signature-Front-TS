@@ -176,7 +176,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
             <thead>
               <tr>
                 <th className="text-center" scope="col">
-                  Attendance
+                  ¿Asistió?
                 </th>
                 <th className="text-left" scope="col">
                   Rut
@@ -221,6 +221,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
                       className="hover:text-red-800"
                       icon={faTrash}
                       onClick={() => handleStudentDelete(student)}
+                      cursor={"pointer"}
                     />
                   </td>
                 </tr>
