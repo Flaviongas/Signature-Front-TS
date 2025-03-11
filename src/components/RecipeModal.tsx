@@ -9,7 +9,7 @@ import {
   ModalFooter,
   Button,
 } from "@chakra-ui/react";
-import { Student, Asistencia, ShortSubject } from "../types";
+import { Student, Attendance, ShortSubject } from "../types";
 import { useEffect, useState } from "react";
 import useExcel from "../hooks/useExcel";
 
@@ -66,7 +66,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
   const HandleSubmit = () => {
     const currentDate = new Date();
     const ISODate = currentDate.toISOString();
-    const asistenciaData: Asistencia = {
+    const asistenciaData: Attendance = {
       fecha: selectedDate ? new Date(selectedDate).toISOString() : ISODate,
       Students: checkedStudents,
     };
@@ -176,7 +176,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
             <thead>
               <tr>
                 <th className="text-center" scope="col">
-                  Asistencia
+                  Attendance
                 </th>
                 <th className="text-left" scope="col">
                   Rut
