@@ -21,7 +21,7 @@ import useGetData from "../hooks/useGetData";
 function SubjectsGrid() {
   const { selectedMajors } = useContext(MajorContext);
   const { setSubjectData } = useContext(SubjectContext);
-  const url = import.meta.env.VITE_API_URL + "/api/subjects";
+  const url = import.meta.env.VITE_API_URL + "/api/subjects/";
   console.log("url subjectsgrid: ", url);
   const [refresh, setRefresh] = useState(false);
   const { loading, data } = useGetData<Subject>(url, refresh);
