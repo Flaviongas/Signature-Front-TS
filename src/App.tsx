@@ -3,12 +3,6 @@ import Login from "./components/Login";
 import MainContent from "./Routes/MainContent";
 
 function App() {
-  return (
-    <>
-      <MainContent />
-    </>
-  );
-
   const [authToken, setAuthToken] = useState("");
 
   const token = localStorage.getItem("Token") || "";
@@ -23,7 +17,7 @@ function App() {
     return <MainContent />;
   } else {
     console.log("no token", token);
-    return <Login onLoginSuccess={onLogin} backLink="http://localhost:8000" />;
+    return <Login onLoginSuccess={onLogin} backLink="https://signature.gidua.xyz" />;
   }
 }
 
