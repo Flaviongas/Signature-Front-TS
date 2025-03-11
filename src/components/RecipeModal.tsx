@@ -90,10 +90,17 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
     if (!shortSubject.id) {
       return;
     }
+    const token = localStorage.getItem("Token");
 
     try {
+      const url = import.meta.env.VITE_API_URL + "/api/subjects";
       await axios.delete(
-        `https://signature.gidua.xyz/api/subjects/${shortSubject.id}/`
+        `${url}/${shortSubject.id}/`
+        , {
+          headers: {
+            "Authorization": `Token ${token}`,
+          }
+        }
       );
       cleanup();
       refresh();
@@ -135,9 +142,16 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
       return;
     }
 
+    const token = localStorage.getItem("Token");
     try {
+      const url = import.meta.env.VITE_API_URL + "/api/students";
       await axios.delete(
-        `https://signature.gidua.xyz/api/students/${student.id}/`
+        `${url}/${student.id}/`,
+        {
+          headers: {
+            "Authorization": `Token ${token}`,
+          }
+        }
       );
       setStudents((prevStudents) =>
         prevStudents.filter((s) => s.id !== student.id)

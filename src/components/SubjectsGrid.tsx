@@ -22,6 +22,7 @@ function SubjectsGrid() {
   const { selectedMajors } = useContext(MajorContext);
   const { setSubjectData } = useContext(SubjectContext);
   const url = import.meta.env.VITE_API_URL + "/api/subjects";
+  console.log("url subjectsgrid: ", url);
   const [refresh, setRefresh] = useState(false);
   const { loading, data } = useGetData<Subject>(url, refresh);
   const [shortSubject, setShortSubject] = useState<ShortSubject>({
@@ -94,6 +95,25 @@ function SubjectsGrid() {
           <Text fontSize="lg" fontWeight="bold" color="gray.600">
             No hay materias disponibles para esta carrera.
           </Text>
+          <div key="add" className="w-full mx-auto">
+            <Card
+              display={"flex"}
+              backgroundColor={"gray.100"}
+              margin={5}
+              minHeight={215}
+              minWidth={270}
+              maxWidth={270}
+              className=" mx-auto transition-transform duration-100 hover:scale-105"
+              cursor={"pointer"}
+            >
+              <FontAwesomeIcon
+                className="text-black my-auto p-2 rounded-4"
+                fontSize={50}
+                icon={faPlus}
+                onClick={handleOpenModalMajor}
+              />
+            </Card>
+          </div>
         </>
       ) : (
         <div className="flex flex-row flex-wrap justify-center">

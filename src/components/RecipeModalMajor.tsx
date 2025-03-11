@@ -21,6 +21,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 type Props = { isOpen: boolean; onClose: () => void };
 
 function RecipeModalMajor({ isOpen, onClose }: Props) {
+  const token = localStorage.getItem("Token");
+  console.log("token", token);
   const { selectedMajors } = useContext(MajorContext);
 
   const {
@@ -29,7 +31,8 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
     formState: { errors },
   } = useForm<majorForm>({ resolver: zodResolver(majorSchema) });
 
-  const url = import.meta.env.VITE_API_URL + "/api/subjects";
+  const url = import.meta.env.VITE_API_URL + "/api/subjects/";
+  console.log("url", url);
 
   const onSubmit = async (data: majorForm) => {
     console.log(data);
@@ -44,6 +47,7 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
         {
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Token ${token}`,
           },
         }
       );
@@ -76,7 +80,7 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
             </FormControl>
           </ModalBody>
           <ModalFooter>
-            <Button type="submit" colorScheme="blue">
+            <Button type="submit" onSubmit={onClose} colorScheme="blue">
               Crear
             </Button>
 

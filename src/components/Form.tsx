@@ -13,8 +13,10 @@ type Props = {
 };
 
 function Form({ subjectId, onStudentAdded }: Props) {
+  const token = localStorage.getItem("Token");
+  console.log("token_form ", token);
   const { selectedMajors } = useContext(MajorContext);
-  const url = import.meta.env.VITE_API_URL + "/api/students";
+  const url = import.meta.env.VITE_API_URL + "/api/students/";
   const {
     register,
     handleSubmit,
@@ -38,6 +40,8 @@ function Form({ subjectId, onStudentAdded }: Props) {
         {
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Token ${token}`,
+
           },
         }
       );
