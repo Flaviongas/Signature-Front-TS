@@ -26,14 +26,14 @@ function MainContent() {
     <MajorContext.Provider value={{ selectedMajors, setSelectedMajors }}>
       <SubjectContext.Provider value={{ SubjectData, setSubjectData }}>
         <div className="flex flex-row w-full h-screen">
-          <div className="w-1/4 min-w-56 bg-blue-900 text-white max-w-72">
+          <div className="w-1/4 min-w-56 bg-[#3454D1] text-white max-w-72">
             <img src={logo} alt="logo" className="w-40 h-40 mx-auto my-2" />
             <SideNav />
             <div className="flex text-center justify-center">
               <Button className="flex my-3 align-middle justify-center text-center" onClick={logOut} >Cerrar sesión</Button>
             </div>
           </div>
-          <div className="flex w-full bg-gray-100">
+          <div className="flex w-full bg-[#EFEFEF]">
             <Dashboard />
           </div>
         </div>

@@ -50,7 +50,7 @@ function SideNav() {
               textAlign={"center"}
               _hover={{
                 textDecoration: "none",
-                bg: "blue.600",
+                bg: "blue.500",
                 color: "white",
               }}
             >

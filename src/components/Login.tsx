@@ -46,9 +46,9 @@ function Login({ onLoginSuccess, backLink }: LoginProps) {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-gradient-to-r from-[#FAF9F9] to-[#FFD6BA]"
     >
-      <div className="w-full max-w-md p-8 rounded-2xl shadow-xl bg-blue-400">
+      <div className="w-full max-w-md p-8 rounded-2xl shadow-xl bg-[#5386E4]">
         <div className="mb-8 text-center ">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">
             <img src={logo} alt="logo" className="w-60 h-60 mx-auto my-2" />
@@ -89,7 +89,8 @@ function Login({ onLoginSuccess, backLink }: LoginProps) {
 
           <Button
             type="submit"
-            colorScheme='red'
+            bgColor={"#D1495B"}
+            _hover={{ bgColor: "#C43145" }}
             className="w-full text-white p-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 font-medium text-lg"
             disabled={loading}
           >
