@@ -94,14 +94,11 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
 
     try {
       const url = import.meta.env.VITE_API_URL + "/api/subjects";
-      await axios.delete(
-        `${url}/${shortSubject.id}/`
-        , {
-          headers: {
-            "Authorization": `Token ${token}`,
-          }
-        }
-      );
+      await axios.delete(`${url}/${shortSubject.id}/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
       cleanup();
       refresh();
     } catch (err) {
@@ -145,14 +142,11 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
     const token = localStorage.getItem("Token");
     try {
       const url = import.meta.env.VITE_API_URL + "/api/students";
-      await axios.delete(
-        `${url}/${student.id}/`,
-        {
-          headers: {
-            "Authorization": `Token ${token}`,
-          }
-        }
-      );
+      await axios.delete(`${url}/${student.id}/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
       setStudents((prevStudents) =>
         prevStudents.filter((s) => s.id !== student.id)
       );

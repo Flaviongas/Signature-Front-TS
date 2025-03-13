@@ -12,9 +12,16 @@ import { ShortSubject, Student, Subject } from "../types";
 import SubjectContext from "../contexts/SubjectContext";
 import RecipeModal from "./RecipeModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsRotate, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowsRotate,
+  faPlus,
+  faUserPen,
+  faUserPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import RecipeModalMajor from "./RecipeModalMajor";
 import useGetData from "../hooks/useGetData";
+import RecipeModalStudents from "./RecipeModalStudents";
+import EditStudents from "./EditStudents";
 
 // type Props = {};
 
@@ -25,6 +32,7 @@ function SubjectsGrid() {
   console.log("url subjectsgrid: ", url);
   const [refresh, setRefresh] = useState(false);
   const { loading, data } = useGetData<Subject>(url, refresh);
+  const [window, setWindow] = useState(false);
   const [shortSubject, setShortSubject] = useState<ShortSubject>({
     id: 0,
     name: "",
@@ -41,6 +49,12 @@ function SubjectsGrid() {
     onOpen: onOpenSecond,
     onClose: onCloseSecond,
   } = useDisclosure();
+
+  const {
+    isOpen: isOpenThird,
+    onOpen: onOpenThird,
+    onClose: onCloseThird,
+  } = useDisclosure();
   const [modalStudents, setModalStudents] = useState<Student[]>([]);
 
   const filteredSubjects = data.filter((e) =>
@@ -53,6 +67,8 @@ function SubjectsGrid() {
     );
     setSubjectData(filteredSubjects);
   }, [selectedMajors, data, setSubjectData]);
+
+  useEffect(() => {}, [setWindow]);
 
   const handleOpenModal = (
     students: Student[],
@@ -78,6 +94,9 @@ function SubjectsGrid() {
     handleRefresh();
     onCloseSecond();
   };
+  const handleOpenModalStudents = () => {
+    onOpenThird();
+  };
 
   return selectedMajors && selectedMajors.name !== "" ? (
     <div className="p-4 flex flex-col mb-2 text-center mx-auto h-40 ">
@@ -89,8 +108,20 @@ function SubjectsGrid() {
           icon={faArrowsRotate}
           cursor={"pointer"}
         />
+        <FontAwesomeIcon
+          className="ml-5 text-3xl hover:text-stone-600"
+          icon={faUserPlus}
+          onClick={handleOpenModalStudents}
+        />
+        <FontAwesomeIcon
+          className="ml-5 text-3xl hover:text-stone-600"
+          icon={faUserPen}
+          onClick={() => setWindow(true)}
+        />
       </div>
-      {filteredSubjects.length === 0 && !loading ? (
+      {window ? (
+        <EditStudents setWindow={setWindow} />
+      ) : filteredSubjects.length === 0 && !loading ? (
         <>
           <Text fontSize="lg" fontWeight="bold" color="gray.600">
             No hay materias disponibles para esta carrera.
@@ -178,7 +209,6 @@ function SubjectsGrid() {
               />
             </Card>
           </div>
-
         </div>
       )}
 
@@ -190,6 +220,11 @@ function SubjectsGrid() {
         refresh={handleRefresh}
       />
       <RecipeModalMajor isOpen={isOpenSecond} onClose={refreshAndClose} />
+      <RecipeModalStudents
+        isOpen={isOpenThird}
+        onClose={onCloseThird}
+        shortSubject={shortSubject}
+      />
     </div>
   ) : (
     <div className="p-4 text-center mx-auto ">

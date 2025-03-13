@@ -6,13 +6,14 @@ import { Student } from "../types";
 import { studentForm, studentSchema } from "../schemas/student";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import useGetData from "../hooks/useGetData";
 
 type Props = {
   subjectId: number | null;
   onStudentAdded: (newStudent: Student) => void;
 };
 
-function Form({ subjectId, onStudentAdded }: Props) {
+function Form({}: Props) {
   const token = localStorage.getItem("Token");
   console.log("token_form ", token);
   const { selectedMajors } = useContext(MajorContext);
@@ -28,7 +29,7 @@ function Form({ subjectId, onStudentAdded }: Props) {
       const response = await axios.post(
         url,
         {
-          subjects: [subjectId],
+          subjects: [],
           rut: data.rut,
           dv: data.dv,
           first_name: data.first_name,
@@ -40,16 +41,15 @@ function Form({ subjectId, onStudentAdded }: Props) {
         {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Token ${token}`,
-
+            Authorization: `Token ${token}`,
           },
         }
       );
-      onStudentAdded(response.data);
     } catch (err) {
       console.error(err);
     }
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="grid grid-cols-2 gap-4">
