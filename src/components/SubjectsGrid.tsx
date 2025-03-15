@@ -119,8 +119,11 @@ function SubjectsGrid() {
           onClick={() => setWindow(true)}
         />
       </div>
+
       {window ? (
-        <EditStudents setWindow={setWindow} />
+        <div className="w-auto">
+          <EditStudents setWindow={setWindow} />{" "}
+        </div>
       ) : filteredSubjects.length === 0 && !loading ? (
         <>
           <Text fontSize="lg" fontWeight="bold" color="gray.600">

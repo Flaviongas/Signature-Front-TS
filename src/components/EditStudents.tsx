@@ -21,7 +21,9 @@ function EditStudents({ setWindow }: Props) {
           icon={faArrowLeft}
         />
       </div>
-      <div>
+      <input type="text" className="form-control" placeholder="Nombre"></input>
+
+      <div className="mt-2 overflow-y-auto max-h-96">
         <table className="table">
           <thead>
             <tr>
