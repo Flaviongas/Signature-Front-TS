@@ -121,8 +121,8 @@ function SubjectsGrid() {
       </div>
 
       {window ? (
-        <div className="w-auto">
-          <EditStudents setWindow={setWindow} />{" "}
+        <div className="w-auto ">
+          <EditStudents refresh={handleRefresh} setWindow={setWindow} />{" "}
         </div>
       ) : filteredSubjects.length === 0 && !loading ? (
         <>
@@ -227,6 +227,7 @@ function SubjectsGrid() {
         isOpen={isOpenThird}
         onClose={onCloseThird}
         shortSubject={shortSubject}
+        refresh={handleRefresh}
       />
     </div>
   ) : (

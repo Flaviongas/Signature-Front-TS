@@ -16,13 +16,20 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   shortSubject: ShortSubject;
+  refresh: () => void;
 };
 
-function RecipeModalStudents({ isOpen, onClose, shortSubject }: Props) {
+function RecipeModalStudents({
+  isOpen,
+  onClose,
+  shortSubject,
+  refresh,
+}: Props) {
   const [students, setStudents] = useState<Student[]>([]);
   const handleStudentAdded = (newStudent: Student) => {
     console.log("Nuevo estudiante agregado:", newStudent);
     setStudents((prevStudents) => [...prevStudents, newStudent]);
+    refresh();
   };
   return (
     <>
