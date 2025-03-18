@@ -29,6 +29,7 @@ function RecipeModalStudents({
   const handleStudentAdded = (newStudent: Student) => {
     console.log("Nuevo estudiante agregado:", newStudent);
     setStudents((prevStudents) => [...prevStudents, newStudent]);
+
     refresh();
   };
   return (
@@ -42,6 +43,8 @@ function RecipeModalStudents({
             <Form
               subjectId={shortSubject.id}
               onStudentAdded={handleStudentAdded}
+              onClose={onClose}
+              refresh={refresh}
             ></Form>
           </ModalBody>
 

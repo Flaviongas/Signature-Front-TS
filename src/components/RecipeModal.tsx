@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import useExcel from "../hooks/useExcel";
 
 import axios from "axios";
-import Form from "./Form";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import MajorContext from "../contexts/MajorContext";
@@ -30,16 +30,10 @@ type Props = {
 function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
   const [checkedStudents, setCheckedStudents] = useState<Student[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
-  const [place, setPlace] = useState(false);
-  const [textBoton, setTextBoton] = useState<string>("Agregar Estudiantes");
+
   const [students, setStudents] = useState<Student[]>([]);
   const { selectedMajors } = useContext(MajorContext);
-  useEffect(() => {
-    if (isOpen) {
-      setPlace(false);
-      setTextBoton("Agregar Estudiante");
-    }
-  }, [isOpen]);
+
   useEffect(() => {
     console.log("Checked students:", checkedStudents);
   }, [checkedStudents]);
@@ -105,25 +99,12 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
       console.error(err);
     }
   };
-  const handlePlace = () => {
-    if (place) {
-      setPlace(false);
-      setTextBoton("Agregar Estudiantes");
-    } else {
-      setPlace(true);
-      setTextBoton("Ocultar");
-    }
-  };
+
   function cleanup() {
     setSelectedDate("");
     setCheckedStudents([]);
     onClose();
   }
-
-  const handleStudentAdded = (newStudent: Student) => {
-    console.log("Nuevo estudiante agregado:", newStudent);
-    setStudents((prevStudents) => [...prevStudents, newStudent]);
-  };
 
   const handleStudentDelete = async (student: Student) => {
     const confirmDelete = window.confirm(
@@ -170,16 +151,7 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
             name="selectedDate"
             onChange={handleDateChange}
           />
-          <Button onClick={handlePlace}>{textBoton}</Button>
 
-          {place ? (
-            <Form
-              subjectId={shortSubject.id}
-              onStudentAdded={handleStudentAdded}
-            ></Form>
-          ) : (
-            ""
-          )}
           <table className="table">
             <thead>
               <tr>

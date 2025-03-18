@@ -1,24 +1,28 @@
 import { faArrowLeft, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Student } from "../types";
+import { Student, Subject } from "../types";
 import useGetData from "../hooks/useGetData";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import MajorContext from "../contexts/MajorContext";
 import axios from "axios";
 
 type Props = { setWindow: (a: boolean) => void; refresh: () => void };
 
 function EditStudents({ setWindow, refresh }: Props) {
-  const url = import.meta.env.VITE_API_URL + "/api/students/";
-
-  //Falta que esos estudiantes sean de la carrera indicada//
-  const { data } = useGetData<Student>(url);
+  const url_students = import.meta.env.VITE_API_URL + "/api/students/";
+  const url_subjects = import.meta.env.VITE_API_URL + "/api/subjects/";
+  const { data: studentsData } = useGetData<Student>(url_students);
+  const { data: subjectsData } = useGetData<Subject>(url_subjects);
   const { selectedMajors } = useContext(MajorContext);
+  const [check, setCheck] = useState(false);
 
   const handleCLick = () => {
     setWindow(false);
   };
-  const filteredStudents = data.filter((e) => e.major === selectedMajors.id);
+
+  const filteredStudents = studentsData.filter(
+    (e) => e.major === selectedMajors.id
+  );
 
   const handleDelete = async (student: Student) => {
     console.log(student.id);
@@ -49,6 +53,12 @@ function EditStudents({ setWindow, refresh }: Props) {
     }
   };
 
+  const filteredSubjects = subjectsData.filter((e) =>
+    e.major.includes(selectedMajors.id)
+  );
+  const handleCheck = () => {
+    check ? setCheck(false) : setCheck(true);
+  };
   return (
     <>
       <div className="flex justify-start mt-2">
@@ -64,8 +74,8 @@ function EditStudents({ setWindow, refresh }: Props) {
         placeholder="Nombre"
       ></input>
 
-      <div className="mt-2 overflow-y-auto max-h-96 mt-4">
-        <table className="table">
+      <div className="mt-2 min-h-96 max-h-96 overflow-y-auto">
+        <table className="table relative w-full">
           <thead>
             <tr>
               <th className="text-left" scope="col">
@@ -86,6 +96,7 @@ function EditStudents({ setWindow, refresh }: Props) {
               <th className="text-left" scope="col">
                 Segundo Apellido
               </th>
+              <th>Asignaturas</th>
               <th className="text-left" scope="col">
                 Borrar
               </th>
@@ -100,6 +111,41 @@ function EditStudents({ setWindow, refresh }: Props) {
                 <td>{student.second_name}</td>
                 <td>{student.last_name}</td>
                 <td>{student.second_last_name}</td>
+                <td>
+                  <div className="btn-group relative">
+                    <button
+                      type="button"
+                      className="btn btn-success dropdown-toggle"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      Ver
+                    </button>
+                    <ul className="dropdown-menu absolute z-50 hidden bg-white shadow-lg rounded-md w-64 mt-2 max-h-60 overflow-y-auto p-2">
+                      <li>
+                        <p className="text-center font-bold">Asignaturas</p>
+                      </li>
+                      <li>
+                        <div className="list-group">
+                          {filteredSubjects.map((subject) => (
+                            <div
+                              key={subject.id}
+                              className="list-group-item d-flex justify-content-between align-items-center"
+                            >
+                              <span>{subject.name}</span>
+                              <input
+                                className="form-check-input"
+                                type="checkbox"
+                                onClick={handleCheck}
+                                checked={check}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </td>
                 <td>
                   <FontAwesomeIcon
                     className="hover:text-red-800"

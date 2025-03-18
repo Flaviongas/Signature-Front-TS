@@ -11,9 +11,11 @@ import useGetData from "../hooks/useGetData";
 type Props = {
   subjectId: number | null;
   onStudentAdded: (newStudent: Student) => void;
+  onClose: () => void;
+  refresh: () => void;
 };
 
-function Form({}: Props) {
+function Form({ onClose, refresh }: Props) {
   const token = localStorage.getItem("Token");
   console.log("token_form ", token);
   const { selectedMajors } = useContext(MajorContext);
@@ -45,6 +47,8 @@ function Form({}: Props) {
           },
         }
       );
+      refresh();
+      onClose();
     } catch (err) {
       console.error(err);
     }
