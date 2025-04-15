@@ -1,17 +1,16 @@
 import {
+  Box,
   Button,
-  FormControl,
-  FormHelperText,
-  FormLabel,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react";
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  TextField,
+} from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+
 import { useContext } from "react";
 import MajorContext from "../contexts/MajorContext";
 import axios from "axios";
@@ -47,7 +46,7 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
         {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Token ${token}`,
+            Authorization: `Token ${token}`,
           },
         }
       );
@@ -57,40 +56,49 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
 
     onClose();
   };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="6x1">
-      <ModalOverlay />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <ModalContent maxW="40vw">
-          <ModalHeader>Agregar Asignatura</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody maxHeight="20vh" overflowY="auto">
-            {/*selectedMajors.name*/}
+    <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="sm">
+      <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        <DialogTitle
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          Agregar Asignatura
+          <IconButton edge="end" onClick={onClose}>
+            <FontAwesomeIcon icon={faTimes} />
+          </IconButton>
+        </DialogTitle>
 
-            <FormControl>
-              <FormLabel htmlFor="name">Ingresar Nombre</FormLabel>
-              <Input
-                {...register("name")}
-                textTransform="uppercase"
-                type="text"
-              />
-              <FormHelperText>
-                {errors?.name?.message ?? <p>{errors?.name?.message}</p>}
-              </FormHelperText>
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button type="submit" onSubmit={onClose} colorScheme="blue">
-              Crear
-            </Button>
+        <DialogContent dividers sx={{ maxHeight: "20vh" }}>
+          <TextField
+            {...register("name")}
+            label="Ingresar Nombre"
+            fullWidth
+            variant="outlined"
+            margin="dense"
+            error={!!errors.name}
+            helperText={errors?.name?.message}
+          />
+        </DialogContent>
 
-            <Button ml={3} onClick={onClose}>
-              Cerrar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </form>
-    </Modal>
+        <DialogActions sx={{ p: 2 }}>
+          <Button type="submit" variant="contained" sx={{ bgcolor: "#3454D1" }}>
+            Crear
+          </Button>
+          <Button
+            onClick={onClose}
+            variant="contained"
+            sx={{ bgcolor: "#D1495B" }}
+          >
+            Cerrar
+          </Button>
+        </DialogActions>
+      </Box>
+    </Dialog>
   );
 }
 

@@ -1,14 +1,21 @@
 import React, { useContext } from "react";
+
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
   Button,
-} from "@chakra-ui/react";
+  TextField,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Checkbox,
+  Box,
+} from "@mui/material";
 import { Student, Attendance, ShortSubject } from "../types";
 import { useEffect, useState } from "react";
 import useExcel from "../hooks/useExcel";
@@ -16,7 +23,7 @@ import useExcel from "../hooks/useExcel";
 import axios from "axios";
 import Form from "./Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
 import MajorContext from "../contexts/MajorContext";
 
 type Props = {
@@ -94,14 +101,11 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
 
     try {
       const url = import.meta.env.VITE_API_URL + "/api/subjects";
-      await axios.delete(
-        `${url}/${shortSubject.id}/`
-        , {
-          headers: {
-            "Authorization": `Token ${token}`,
-          }
-        }
-      );
+      await axios.delete(`${url}/${shortSubject.id}/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
       cleanup();
       refresh();
     } catch (err) {
@@ -145,14 +149,11 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
     const token = localStorage.getItem("Token");
     try {
       const url = import.meta.env.VITE_API_URL + "/api/students";
-      await axios.delete(
-        `${url}/${student.id}/`,
-        {
-          headers: {
-            "Authorization": `Token ${token}`,
-          }
-        }
-      );
+      await axios.delete(`${url}/${student.id}/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
       setStudents((prevStudents) =>
         prevStudents.filter((s) => s.id !== student.id)
       );
@@ -162,104 +163,133 @@ function RecipeModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={cleanup} size="6x1">
-      <ModalOverlay />
-      <ModalContent maxW="70vw">
-        <ModalHeader>Attendance</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody maxHeight="70vh" overflowY="auto">
-          <input
+    <Dialog open={isOpen} onClose={cleanup} maxWidth="lg" fullWidth>
+      <DialogTitle
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        Attendance
+        <IconButton onClick={cleanup}>
+          <FontAwesomeIcon icon={faTimes} />
+        </IconButton>
+      </DialogTitle>
+
+      <DialogContent dividers>
+        <Box mb={2}>
+          <TextField
             type="date"
-            className="form-control mb-3"
+            fullWidth
             value={selectedDate}
-            id="date-input"
-            name="selectedDate"
             onChange={handleDateChange}
           />
-          <Button onClick={handlePlace}>{textBoton}</Button>
+        </Box>
 
-          {place ? (
-            <Form
-              subjectId={shortSubject.id}
-              onStudentAdded={handleStudentAdded}
-            ></Form>
-          ) : (
-            ""
-          )}
-          <table className="table">
-            <thead>
-              <tr>
-                <th className="text-center" scope="col">
-                  ¿Asistió?
-                </th>
-                <th className="text-left" scope="col">
-                  Rut
-                </th>
-                <th className="text-left" scope="col">
-                  DV
-                </th>
-                <th className="text-left" scope="col">
-                  Nombre
-                </th>
-                <th className="text-left" scope="col">
-                  Segundo Nombre
-                </th>
-                <th className="text-left" scope="col">
-                  Apellido
-                </th>
-                <th className="text-left" scope="col">
-                  Segundo Apellido
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {students.map((student) => (
-                <tr key={student.id}>
-                  <td className="text-center">
-                    <input
-                      key={student.id}
-                      className="form-check-input"
-                      type="checkbox"
-                      checked={checkedStudents.some((s) => s.id === student.id)}
-                      onChange={() => handleCheckboxChange(student)}
-                    />
-                  </td>
-                  <td>{student.rut}</td>
-                  <td>{student.dv}</td>
-                  <td>{student.first_name}</td>
-                  <td>{student.second_name}</td>
-                  <td>{student.last_name}</td>
-                  <td>{student.second_last_name}</td>
-                  <td>
-                    <FontAwesomeIcon
-                      className="hover:text-red-800"
-                      icon={faTrash}
-                      onClick={() => handleStudentDelete(student)}
-                      cursor={"pointer"}
-                    />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </ModalBody>
-        <ModalFooter className="w-full flex">
-          <div className="flex-1 ">
-            <Button bg={"red"} color={"white"} onClick={handleDelete}>
-              Borrar
-            </Button>
-          </div>
-          <div className="flex gap-3">
-            <Button colorScheme="blue" onClick={HandleSubmit}>
-              Enviar Asistencia
-            </Button>
-            <Button ml={3} onClick={onClose}>
-              Cerrar
-            </Button>
-          </div>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        <Button
+          variant="contained"
+          sx={{
+            mb: 2,
+            bgcolor: "#3454D1",
+            "&:hover": {
+              bgcolor: "#2F4BC0",
+            },
+          }}
+          onClick={handlePlace}
+        >
+          {textBoton}
+        </Button>
+
+        {place && (
+          <Form
+            subjectId={shortSubject.id}
+            onStudentAdded={handleStudentAdded}
+          />
+        )}
+
+        <Table>
+          <TableHead>
+            <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                ¿Asistió?
+              </TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Rut</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>DV</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Nombre</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Segundo Nombre</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Apellido</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>
+                Segundo Apellido
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Eliminar
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {students.map((student) => (
+              <TableRow key={student.id}>
+                <TableCell align="center">
+                  <Checkbox
+                    checked={checkedStudents.some((s) => s.id === student.id)}
+                    onChange={() => handleCheckboxChange(student)}
+                    sx={{
+                      "&.Mui-checked": {
+                        color: "green",
+                      },
+                    }}
+                  />
+                </TableCell>
+                <TableCell>{student.rut}</TableCell>
+                <TableCell>{student.dv}</TableCell>
+                <TableCell>{student.first_name}</TableCell>
+                <TableCell>{student.second_name}</TableCell>
+                <TableCell>{student.last_name}</TableCell>
+                <TableCell>{student.second_last_name}</TableCell>
+                <TableCell align="center">
+                  <IconButton onClick={() => handleStudentDelete(student)}>
+                    <FontAwesomeIcon icon={faTrash} color="#e53935" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </DialogContent>
+
+      <DialogActions sx={{ justifyContent: "space-between", px: 3, py: 2 }}>
+        <Button variant="contained" color="error" onClick={handleDelete}>
+          Borrar
+        </Button>
+        <Box display="flex" gap={2}>
+          <Button
+            variant="contained"
+            onClick={HandleSubmit}
+            sx={{
+              bgcolor: "#3454D1",
+              "&:hover": {
+                bgcolor: "#2F4BC0",
+              },
+            }}
+          >
+            descargar excel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={onClose}
+            sx={{
+              bgcolor: "#D1495B",
+              "&:hover": {
+                bgcolor: "#C43145",
+              },
+            }}
+          >
+            Cerrar
+          </Button>
+        </Box>
+      </DialogActions>
+    </Dialog>
   );
 }
 

@@ -5,8 +5,9 @@ import { MajorShort, Subject } from "../types";
 import MajorContext from "../contexts/MajorContext";
 import SubjectContext from "../contexts/SubjectContext";
 
-import logo from '../assets/signature.svg'
-import { Button } from "@chakra-ui/react";
+import logo from "../assets/signature.svg";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 
 // type Props = {};
 
@@ -19,24 +20,51 @@ function MainContent() {
 
   const logOut = () => {
     localStorage.setItem("Token", "");
-    location.reload()
-  }
+    location.reload();
+  };
 
   return (
     <MajorContext.Provider value={{ selectedMajors, setSelectedMajors }}>
       <SubjectContext.Provider value={{ SubjectData, setSubjectData }}>
-        <div className="flex flex-row w-full h-screen">
-          <div className="w-1/4 min-w-56 bg-[#3454D1] text-white max-w-72">
-            <img src={logo} alt="logo" className="w-40 h-40 mx-auto my-2" />
+        <Box display="flex" flexDirection="row" width="100%" height="100vh">
+          <Box minWidth={224} maxWidth={288} bgcolor="#3454D1">
+            <Box display="flex" justifyContent="center" my={2}>
+              <Box
+                component="img"
+                src={logo}
+                alt="Logo"
+                sx={{
+                  width: 160,
+                  height: 160,
+                  objectFit: "contain",
+                }}
+              />
+            </Box>
+
             <SideNav />
-            <div className="flex text-center justify-center">
-              <Button className="flex my-3 align-middle justify-center text-center" onClick={logOut} >Cerrar sesión</Button>
-            </div>
-          </div>
-          <div className="flex w-full bg-[#EFEFEF]">
+
+            <Box my={2} px={5}>
+              <Button
+                variant="contained"
+                onClick={logOut}
+                sx={{
+                  backgroundColor: "#D1495B",
+                  width: "100%",
+                  "&:hover": {
+                    backgroundColor: "#C43145",
+                  },
+                }}
+              >
+                Cerrar sesión
+              </Button>
+            </Box>
+          </Box>
+
+          {/* Contenido principal */}
+          <Box flex={1} bgcolor="#EFEFEF">
             <Dashboard />
-          </div>
-        </div>
+          </Box>
+        </Box>
       </SubjectContext.Provider>
     </MajorContext.Provider>
   );

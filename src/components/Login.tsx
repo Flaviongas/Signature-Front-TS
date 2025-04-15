@@ -1,9 +1,10 @@
-import logo from '../assets/signature.svg'
+import logo from "../assets/signature.svg";
 import { FormEvent, useState } from "react";
-import {
-  Button,
-} from "@chakra-ui/react";
-
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
 
 type LoginProps = {
   onLoginSuccess: (token: string) => void;
@@ -15,13 +16,24 @@ function Login({ onLoginSuccess, backLink }: LoginProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  console.log("backLink:", backLink);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    console.log({ username, password })
+    console.log({ username, password });
     try {
-      const response = await fetch(`${backLink}/login`, {
+      // VOLVER ATRAS COMO ESTABA
+
+      // const response = await fetch(`${backLink}/login`, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({ username, password }),
+      // });
+      const response = await fetch(`http://localhost:8000/login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,7 +48,6 @@ function Login({ onLoginSuccess, backLink }: LoginProps) {
       onLoginSuccess(data.token.toString());
     } catch (err) {
       if (err instanceof Error) {
-
         setError(err.message);
       }
     } finally {
@@ -44,61 +55,94 @@ function Login({ onLoginSuccess, backLink }: LoginProps) {
     }
   };
 
+  const inputTextField = {
+    my: 1,
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "0.5rem",
+      p: 1,
+      backgroundColor: "white",
+    },
+  };
+
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-gradient-to-r from-[#FAF9F9] to-[#FFD6BA]"
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(to right, #FAF9F9, #FFD6BA)",
+      }}
     >
-      <div className="w-full max-w-md p-8 rounded-2xl shadow-xl bg-[#5386E4]">
-        <div className="mb-8 text-center ">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            <img src={logo} alt="logo" className="w-60 h-60 mx-auto my-2" />
-          </h2>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="relative">
-
-            <input
-              type="text"
-              placeholder="Usuario"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="pl-10 w-full p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white"
-              required
-            />
-
-          </div>
-
-          <div className="relative">
-
-            <input
-              type="password"
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="pl-10 w-full p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all bg-white"
-              required
-            />
-          </div>
+      <Paper
+        elevation={8}
+        sx={{
+          width: "100%",
+          maxWidth: 480,
+          p: 4,
+          borderRadius: "1rem",
+          backgroundColor: "#5386E4",
+        }}
+      >
+        <Box display="flex" justifyContent="center" alignItems="center" my={2}>
+          <img src={logo} alt="Logo" />
+        </Box>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Usuario"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            sx={inputTextField}
+          />
+          <TextField
+            fullWidth
+            variant="outlined"
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            sx={inputTextField}
+          />
 
           {error && (
-            <div className="bg-red-50 text-red-500 p-3 rounded-lg text-sm text-center">
+            <Alert
+              severity="error"
+              sx={{ my: 2, borderRadius: "0.5rem", textAlign: "center" }}
+            >
               {error}
-            </div>
+            </Alert>
           )}
 
           <Button
             type="submit"
-            bgColor={"#D1495B"}
-            _hover={{ bgColor: "#C43145" }}
-            className="w-full text-white p-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 font-medium text-lg"
+            variant="contained"
+            fullWidth
             disabled={loading}
+            sx={{
+              my: 2,
+              p: 1,
+              backgroundColor: "#D1495B",
+              borderRadius: 2,
+              fontWeight: 600,
+              fontSize: "1rem",
+              transition: "background-color 0.3s",
+              "&:hover": {
+                backgroundColor: "#C43145",
+              },
+              "&:disabled": {
+                opacity: 0.5,
+              },
+            }}
           >
             {loading ? "Iniciando sesión..." : "Iniciar sesión"}
           </Button>
         </form>
-      </div>
-    </div>
+      </Paper>
+    </Box>
   );
 }
 

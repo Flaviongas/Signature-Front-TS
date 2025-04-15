@@ -1,4 +1,11 @@
-import { Input, Link, SkeletonText, VStack } from "@chakra-ui/react";
+import TextField from "@mui/material/TextField";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Skeleton from "@mui/material/Skeleton";
+import Box from "@mui/material/Box";
 
 import { FormEvent, useContext, useState } from "react";
 import { MajorShort } from "../types";
@@ -20,48 +27,62 @@ function SideNav() {
   };
 
   return loading ? (
-    <SkeletonText mt="1" noOfLines={8} spacing="6" skeletonHeight="2" />
+    <Box p={2}>
+      {[...Array(5)].map((_, i) => (
+        <Skeleton key={i} variant="rectangular" height={40} sx={{ mb: 2 }} />
+      ))}
+    </Box>
   ) : (
-    <nav className="p-4 h-[75vh] overflow-y-auto">
-      <a onClick={() => { setSelectedMajors({ id: 0, name: "" }) }} >
-      </a>
+    <Paper
+      elevation={0}
+      sx={{
+        p: 2,
+        height: "70vh",
+        overflowY: "auto",
+        bgcolor: "#f9f9f9",
+        borderRadius: 0,
+      }}
+    >
+      <Typography variant="h5" fontWeight={600} textAlign="center" mb={2}>
+        Carreras
+      </Typography>
       <form onSubmit={handleSubmit}>
-        <Input
+        <TextField
+          variant="outlined"
+          fullWidth
+          size="small"
+          placeholder="Buscar carrera"
           value={search.name}
           onChange={(e) => setSearch({ ...search, name: e.target.value })}
-          mb={2}
-          textAlign={"center"}
-          placeholder="Buscar Carrera"
+          sx={{ mb: 2 }}
         />
       </form>
-      {loading ? <p>Cargando...</p> : null}
-      <VStack align="stretch" className="w-full">
+
+      <List disablePadding>
         {data
           .filter((c) =>
             c.name.toLowerCase().includes(search.name.toLowerCase())
           )
           .map((c) => (
-            <Link
-              px={2}
-              py={2}
-              borderRadius={5}
+            <ListItemButton
               key={c.id}
               onClick={() => setSelectedMajors(c)}
-              textAlign={"center"}
-              _hover={{
-                textDecoration: "none",
-                bg: "blue.500",
-                color: "white",
+              sx={{
+                borderRadius: 2,
+                mb: 1,
+                "&:hover": {
+                  bgcolor: "#3454D1",
+                  color: "white",
+                },
               }}
             >
-              <p className="cursor-pointer transition-transform duration-100 hover:scale-105 p-0 m-0">
-                {" "}
-                {c.name}{" "}
-              </p>
-            </Link>
+              <ListItemText
+                primary={<Typography textAlign="center">{c.name}</Typography>}
+              />
+            </ListItemButton>
           ))}
-      </VStack>
-    </nav>
+      </List>
+    </Paper>
   );
 }
 

@@ -1,5 +1,9 @@
-import { Button } from "@chakra-ui/react";
+// import { Button } from "@chakra-ui/react";
 import { useContext } from "react";
+
+import { Button, Grid, TextField, Box } from "@mui/material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import MajorContext from "../contexts/MajorContext";
 import axios from "axios";
 import { Student } from "../types";
@@ -40,8 +44,7 @@ function Form({ subjectId, onStudentAdded }: Props) {
         {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Token ${token}`,
-
+            Authorization: `Token ${token}`,
           },
         }
       );
@@ -50,110 +53,99 @@ function Form({ subjectId, onStudentAdded }: Props) {
       console.error(err);
     }
   };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="mb-3">
-            <label htmlFor="rutComplet" className="form-label">
-              Rut
-            </label>
-            <input
-              {...register("rut")}
-              type="text"
-              className="form-control"
-              id="exampleFormControlInput1"
-              placeholder="12345678"
-            ></input>
-            {errors?.rut?.message ?? <p>{errors?.rut?.message}</p>}
-          </div>
-          <div className="mb-2">
-            <label htmlFor="dv" className="form-label">
-              DV
-            </label>
-            <input
-              {...register("dv")}
-              type="text"
-              className="form-control"
-              id="exampleFormControlInput1"
-              placeholder="Digito verificador"
-              maxLength={1}
-            ></input>
-            {errors?.dv?.message ?? <p>{errors?.dv?.message}</p>}
-          </div>
-        </div>
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      sx={{ my: 2 }}
+    >
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <TextField
+            label="Rut"
+            fullWidth
+            {...register("rut")}
+            error={!!errors.rut}
+            helperText={errors.rut?.message}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 1 }}>
+          <TextField
+            label="DV"
+            fullWidth
+            inputProps={{ maxLength: 1 }}
+            {...register("dv")}
+            error={!!errors.dv}
+            helperText={errors.dv?.message}
+          />
+        </Grid>
 
-        <div className="mb-3">
-          <label htmlFor="fist_name" className="form-label">
-            Primer Nombre
-          </label>
-          <input
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <TextField
+            label="Primer Nombre"
+            fullWidth
             {...register("first_name")}
-            type="text"
-            className="form-control"
-            id="exampleFormControlInput1"
-            placeholder="Ingresar Primer Nombre"
-          ></input>
-          {errors?.first_name?.message ?? <p>{errors?.first_name?.message}</p>}
-        </div>
+            error={!!errors.first_name}
+            helperText={errors.first_name?.message}
+          />
+        </Grid>
 
-        <div className="mb-3">
-          <label htmlFor="second_name" className="form-label">
-            Segundo Nombre
-          </label>
-          <input
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <TextField
+            label="Segundo Nombre"
+            fullWidth
             {...register("second_name")}
-            type="text"
-            className="form-control"
-            id="exampleFormControlInput1"
-            placeholder="Ingresar Segundo Nombre"
-          ></input>
-          {errors?.second_name?.message ?? (
-            <p>{errors?.second_name?.message}</p>
-          )}
-        </div>
+            error={!!errors.second_name}
+            helperText={errors.second_name?.message}
+          />
+        </Grid>
 
-        <div className="mb-3">
-          <label htmlFor="last_name" className="form-label">
-            Apellido
-          </label>
-          <input
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <TextField
+            label="Apellido"
+            fullWidth
             {...register("last_name")}
-            type="text"
-            className="form-control"
-            id="exampleFormControlInput1"
-            placeholder="Ingresar Apellido"
-          ></input>
-          {errors?.last_name?.message ?? <p>{errors?.last_name?.message}</p>}
-        </div>
+            error={!!errors.last_name}
+            helperText={errors.last_name?.message}
+          />
+        </Grid>
 
-        <div className="mb-3">
-          <label htmlFor="second_last_name" className="form-label">
-            Segundo Apellido
-          </label>
-          <input
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <TextField
+            label="Segundo Apellido"
+            fullWidth
             {...register("second_last_name")}
-            type="text"
-            className="form-control"
-            id="exampleFormControlInput1"
-            placeholder="Ingresar Segundo Apellido"
-          ></input>
-          {errors?.second_last_name?.message ?? (
-            <p>{errors?.second_last_name?.message}</p>
-          )}
-        </div>
+            error={!!errors.second_last_name}
+            helperText={errors.second_last_name?.message}
+          />
+        </Grid>
 
-        <div className="mt-4">
+        <Grid
+          size={{ xs: 12, md: 2 }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: { xs: "center", md: "flex-start" },
+          }}
+        >
           <Button
-            backgroundColor={"blue.500"}
             type="submit"
-            textColor={"white"}
+            variant="contained"
+            sx={{
+              p: 1.5,
+              bgcolor: "#3454D1",
+              "&:hover": {
+                bgcolor: "#2F4BC0",
+              },
+            }}
           >
-            Agregar
+            <FontAwesomeIcon icon={faUserPlus} />
           </Button>
-        </div>
-      </div>
-    </form>
+        </Grid>
+      </Grid>
+    </Box>
   );
 }
 

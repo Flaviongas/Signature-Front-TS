@@ -1,11 +1,11 @@
 import SubjectsGrid from "./SubjectsGrid";
-
+import { Box } from "@mui/material";
 
 function Dashboard() {
   return (
-    <div className="flex w-full flex-col">
+    <Box display="flex" flexDirection="column" width="100%">
       <SubjectsGrid />
-    </div>
+    </Box>
   );
 }
 

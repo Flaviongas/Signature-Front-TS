@@ -1,11 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  CardFooter,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
+
+import { Box, Typography, IconButton, Card, Button } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import MajorContext from "../contexts/MajorContext";
 import { ShortSubject, Student, Subject } from "../types";
 
@@ -30,17 +26,15 @@ function SubjectsGrid() {
     name: "",
   });
 
-  const {
-    isOpen: isOpenFirst,
-    onOpen: onOpenFirst,
-    onClose: onCloseFirst,
-  } = useDisclosure();
+  const [isOpenFirst, setIsOpenFirst] = useState(false);
+  const [isOpenSecond, setIsOpenSecond] = useState(false);
 
-  const {
-    isOpen: isOpenSecond,
-    onOpen: onOpenSecond,
-    onClose: onCloseSecond,
-  } = useDisclosure();
+  const onOpenFirst = () => setIsOpenFirst(true);
+  const onCloseFirst = () => setIsOpenFirst(false);
+
+  const onOpenSecond = () => setIsOpenSecond(true);
+  const onCloseSecond = () => setIsOpenSecond(false);
+
   const [modalStudents, setModalStudents] = useState<Student[]>([]);
 
   const filteredSubjects = data.filter((e) =>
@@ -68,7 +62,16 @@ function SubjectsGrid() {
     onOpenSecond();
   };
   if (loading) {
-    return <Text>Cargando...</Text>;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   const handleRefresh = () => {
@@ -79,107 +82,148 @@ function SubjectsGrid() {
     onCloseSecond();
   };
 
+  const cardStyles = {
+    display: "flex",
+    minHeight: 215,
+    minWidth: 270,
+    maxWidth: 270,
+    boxShadow: 3,
+    transition: "transform 0.3s",
+    "&:hover": {
+      transform: "scale(1.03)",
+    },
+    cursor: "pointer",
+  };
+
   return selectedMajors && selectedMajors.name !== "" ? (
-    <div className="p-4 flex flex-col mb-2 text-center mx-auto h-40 ">
-      <h1>Carrera: {selectedMajors.name}</h1>
-      <div className="flex justify-end">
-        <FontAwesomeIcon
-          className="ml-5 text-3xl hover:text-stone-600"
-          onClick={handleRefresh}
-          icon={faArrowsRotate}
-          cursor={"pointer"}
-        />
-      </div>
+    <Box
+      sx={{
+        p: 4,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        height: "40vh",
+      }}
+    >
+      <Typography
+        variant="h5"
+        component="h1"
+        sx={{
+          mb: 2,
+          fontWeight: "bold",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        {selectedMajors.name}
+        <Box ml={2}>
+          <IconButton
+            onClick={handleRefresh}
+            sx={{
+              fontSize: 30,
+            }}
+          >
+            <FontAwesomeIcon icon={faArrowsRotate} />
+          </IconButton>
+        </Box>
+      </Typography>
+
       {filteredSubjects.length === 0 && !loading ? (
         <>
-          <Text fontSize="lg" fontWeight="bold" color="gray.600">
+          <Typography variant="body1" fontWeight="bold" mb={2}>
             No hay materias disponibles para esta carrera.
-          </Text>
-          <div key="add" className="w-full mx-auto">
-            <Card
-              display={"flex"}
-              backgroundColor={"gray.100"}
-              margin={5}
-              minHeight={215}
-              minWidth={270}
-              maxWidth={270}
-              className=" mx-auto transition-transform duration-100 hover:scale-105"
-              cursor={"pointer"}
-            >
+          </Typography>
+          <Box key="add">
+            <Card sx={cardStyles}>
               <FontAwesomeIcon
-                className="text-black my-auto p-2 rounded-4"
+                style={{
+                  color: "black",
+                  margin: "auto",
+                  padding: "16px",
+                  borderRadius: "4px",
+                }}
                 fontSize={50}
                 icon={faPlus}
                 onClick={handleOpenModalMajor}
               />
             </Card>
-          </div>
+          </Box>
         </>
       ) : (
-        <div className="flex flex-row flex-wrap justify-center">
+        <Box
+          display="flex"
+          flexDirection="row"
+          flexWrap="wrap"
+          justifyContent="center"
+        >
           {filteredSubjects.map((Subject) => {
             const filteredStudents = Subject.students.filter(
               (student) => student.major === selectedMajors.id
             );
 
             return (
-              <div key={Subject.id}>
+              <Box key={Subject.id} sx={{ margin: 2 }}>
                 <Card
-                  display={"flex"}
-                  boxShadow="lg"
-                  margin={5}
-                  className="transition-transform duration-100 hover:scale-105 "
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    boxShadow: 3,
+                    minHeight: 215,
+                    minWidth: 270,
+                    maxWidth: 400,
+                    p: 2,
+                  }}
                 >
-                  <div className="flex flex-col">
-                    <div className="flex h-1/2 w-full min-h-24 mx-auto">
-                      <p className="text-center text-xl pt-3 w-72 m-auto">
-                        {Subject.name}
-                      </p>
-                    </div>
-                    <p className="text-center text-gray-500">
-                      Cantidad de Alumnos: {filteredStudents.length}
-                    </p>
-                    <CardFooter className="flex h-1/2">
-                      <Button
-                        colorScheme="blue"
-                        w="full"
-                        onClick={() =>
-                          handleOpenModal(
-                            filteredStudents,
-                            Subject.id,
-                            Subject.name
-                          )
-                        }
-                      >
-                        Asistencia
-                      </Button>
-                    </CardFooter>
-                  </div>
+                  <Typography variant="h6" align="center" sx={{ my: "auto" }}>
+                    {Subject.name}
+                  </Typography>
+
+                  <Typography align="center" sx={{ mb: 4 }}>
+                    Cantidad de Alumnos: {filteredStudents.length}
+                  </Typography>
+
+                  <Button
+                    variant="contained"
+                    sx={{
+                      width: "75%",
+                      bgcolor: "#3454D1",
+                      ":hover": {
+                        bgcolor: "#2F4BC0",
+                      },
+                    }}
+                    onClick={() =>
+                      handleOpenModal(
+                        filteredStudents,
+                        Subject.id,
+                        Subject.name
+                      )
+                    }
+                  >
+                    Asistencia
+                  </Button>
                 </Card>
-              </div>
+              </Box>
             );
           })}
 
-          <div key="add">
-            <Card
-              display={"flex"}
-              backgroundColor={"gray.100"}
-              margin={5}
-              minHeight={215}
-              minWidth={270}
-              className="transition-transform duration-100 hover:scale-105"
-              cursor={"pointer"}
-            >
+          <Box key="add" sx={{ margin: 2 }}>
+            <Card sx={cardStyles}>
               <FontAwesomeIcon
-                className="text-black my-auto p-2 rounded-4"
+                style={{
+                  color: "black",
+                  margin: "auto",
+                  padding: "16px",
+                  borderRadius: "4px",
+                }}
                 fontSize={50}
                 icon={faPlus}
                 onClick={handleOpenModalMajor}
               />
             </Card>
-          </div>
-
-        </div>
+          </Box>
+        </Box>
       )}
 
       <RecipeModal
@@ -190,13 +234,13 @@ function SubjectsGrid() {
         refresh={handleRefresh}
       />
       <RecipeModalMajor isOpen={isOpenSecond} onClose={refreshAndClose} />
-    </div>
+    </Box>
   ) : (
-    <div className="p-4 text-center mx-auto ">
-      <Text fontSize="50" fontWeight="bold" color="gray.600">
+    <Box sx={{ p: 4 }} textAlign="center" mx="auto">
+      <Typography variant="h4" fontWeight="bold">
         Seleccione una Carrera
-      </Text>
-    </div>
+      </Typography>
+    </Box>
   );
 }
 
