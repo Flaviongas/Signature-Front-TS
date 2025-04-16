@@ -10,30 +10,22 @@ type LoginProps = {
   onLoginSuccess: (token: string) => void;
   backLink: "https://signature.gidua.xyz" | "http://localhost:8000";
 };
-function Login({ onLoginSuccess, backLink }: LoginProps) {
+
+function LoginForm({ onLoginSuccess, backLink }: LoginProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  console.log("backLink:", backLink);
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  // Maneja el envío del formulario de login
+  const handleLoginSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setErrorMessage("");
+    setIsLoading(true);
     console.log({ username, password });
-    try {
-      // VOLVER ATRAS COMO ESTABA
 
-      // const response = await fetch(`${backLink}/login`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ username, password }),
-      // });
-      const response = await fetch(`http://localhost:8000/login/`, {
+    try {
+      const response = await fetch(`${backLink}/login/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,21 +33,24 @@ function Login({ onLoginSuccess, backLink }: LoginProps) {
         body: JSON.stringify({ username, password }),
       });
       const data = await response.json();
+
       if (!response.ok) {
         throw new Error(data.error || "Error al iniciar sesión");
       }
+
+      // Guarda el token y notifica al componente padre
       localStorage.setItem("Token", data.token);
       onLoginSuccess(data.token.toString());
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
       }
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const inputTextField = {
+  const inputTextFieldStyles = {
     my: 1,
     "& .MuiOutlinedInput-root": {
       borderRadius: "0.5rem",
@@ -84,10 +79,13 @@ function Login({ onLoginSuccess, backLink }: LoginProps) {
           backgroundColor: "#5386E4",
         }}
       >
+        {/* Logo centrado */}
         <Box display="flex" justifyContent="center" alignItems="center" my={2}>
           <img src={logo} alt="Logo" />
         </Box>
-        <form onSubmit={handleSubmit}>
+
+        {/* Formulario de login */}
+        <form onSubmit={handleLoginSubmit}>
           <TextField
             fullWidth
             variant="outlined"
@@ -95,7 +93,7 @@ function Login({ onLoginSuccess, backLink }: LoginProps) {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            sx={inputTextField}
+            sx={inputTextFieldStyles}
           />
           <TextField
             fullWidth
@@ -105,23 +103,25 @@ function Login({ onLoginSuccess, backLink }: LoginProps) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            sx={inputTextField}
+            sx={inputTextFieldStyles}
           />
 
-          {error && (
+          {/* Mensaje de error si el login falla */}
+          {errorMessage && (
             <Alert
               severity="error"
               sx={{ my: 2, borderRadius: "0.5rem", textAlign: "center" }}
             >
-              {error}
+              {errorMessage}
             </Alert>
           )}
 
+          {/* Botón de envío con estado de carga */}
           <Button
             type="submit"
             variant="contained"
             fullWidth
-            disabled={loading}
+            disabled={isLoading}
             sx={{
               my: 2,
               p: 1,
@@ -138,7 +138,7 @@ function Login({ onLoginSuccess, backLink }: LoginProps) {
               },
             }}
           >
-            {loading ? "Iniciando sesión..." : "Iniciar sesión"}
+            {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
           </Button>
         </form>
       </Paper>
@@ -146,4 +146,4 @@ function Login({ onLoginSuccess, backLink }: LoginProps) {
   );
 }
 
-export default Login;
+export default LoginForm;

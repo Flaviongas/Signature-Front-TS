@@ -7,7 +7,7 @@ import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import MajorContext from "../contexts/MajorContext";
 import axios from "axios";
 import { Student } from "../types";
-import { studentForm, studentSchema } from "../schemas/student";
+import { studentFormSchema, studentValidationSchema } from "../schemas/student";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -16,53 +16,53 @@ type Props = {
   onStudentAdded: (newStudent: Student) => void;
 };
 
-function Form({ subjectId, onStudentAdded }: Props) {
-  const token = localStorage.getItem("Token");
-  console.log("token_form ", token);
-  const { selectedMajors } = useContext(MajorContext);
-  const url = import.meta.env.VITE_API_URL + "/api/students/";
+function StudentForm({ subjectId, onStudentAdded }: Props) {
+  const authToken = localStorage.getItem("Token");
+  console.log("auth_token ", authToken);
+  const { selectedMajor } = useContext(MajorContext);
+  const apiUrl = import.meta.env.VITE_API_URL + "/api/students/";
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<studentForm>({ resolver: zodResolver(studentSchema) });
+  } = useForm<studentFormSchema>({ resolver: zodResolver(studentValidationSchema) });
 
-  const onSubmit = async (data: studentForm) => {
+  const handleStudentSubmission = async (formData: studentFormSchema) => {
     try {
       const response = await axios.post(
-        url,
+        apiUrl,
         {
           subjects: [subjectId],
-          rut: data.rut,
-          dv: data.dv,
-          first_name: data.first_name,
-          second_name: data.second_name,
-          last_name: data.last_name,
-          second_last_name: data.second_last_name,
-          major: selectedMajors.id,
+          rut: formData.rut,
+          checkDigit: formData.dv,
+          firstName: formData.first_name,
+          secondName: formData.second_name,
+          lastName: formData.last_name,
+          secondLastName: formData.second_last_name,
+          majorId: selectedMajor.id,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Token ${token}`,
+            Authorization: `Token ${authToken}`,
           },
         }
       );
       onStudentAdded(response.data);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Error adding student:", error);
     }
   };
 
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(handleStudentSubmission)}
       noValidate
       sx={{ my: 2 }}
     >
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
           <TextField
             label="Rut"
             fullWidth
@@ -71,18 +71,18 @@ function Form({ subjectId, onStudentAdded }: Props) {
             helperText={errors.rut?.message}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 1 }}>
+        <Grid item xs={12} sm={6} md={1}>
           <TextField
-            label="DV"
+            label="checkDigit"
             fullWidth
             inputProps={{ maxLength: 1 }}
-            {...register("dv")}
-            error={!!errors.dv}
-            helperText={errors.dv?.message}
+            {...register("checkDigit")}
+            error={!!errors.checkDigit}
+            helperText={errors.checkDigit?.message}
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
           <TextField
             label="Primer Nombre"
             fullWidth
@@ -92,7 +92,7 @@ function Form({ subjectId, onStudentAdded }: Props) {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
           <TextField
             label="Segundo Nombre"
             fullWidth
@@ -102,7 +102,7 @@ function Form({ subjectId, onStudentAdded }: Props) {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
           <TextField
             label="Apellido"
             fullWidth
@@ -112,7 +112,7 @@ function Form({ subjectId, onStudentAdded }: Props) {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid item xs={12} sm={6} md={4}>
           <TextField
             label="Segundo Apellido"
             fullWidth
@@ -122,14 +122,11 @@ function Form({ subjectId, onStudentAdded }: Props) {
           />
         </Grid>
 
-        <Grid
-          size={{ xs: 12, md: 2 }}
-          sx={{
+        <Grid item xs={12} md={2} sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: { xs: "center", md: "flex-start" },
-          }}
-        >
+          }}>
           <Button
             type="submit"
             variant="contained"
@@ -149,4 +146,4 @@ function Form({ subjectId, onStudentAdded }: Props) {
   );
 }
 
-export default Form;
+export default StudentForm;

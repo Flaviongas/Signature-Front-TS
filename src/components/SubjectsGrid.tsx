@@ -1,10 +1,14 @@
 import { useContext, useEffect, useState } from "react";
-
-import { Box, Typography, IconButton, Card, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  IconButton,
+  Card,
+  Button,
+} from "@mui/material";
 import { CircularProgress } from "@mui/material";
 import MajorContext from "../contexts/MajorContext";
 import { ShortSubject, Student, Subject } from "../types";
-
 import SubjectContext from "../contexts/SubjectContext";
 import RecipeModal from "./RecipeModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,87 +16,82 @@ import { faArrowsRotate, faPlus } from "@fortawesome/free-solid-svg-icons";
 import RecipeModalMajor from "./RecipeModalMajor";
 import useGetData from "../hooks/useGetData";
 
-// type Props = {};
-
 function SubjectsGrid() {
   const { selectedMajors } = useContext(MajorContext);
   const { setSubjectData } = useContext(SubjectContext);
-  const url = import.meta.env.VITE_API_URL + "/api/subjects/";
-  console.log("url subjectsgrid: ", url);
-  const [refresh, setRefresh] = useState(false);
-  const { loading, data } = useGetData<Subject>(url, refresh);
-  const [shortSubject, setShortSubject] = useState<ShortSubject>({
+
+  const apiUrl = import.meta.env.VITE_API_URL + "/api/subjects/";
+  console.log("apiUrl subjectsgrid: ", apiUrl);
+
+  const [shouldRefresh, setShouldRefresh] = useState(false);
+
+  // Obtiene datos de materias desde la API
+  const { loading, data } = useGetData<Subject>(apiUrl, shouldRefresh);
+
+  const [currentShortSubject, setCurrentShortSubject] = useState<ShortSubject>({
     id: 0,
     name: "",
   });
 
-  const [isOpenFirst, setIsOpenFirst] = useState(false);
-  const [isOpenSecond, setIsOpenSecond] = useState(false);
+  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+  const [isMajorRecipeModalOpen, setIsMajorRecipeModalOpen] = useState(false);
 
-  const onOpenFirst = () => setIsOpenFirst(true);
-  const onCloseFirst = () => setIsOpenFirst(false);
-
-  const onOpenSecond = () => setIsOpenSecond(true);
-  const onCloseSecond = () => setIsOpenSecond(false);
+  const openRecipeModal = () => setIsRecipeModalOpen(true);
+  const closeRecipeModal = () => setIsRecipeModalOpen(false);
+  const openMajorRecipeModal = () => setIsMajorRecipeModalOpen(true);
+  const closeMajorRecipeModal = () => setIsMajorRecipeModalOpen(false);
 
   const [modalStudents, setModalStudents] = useState<Student[]>([]);
 
-  const filteredSubjects = data.filter((e) =>
-    e.major.includes(selectedMajors.id)
+  // Filtra materias según la carrera seleccionada
+  const filteredSubjects = data.filter((subject) =>
+    subject.major.includes(selectedMajors.id)
   );
 
+  // Actualiza el contexto de materias cada vez que cambian los datos o la carrera
   useEffect(() => {
-    const filteredSubjects = data.filter((e) =>
-      e.major.includes(selectedMajors.id)
-    );
     setSubjectData(filteredSubjects);
   }, [selectedMajors, data, setSubjectData]);
 
-  const handleOpenModal = (
+  // Abre el modal con estudiantes de una materia específica
+  const handleOpenRecipeModal = (
     students: Student[],
     subjectId: number,
-    name: string
+    subjectName: string
   ) => {
     setModalStudents(students);
-    setShortSubject({ id: subjectId, name: name });
-    onOpenFirst();
+    setCurrentShortSubject({ id: subjectId, name: subjectName });
+    openRecipeModal();
   };
 
-  const handleOpenModalMajor = () => {
-    onOpenSecond();
+  const handleOpenMajorRecipeModal = () => {
+    openMajorRecipeModal();
   };
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   const handleRefresh = () => {
-    setRefresh((prev) => !prev);
+    setShouldRefresh((prev) => !prev);
   };
-  const refreshAndClose = () => {
+
+  const refreshAndCloseMajorModal = () => {
     handleRefresh();
-    onCloseSecond();
+    closeMajorRecipeModal();
   };
 
   const cardStyles = {
     display: "flex",
     minHeight: 215,
     minWidth: 270,
-    maxWidth: 270,
+    maxWidth: 400,
     boxShadow: 3,
     transition: "transform 0.3s",
     "&:hover": {
       transform: "scale(1.03)",
     },
     cursor: "pointer",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    p: 2,
   };
 
   return selectedMajors && selectedMajors.name !== "" ? (
@@ -117,12 +116,7 @@ function SubjectsGrid() {
       >
         {selectedMajors.name}
         <Box ml={2}>
-          <IconButton
-            onClick={handleRefresh}
-            sx={{
-              fontSize: 30,
-            }}
-          >
+          <IconButton onClick={handleRefresh} sx={{ fontSize: 30 }}>
             <FontAwesomeIcon icon={faArrowsRotate} />
           </IconButton>
         </Box>
@@ -144,7 +138,7 @@ function SubjectsGrid() {
                 }}
                 fontSize={50}
                 icon={faPlus}
-                onClick={handleOpenModalMajor}
+                onClick={handleOpenMajorRecipeModal}
               />
             </Card>
           </Box>
@@ -156,34 +150,20 @@ function SubjectsGrid() {
           flexWrap="wrap"
           justifyContent="center"
         >
-          {filteredSubjects.map((Subject) => {
-            const filteredStudents = Subject.students.filter(
+          {filteredSubjects.map((subject) => {
+            const filteredStudents = subject.students.filter(
               (student) => student.major === selectedMajors.id
             );
 
             return (
-              <Box key={Subject.id} sx={{ margin: 2 }}>
-                <Card
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    boxShadow: 3,
-                    minHeight: 215,
-                    minWidth: 270,
-                    maxWidth: 400,
-                    p: 2,
-                  }}
-                >
+              <Box key={subject.id} sx={{ margin: 2 }}>
+                <Card sx={cardStyles}>
                   <Typography variant="h6" align="center" sx={{ my: "auto" }}>
-                    {Subject.name}
+                    {subject.name}
                   </Typography>
-
                   <Typography align="center" sx={{ mb: 4 }}>
                     Cantidad de Alumnos: {filteredStudents.length}
                   </Typography>
-
                   <Button
                     variant="contained"
                     sx={{
@@ -194,10 +174,10 @@ function SubjectsGrid() {
                       },
                     }}
                     onClick={() =>
-                      handleOpenModal(
+                      handleOpenRecipeModal(
                         filteredStudents,
-                        Subject.id,
-                        Subject.name
+                        subject.id,
+                        subject.name
                       )
                     }
                   >
@@ -219,7 +199,7 @@ function SubjectsGrid() {
                 }}
                 fontSize={50}
                 icon={faPlus}
-                onClick={handleOpenModalMajor}
+                onClick={handleOpenMajorRecipeModal}
               />
             </Card>
           </Box>
@@ -228,12 +208,15 @@ function SubjectsGrid() {
 
       <RecipeModal
         data={modalStudents}
-        isOpen={isOpenFirst}
-        onClose={onCloseFirst}
-        shortSubject={shortSubject}
+        isOpen={isRecipeModalOpen}
+        onClose={closeRecipeModal}
+        shortSubject={currentShortSubject}
         refresh={handleRefresh}
       />
-      <RecipeModalMajor isOpen={isOpenSecond} onClose={refreshAndClose} />
+      <RecipeModalMajor
+        isOpen={isMajorRecipeModalOpen}
+        onClose={refreshAndCloseMajorModal}
+      />
     </Box>
   ) : (
     <Box sx={{ p: 4 }} textAlign="center" mx="auto">

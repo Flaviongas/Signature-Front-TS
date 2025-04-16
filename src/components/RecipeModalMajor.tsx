@@ -17,11 +17,16 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { majorForm, majorSchema } from "../schemas/major";
 import { zodResolver } from "@hookform/resolvers/zod";
-type Props = { isOpen: boolean; onClose: () => void };
+
+type Props = {
+  isOpen: boolean;
+  onClose: () => void;
+};
 
 function RecipeModalMajor({ isOpen, onClose }: Props) {
-  const token = localStorage.getItem("Token");
-  console.log("token", token);
+  const apiToken = localStorage.getItem("Token");
+  console.log("apiToken", apiToken);
+
   const { selectedMajors } = useContext(MajorContext);
 
   const {
@@ -30,28 +35,29 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
     formState: { errors },
   } = useForm<majorForm>({ resolver: zodResolver(majorSchema) });
 
-  const url = import.meta.env.VITE_API_URL + "/api/subjects/";
-  console.log("url", url);
+  const apiUrl = import.meta.env.VITE_API_URL + "/api/subjects/";
+  console.log("apiUrl", apiUrl);
 
-  const onSubmit = async (data: majorForm) => {
-    console.log(data);
+  // Envía los datos del formulario a la API para crear una asignatura
+  const onSubmit = async (formData: majorForm) => {
+    console.log(formData);
 
     try {
       await axios.post(
-        url,
+        apiUrl,
         {
-          name: data.name.toUpperCase(),
+          name: formData.name.toUpperCase(),
           major: [selectedMajors.id],
         },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Token ${token}`,
+            Authorization: `Token ${apiToken}`,
           },
         }
       );
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
 
     onClose();
@@ -74,6 +80,7 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
         </DialogTitle>
 
         <DialogContent dividers sx={{ maxHeight: "20vh" }}>
+          {/* Campo para ingresar nombre de la asignatura */}
           <TextField
             {...register("name")}
             label="Ingresar Nombre"
@@ -86,9 +93,11 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
         </DialogContent>
 
         <DialogActions sx={{ p: 2 }}>
+          {/* Botón para enviar el formulario */}
           <Button type="submit" variant="contained" sx={{ bgcolor: "#3454D1" }}>
             Crear
           </Button>
+          {/* Botón para cerrar el modal */}
           <Button
             onClick={onClose}
             variant="contained"

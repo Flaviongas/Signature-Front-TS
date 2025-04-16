@@ -12,24 +12,30 @@ import { MajorShort } from "../types";
 import MajorContext from "../contexts/MajorContext";
 import useGetData from "../hooks/useGetData";
 
-// type Props = {};
-
 function SideNav() {
-  const url = import.meta.env.VITE_API_URL + "/api/majors/getMajors/";
+  // URL de la API para obtener las carreras
+  const apiUrl = import.meta.env.VITE_API_URL + "/api/majors/getMajors/";
 
-  const { data, loading } = useGetData<MajorShort>(url);
-  const [search, setSearch] = useState<MajorShort>({ id: 0, name: "" });
+  // Hook personalizado para obtener datos desde la API
+  const { data, loading } = useGetData<MajorShort>(apiUrl);
+
+  // Estado para almacenar el valor de búsqueda del usuario
+  const [searchQuery, setSearchQuery] = useState<MajorShort>({ id: 0, name: "" });
+
+  // Contexto para manejar las carreras seleccionadas
   const { setSelectedMajors } = useContext(MajorContext);
 
+  // Función que se ejecuta al enviar el formulario de búsqueda
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    console.log(search);
+    console.log(searchQuery);
   };
 
+  // Renderización condicional según si los datos están cargando o no
   return loading ? (
     <Box p={2}>
-      {[...Array(5)].map((_, i) => (
-        <Skeleton key={i} variant="rectangular" height={40} sx={{ mb: 2 }} />
+      {[...Array(5)].map((_, index) => (
+        <Skeleton key={index} variant="rectangular" height={40} sx={{ mb: 2 }} />
       ))}
     </Box>
   ) : (
@@ -52,21 +58,21 @@ function SideNav() {
           fullWidth
           size="small"
           placeholder="Buscar carrera"
-          value={search.name}
-          onChange={(e) => setSearch({ ...search, name: e.target.value })}
+          value={searchQuery.name}
+          onChange={(e) => setSearchQuery({ ...searchQuery, name: e.target.value })}
           sx={{ mb: 2 }}
         />
       </form>
 
       <List disablePadding>
         {data
-          .filter((c) =>
-            c.name.toLowerCase().includes(search.name.toLowerCase())
+          .filter((major) =>
+            major.name.toLowerCase().includes(searchQuery.name.toLowerCase())
           )
-          .map((c) => (
+          .map((major) => (
             <ListItemButton
-              key={c.id}
-              onClick={() => setSelectedMajors(c)}
+              key={major.id}
+              onClick={() => setSelectedMajors(major)}
               sx={{
                 borderRadius: 2,
                 mb: 1,
@@ -77,7 +83,7 @@ function SideNav() {
               }}
             >
               <ListItemText
-                primary={<Typography textAlign="center">{c.name}</Typography>}
+                primary={<Typography textAlign="center">{major.name}</Typography>}
               />
             </ListItemButton>
           ))}
