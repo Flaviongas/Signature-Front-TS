@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const studentSchema = z.object({
+  //Test commit
   rut: z
     .string()
     .min(7, { message: "minimo 7 digitos sin letras" })
