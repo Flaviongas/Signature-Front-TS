@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const studentSchema = z.object({
+export const studentValidationSchema = z.object({
   rut: z
     .string()
     .min(7, { message: "minimo 7 digitos sin letras" })
@@ -23,4 +23,4 @@ export const studentSchema = z.object({
   second_last_name: z.string().nonempty("El campo no puede estar vacio"),
 });
 
-export type studentForm = z.infer<typeof studentSchema>;
+export type studentFormSchema = z.infer<typeof studentValidationSchema>;

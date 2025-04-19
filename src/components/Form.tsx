@@ -25,7 +25,9 @@ function StudentForm({ subjectId, onStudentAdded }: Props) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<studentFormSchema>({ resolver: zodResolver(studentValidationSchema) });
+  } = useForm<studentFormSchema>({
+    resolver: zodResolver(studentValidationSchema),
+  });
 
   const handleStudentSubmission = async (formData: studentFormSchema) => {
     try {
@@ -62,7 +64,7 @@ function StudentForm({ subjectId, onStudentAdded }: Props) {
       sx={{ my: 2 }}
     >
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
           <TextField
             label="Rut"
             fullWidth
@@ -71,18 +73,18 @@ function StudentForm({ subjectId, onStudentAdded }: Props) {
             helperText={errors.rut?.message}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={1}>
+        <Grid size={{ xs: 12, sm: 6, md: 1 }}>
           <TextField
-            label="checkDigit"
+            label="DV"
             fullWidth
             inputProps={{ maxLength: 1 }}
-            {...register("checkDigit")}
-            error={!!errors.checkDigit}
-            helperText={errors.checkDigit?.message}
+            {...register("dv")}
+            error={!!errors.dv}
+            helperText={errors.dv?.message}
           />
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <TextField
             label="Primer Nombre"
             fullWidth
@@ -92,7 +94,7 @@ function StudentForm({ subjectId, onStudentAdded }: Props) {
           />
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <TextField
             label="Segundo Nombre"
             fullWidth
@@ -102,7 +104,7 @@ function StudentForm({ subjectId, onStudentAdded }: Props) {
           />
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <TextField
             label="Apellido"
             fullWidth
@@ -112,7 +114,7 @@ function StudentForm({ subjectId, onStudentAdded }: Props) {
           />
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <TextField
             label="Segundo Apellido"
             fullWidth
@@ -122,17 +124,22 @@ function StudentForm({ subjectId, onStudentAdded }: Props) {
           />
         </Grid>
 
-        <Grid item xs={12} md={2} sx={{
+        <Grid
+          size={{ xs: 12, md: 2 }}
+          sx={{
             display: "flex",
+            justifyContent: "center",
             alignItems: "center",
-            justifyContent: { xs: "center", md: "flex-start" },
-          }}>
+          }}
+        >
           <Button
             type="submit"
             variant="contained"
             sx={{
-              p: 1.5,
               bgcolor: "#3454D1",
+              width: { xs: "50%", sm: "25%", md: "100%" },
+              p: 2.6,
+              mb: 3,
               "&:hover": {
                 bgcolor: "#2F4BC0",
               },
