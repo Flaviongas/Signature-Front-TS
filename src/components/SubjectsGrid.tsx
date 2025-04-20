@@ -5,8 +5,11 @@ import {
   IconButton,
   Card,
   Button,
+  Container,
 } from "@mui/material";
-import { CircularProgress } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import axios from "axios";
+
 import MajorContext from "../contexts/MajorContext";
 import { ShortSubject, Student, Subject } from "../types";
 import SubjectContext from "../contexts/SubjectContext";
@@ -15,6 +18,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsRotate, faPlus } from "@fortawesome/free-solid-svg-icons";
 import RecipeModalMajor from "./RecipeModalMajor";
 import useGetData from "../hooks/useGetData";
+
+import { useNavigate } from "react-router-dom";
 
 function SubjectsGrid() {
   const { selectedMajors } = useContext(MajorContext);
@@ -48,6 +53,8 @@ function SubjectsGrid() {
     subject.major.includes(selectedMajors.id)
   );
 
+  const navigate = useNavigate();
+
   // Actualiza el contexto de materias cada vez que cambian los datos o la carrera
   useEffect(() => {
     setSubjectData(filteredSubjects);
@@ -76,16 +83,33 @@ function SubjectsGrid() {
     handleRefresh();
     closeMajorRecipeModal();
   };
+  // Elimina la asignatura del card
+  const handleDeleteSubject = async (id: number, name: string) => {
+    const confirmDelete = window.confirm(
+      `¿Estás seguro de que deseas eliminar la asignatura ${name}?`
+    );
+    if (!confirmDelete) return;
+
+    const token = localStorage.getItem("Token");
+    try {
+      const url = import.meta.env.VITE_API_URL + "/api/subjects";
+      await axios.delete(`${url}/${id}/`, {
+        headers: { Authorization: `Token ${token}` },
+      });
+      handleRefresh();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const cardStyles = {
     display: "flex",
     minHeight: 215,
-    minWidth: 270,
-    maxWidth: 400,
+    width: 270,
     boxShadow: 3,
     transition: "transform 0.3s",
     "&:hover": {
-      transform: "scale(1.03)",
+      transform: "scale(1.02)",
     },
     cursor: "pointer",
     flexDirection: "column",
@@ -94,136 +118,219 @@ function SubjectsGrid() {
     p: 2,
   };
 
-  return selectedMajors && selectedMajors.name !== "" ? (
-    <Box
-      sx={{
-        p: 4,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        height: "40vh",
-      }}
-    >
-      <Typography
-        variant="h5"
-        component="h1"
+  const content =
+    selectedMajors && selectedMajors.name !== "" ? (
+      <Box
         sx={{
-          mb: 2,
-          fontWeight: "bold",
+          p: 4,
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
         }}
       >
-        {selectedMajors.name}
-        <Box ml={2}>
-          <IconButton onClick={handleRefresh} sx={{ fontSize: 30 }}>
-            <FontAwesomeIcon icon={faArrowsRotate} />
-          </IconButton>
-        </Box>
-      </Typography>
-
-      {filteredSubjects.length === 0 && !loading ? (
-        <>
-          <Typography variant="body1" fontWeight="bold" mb={2}>
-            No hay materias disponibles para esta carrera.
-          </Typography>
-          <Box key="add">
-            <Card sx={cardStyles}>
-              <FontAwesomeIcon
-                style={{
-                  color: "black",
-                  margin: "auto",
-                  padding: "16px",
-                  borderRadius: "4px",
-                }}
-                fontSize={50}
-                icon={faPlus}
-                onClick={handleOpenMajorRecipeModal}
-              />
-            </Card>
-          </Box>
-        </>
-      ) : (
-        <Box
-          display="flex"
-          flexDirection="row"
-          flexWrap="wrap"
-          justifyContent="center"
+        <Typography
+          variant="h5"
+          component="h1"
+          sx={{
+            mb: 3,
+            fontWeight: "bold",
+            display: "flex",
+            flexDirection: {
+              xs: "column-reverse",
+              sm: "row",
+            },
+            alignItems: "center",
+          }}
         >
-          {filteredSubjects.map((subject) => {
-            const filteredStudents = subject.students.filter(
-              (student) => student.major === selectedMajors.id
-            );
-
-            return (
-              <Box key={subject.id} sx={{ margin: 2 }}>
-                <Card sx={cardStyles}>
-                  <Typography variant="h6" align="center" sx={{ my: "auto" }}>
-                    {subject.name}
-                  </Typography>
-                  <Typography align="center" sx={{ mb: 4 }}>
-                    Cantidad de Alumnos: {filteredStudents.length}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      width: "75%",
-                      bgcolor: "#3454D1",
-                      ":hover": {
-                        bgcolor: "#2F4BC0",
-                      },
-                    }}
-                    onClick={() =>
-                      handleOpenRecipeModal(
-                        filteredStudents,
-                        subject.id,
-                        subject.name
-                      )
-                    }
-                  >
-                    Asistencia
-                  </Button>
-                </Card>
-              </Box>
-            );
-          })}
-
-          <Box key="add" sx={{ margin: 2 }}>
-            <Card sx={cardStyles}>
-              <FontAwesomeIcon
-                style={{
-                  color: "black",
-                  margin: "auto",
-                  padding: "16px",
-                  borderRadius: "4px",
-                }}
-                fontSize={50}
-                icon={faPlus}
-                onClick={handleOpenMajorRecipeModal}
-              />
-            </Card>
+          {selectedMajors.name}
+          <Box
+            sx={{
+              ml: { xs: 0, md: 2 },
+            }}
+          >
+            <IconButton onClick={handleRefresh} sx={{ fontSize: 30 }}>
+              <FontAwesomeIcon icon={faArrowsRotate} />
+            </IconButton>
           </Box>
-        </Box>
-      )}
+        </Typography>
 
-      <RecipeModal
-        data={modalStudents}
-        isOpen={isRecipeModalOpen}
-        onClose={closeRecipeModal}
-        shortSubject={currentShortSubject}
-        refresh={handleRefresh}
-      />
-      <RecipeModalMajor
-        isOpen={isMajorRecipeModalOpen}
-        onClose={refreshAndCloseMajorModal}
-      />
-    </Box>
-  ) : (
-    <Box sx={{ p: 4 }} textAlign="center" mx="auto">
-      <Typography variant="h4" fontWeight="bold">
-        Seleccione una Carrera
-      </Typography>
-    </Box>
+        {filteredSubjects.length === 0 && !loading ? (
+          <>
+            <Typography variant="body1" fontWeight="bold" mb={2}>
+              No hay materias disponibles para esta carrera.
+            </Typography>
+            <Box key="add">
+              <Card sx={cardStyles}>
+                <FontAwesomeIcon
+                  style={{
+                    color: "black",
+                    margin: "auto",
+                    padding: "16px",
+                    borderRadius: "4px",
+                  }}
+                  fontSize={50}
+                  icon={faPlus}
+                  onClick={handleOpenMajorRecipeModal}
+                />
+              </Card>
+            </Box>
+          </>
+        ) : (
+          <Box
+            display="flex"
+            flexDirection="row"
+            flexWrap="wrap"
+            justifyContent="center"
+          >
+            {filteredSubjects.map((subject) => {
+              const filteredStudents = subject.students.filter(
+                (student) => student.major === selectedMajors.id
+              );
+
+              return (
+                <Box
+                  key={subject.id}
+                  sx={{
+                    m: 2,
+                  }}
+                >
+                  <Card sx={{ ...cardStyles, position: "relative" }}>
+                    <IconButton
+                      onClick={() =>
+                        handleDeleteSubject(subject.id, subject.name)
+                      }
+                      size="small"
+                      sx={{
+                        position: "absolute",
+                        top: 4,
+                        right: 4,
+                      }}
+                    >
+                      <CloseIcon
+                        fontSize="small"
+                        color="error"
+                        sx={{
+                          stroke: "currentColor",
+                          strokeWidth: 1.5,
+                          fontSize: 25,
+                        }}
+                      />
+                    </IconButton>
+                    <Typography
+                      variant="h6"
+                      align="center"
+                      sx={{
+                        my: "auto",
+                        overflow: "hidden",
+                        maxWidth: "98%",
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                      }}
+                    >
+                      {subject.name}
+                    </Typography>
+                    <Typography align="center" sx={{ mb: 4 }}>
+                      Cantidad de Alumnos: {filteredStudents.length}
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        width: "75%",
+                        bgcolor: "#3454D1",
+                        ":hover": {
+                          bgcolor: "#2F4BC0",
+                        },
+                      }}
+                      onClick={() =>
+                        handleOpenRecipeModal(
+                          filteredStudents,
+                          subject.id,
+                          subject.name
+                        )
+                      }
+                    >
+                      Asistencia
+                    </Button>
+                  </Card>
+                </Box>
+              );
+            })}
+
+            <Box
+              key="add"
+              sx={{
+                m: 2,
+              }}
+            >
+              <Card sx={cardStyles} onClick={handleOpenMajorRecipeModal}>
+                <FontAwesomeIcon
+                  style={{
+                    margin: "auto",
+                    padding: "16px",
+                    borderRadius: "4px",
+                  }}
+                  fontSize={50}
+                  icon={faPlus}
+                />
+              </Card>
+            </Box>
+          </Box>
+        )}
+
+        <RecipeModal
+          data={modalStudents}
+          isOpen={isRecipeModalOpen}
+          onClose={closeRecipeModal}
+          shortSubject={currentShortSubject}
+        />
+        <RecipeModalMajor
+          isOpen={isMajorRecipeModalOpen}
+          onClose={refreshAndCloseMajorModal}
+        />
+      </Box>
+    ) : (
+      <Box sx={{ p: 4 }} textAlign="center" mx="auto">
+        <Typography variant="h4" fontWeight="bold">
+          Seleccione una Carrera
+        </Typography>
+      </Box>
+    );
+
+  return (
+    <Container
+      sx={{
+        position: "relative",
+        padding: 3,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: {
+          xs: "center",
+        },
+      }}
+    >
+      <Box
+        sx={{
+          alignSelf: { xs: "center", md: "flex-end" },
+        }}
+      >
+        <Button
+          variant="contained"
+          sx={{
+            minWidth: "150px",
+            px: 5,
+            bgcolor: "#3454D1",
+            "&:hover": {
+              bgcolor: "#2F4BC0",
+            },
+          }}
+          onClick={() => navigate("/users")}
+        >
+          Gestionar Usuarios
+        </Button>
+      </Box>
+      {content}
+    </Container>
   );
 }
 

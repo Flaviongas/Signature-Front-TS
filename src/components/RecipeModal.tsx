@@ -1,9 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  IconButton, Button, TextField, Table,
-  TableHead, TableBody, TableRow, TableCell,
-  Checkbox, Box
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Button,
+  TextField,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  Checkbox,
+  Box,
 } from "@mui/material";
 import { Student, Attendance, ShortSubject } from "../types";
 import useExcel from "../hooks/useExcel";
@@ -18,16 +28,15 @@ type Props = {
   onClose: () => void;
   data: Student[];
   shortSubject: ShortSubject;
-  refresh: () => void;
 };
 
-function AttendanceModal({ isOpen, onClose, data, shortSubject, refresh }: Props) {
+function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [checkedStudents, setCheckedStudents] = useState<Student[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [isPlaceVisible, setIsPlaceVisible] = useState(false);
   const [buttonText, setButtonText] = useState("Agregar Estudiantes");
   const [studentsList, setStudentsList] = useState<Student[]>([]);
-  const { selectedMajor } = useContext(MajorContext);
+  const { selectedMajors } = useContext(MajorContext);
 
   // Reinicia la vista cada vez que se abre el modal
   useEffect(() => {
@@ -66,31 +75,11 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject, refresh }: Props
       students: checkedStudents,
     };
 
-    useExcel(attendanceData, ISODate, shortSubject, selectedMajor);
+    useExcel(attendanceData, ISODate, shortSubject, selectedMajors);
 
     setCheckedStudents([]);
     setSelectedDate("");
     onClose();
-  };
-
-  // Elimina la asignatura actual
-  const handleDeleteSubject = async () => {
-    const confirmDelete = window.confirm(
-      `¿Estás seguro de que deseas eliminar la asignatura ${shortSubject.name}?`
-    );
-    if (!confirmDelete || !shortSubject.id) return;
-
-    const token = localStorage.getItem("Token");
-    try {
-      const url = import.meta.env.VITE_API_URL + "/api/subjects";
-      await axios.delete(`${url}/${shortSubject.id}/`, {
-        headers: { Authorization: `Token ${token}` },
-      });
-      cleanup();
-      refresh();
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   // Alterna visibilidad del formulario para agregar estudiantes
@@ -133,9 +122,13 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject, refresh }: Props
   return (
     <Dialog open={isOpen} onClose={cleanup} maxWidth="lg" fullWidth>
       <DialogTitle
-        sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
       >
-        Asistencia
+        {shortSubject.name}
         <IconButton onClick={cleanup}>
           <FontAwesomeIcon icon={faTimes} />
         </IconButton>
@@ -153,27 +146,44 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject, refresh }: Props
 
         <Button
           variant="contained"
-          sx={{ mb: 2, bgcolor: "#3454D1", "&:hover": { bgcolor: "#2F4BC0" } }}
+          sx={{
+            mb: 2,
+            bgcolor: "#3454D1",
+            "&:hover": { bgcolor: "#2F4BC0" },
+            fontSize: {
+              xs: "0.75rem",
+              sm: "0.875rem",
+            },
+          }}
           onClick={handleTogglePlaceVisibility}
         >
           {buttonText}
         </Button>
 
         {isPlaceVisible && (
-          <Form subjectId={shortSubject.id} onStudentAdded={handleStudentAdded} />
+          <Form
+            subjectId={shortSubject.id}
+            onStudentAdded={handleStudentAdded}
+          />
         )}
 
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>¿Asistió?</TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                ¿Asistió?
+              </TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Rut</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>DV</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Nombre</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Segundo Nombre</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Apellido</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Segundo Apellido</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>Eliminar</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>
+                Segundo Apellido
+              </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Eliminar
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -203,26 +213,35 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject, refresh }: Props
         </Table>
       </DialogContent>
 
-      <DialogActions sx={{ justifyContent: "space-between", px: 3, py: 2 }}>
-        <Button variant="contained" color="error" onClick={handleDeleteSubject}>
-          Borrar
+      <DialogActions sx={{ justifyContent: "flex-end", p: 2, gap: 1 }}>
+        <Button
+          variant="contained"
+          onClick={handleSubmitAttendance}
+          sx={{
+            bgcolor: "#3454D1",
+            "&:hover": { bgcolor: "#2F4BC0" },
+            fontSize: {
+              xs: "0.6rem",
+              sm: "0.875rem",
+            },
+          }}
+        >
+          descargar excel
         </Button>
-        <Box display="flex" gap={2}>
-          <Button
-            variant="contained"
-            onClick={handleSubmitAttendance}
-            sx={{ bgcolor: "#3454D1", "&:hover": { bgcolor: "#2F4BC0" } }}
-          >
-            descargar excel
-          </Button>
-          <Button
-            variant="contained"
-            onClick={onClose}
-            sx={{ bgcolor: "#D1495B", "&:hover": { bgcolor: "#C43145" } }}
-          >
-            Cerrar
-          </Button>
-        </Box>
+        <Button
+          variant="contained"
+          onClick={onClose}
+          sx={{
+            bgcolor: "#D1495B",
+            "&:hover": { bgcolor: "#C43145" },
+            fontSize: {
+              xs: "0.6rem",
+              sm: "0.875rem",
+            },
+          }}
+        >
+          Cerrar
+        </Button>
       </DialogActions>
     </Dialog>
   );

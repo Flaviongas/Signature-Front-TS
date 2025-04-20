@@ -1,24 +1,12 @@
-import { useState } from "react";
-import Login from "./components/Login";
-import MainContent from "./Routes/MainContent";
+import { BrowserRouter } from "react-router-dom";
+import AppRoutes from "./Routes/AppRoutes";
 
 function App() {
-  const [authToken, setAuthToken] = useState("");
-
-  const token = localStorage.getItem("Token") || "";
-  const onLogin = (token: string) => {
-    setAuthToken(token)
-  }
-
-
-
-  if (authToken || token) {
-    console.log("token", token);
-    return <MainContent />;
-  } else {
-    console.log("no token", token);
-    return <Login onLoginSuccess={onLogin} backLink={import.meta.env.VITE_API_URL} />;
-  }
+  return (
+    <BrowserRouter basename="/signature">
+      <AppRoutes />
+    </BrowserRouter>
+  );
 }
 
 export default App;

@@ -1,4 +1,3 @@
-// import { Button } from "@chakra-ui/react";
 import { useContext } from "react";
 
 import { Button, Grid, TextField, Box } from "@mui/material";
@@ -19,7 +18,7 @@ type Props = {
 function StudentForm({ subjectId, onStudentAdded }: Props) {
   const authToken = localStorage.getItem("Token");
   console.log("auth_token ", authToken);
-  const { selectedMajor } = useContext(MajorContext);
+  const { selectedMajors } = useContext(MajorContext);
   const apiUrl = import.meta.env.VITE_API_URL + "/api/students/";
   const {
     register,
@@ -41,7 +40,7 @@ function StudentForm({ subjectId, onStudentAdded }: Props) {
           secondName: formData.second_name,
           lastName: formData.last_name,
           secondLastName: formData.second_last_name,
-          majorId: selectedMajor.id,
+          majorId: selectedMajors.id,
         },
         {
           headers: {
