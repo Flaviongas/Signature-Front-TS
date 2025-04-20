@@ -160,7 +160,7 @@ function SubjectsGrid() {
               No hay materias disponibles para esta carrera.
             </Typography>
             <Box key="add">
-              <Card sx={cardStyles}>
+              <Card sx={cardStyles} onClick={handleOpenMajorRecipeModal}>
                 <FontAwesomeIcon
                   style={{
                     color: "black",
@@ -170,7 +170,6 @@ function SubjectsGrid() {
                   }}
                   fontSize={50}
                   icon={faPlus}
-                  onClick={handleOpenMajorRecipeModal}
                 />
               </Card>
             </Box>
