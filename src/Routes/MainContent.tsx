@@ -13,7 +13,7 @@ import Drawer from "@mui/material/Drawer";
 // type Props = {};
 
 function MainContent() {
-  const [selectedMajors, setSelectedMajors] = useState<MajorShort>({
+  const [selectedMajor, setSelectedMajor] = useState<MajorShort>({
     id: 0,
     name: "",
   });
@@ -65,7 +65,7 @@ function MainContent() {
   );
 
   return (
-    <MajorContext.Provider value={{ selectedMajors, setSelectedMajors }}>
+    <MajorContext.Provider value={{ selectedMajor, setSelectedMajor }}>
       <SubjectContext.Provider value={{ SubjectData, setSubjectData }}>
         <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
           <Box

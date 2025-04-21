@@ -36,7 +36,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [isPlaceVisible, setIsPlaceVisible] = useState(false);
   const [buttonText, setButtonText] = useState("Agregar Estudiantes");
   const [studentsList, setStudentsList] = useState<Student[]>([]);
-  const { selectedMajors } = useContext(MajorContext);
+  const { selectedMajor } = useContext(MajorContext);
 
   // Reinicia la vista cada vez que se abre el modal
   useEffect(() => {
@@ -75,7 +75,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
       students: checkedStudents,
     };
 
-    useExcel(attendanceData, ISODate, shortSubject, selectedMajors);
+    useExcel(attendanceData, ISODate, shortSubject, selectedMajor);
 
     setCheckedStudents([]);
     setSelectedDate("");

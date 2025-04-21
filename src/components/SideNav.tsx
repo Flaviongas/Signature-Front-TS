@@ -20,10 +20,13 @@ function SideNav() {
   const { data, loading } = useGetData<MajorShort>(apiUrl);
 
   // Estado para almacenar el valor de búsqueda del usuario
-  const [searchQuery, setSearchQuery] = useState<MajorShort>({ id: 0, name: "" });
+  const [searchQuery, setSearchQuery] = useState<MajorShort>({
+    id: 0,
+    name: "",
+  });
 
   // Contexto para manejar las carreras seleccionadas
-  const { setSelectedMajors } = useContext(MajorContext);
+  const { setSelectedMajor } = useContext(MajorContext);
 
   // Función que se ejecuta al enviar el formulario de búsqueda
   const handleSubmit = (event: FormEvent) => {
@@ -35,7 +38,12 @@ function SideNav() {
   return loading ? (
     <Box p={2}>
       {[...Array(5)].map((_, index) => (
-        <Skeleton key={index} variant="rectangular" height={40} sx={{ mb: 2 }} />
+        <Skeleton
+          key={index}
+          variant="rectangular"
+          height={40}
+          sx={{ mb: 2 }}
+        />
       ))}
     </Box>
   ) : (
@@ -59,7 +67,9 @@ function SideNav() {
           size="small"
           placeholder="Buscar carrera"
           value={searchQuery.name}
-          onChange={(e) => setSearchQuery({ ...searchQuery, name: e.target.value })}
+          onChange={(e) =>
+            setSearchQuery({ ...searchQuery, name: e.target.value })
+          }
           sx={{ mb: 2 }}
         />
       </form>
@@ -72,7 +82,7 @@ function SideNav() {
           .map((major) => (
             <ListItemButton
               key={major.id}
-              onClick={() => setSelectedMajors(major)}
+              onClick={() => setSelectedMajor(major)}
               sx={{
                 borderRadius: 2,
                 mb: 1,
@@ -83,7 +93,9 @@ function SideNav() {
               }}
             >
               <ListItemText
-                primary={<Typography textAlign="center">{major.name}</Typography>}
+                primary={
+                  <Typography textAlign="center">{major.name}</Typography>
+                }
               />
             </ListItemButton>
           ))}

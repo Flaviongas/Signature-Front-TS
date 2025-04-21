@@ -22,7 +22,7 @@ import useGetData from "../hooks/useGetData";
 import { useNavigate } from "react-router-dom";
 
 function SubjectsGrid() {
-  const { selectedMajors } = useContext(MajorContext);
+  const { selectedMajor } = useContext(MajorContext);
   const { setSubjectData } = useContext(SubjectContext);
 
   const apiUrl = import.meta.env.VITE_API_URL + "/api/subjects/";
@@ -50,7 +50,7 @@ function SubjectsGrid() {
 
   // Filtra materias según la carrera seleccionada
   const filteredSubjects = data.filter((subject) =>
-    subject.major.includes(selectedMajors.id)
+    subject.major.includes(selectedMajor.id)
   );
 
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ function SubjectsGrid() {
   // Actualiza el contexto de materias cada vez que cambian los datos o la carrera
   useEffect(() => {
     setSubjectData(filteredSubjects);
-  }, [selectedMajors, data, setSubjectData]);
+  }, [selectedMajor, data, setSubjectData]);
 
   // Abre el modal con estudiantes de una materia específica
   const handleOpenRecipeModal = (
@@ -119,7 +119,7 @@ function SubjectsGrid() {
   };
 
   const content =
-    selectedMajors && selectedMajors.name !== "" ? (
+    selectedMajor && selectedMajor.name !== "" ? (
       <Box
         sx={{
           p: 4,
@@ -142,7 +142,7 @@ function SubjectsGrid() {
             alignItems: "center",
           }}
         >
-          {selectedMajors.name}
+          {selectedMajor.name}
           <Box
             sx={{
               ml: { xs: 0, md: 2 },
@@ -183,7 +183,7 @@ function SubjectsGrid() {
           >
             {filteredSubjects.map((subject) => {
               const filteredStudents = subject.students.filter(
-                (student) => student.major === selectedMajors.id
+                (student) => student.major === selectedMajor.id
               );
 
               return (

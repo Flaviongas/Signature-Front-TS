@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 function UserManagementPage() {
   const [isOpen, setIsOpen] = useState(false);
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, _] = useState<User[]>([]);
   const navigate = useNavigate();
   return (
     <Box

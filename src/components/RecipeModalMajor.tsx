@@ -27,7 +27,7 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
   const apiToken = localStorage.getItem("Token");
   console.log("apiToken", apiToken);
 
-  const { selectedMajors } = useContext(MajorContext);
+  const { selectedMajor } = useContext(MajorContext);
 
   const {
     register,
@@ -47,7 +47,7 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
         apiUrl,
         {
           name: formData.name.toUpperCase(),
-          major: [selectedMajors.id],
+          major: [selectedMajor.id],
         },
         {
           headers: {
