@@ -7,9 +7,12 @@ import {
   Button,
   Snackbar,
   Alert,
+  Autocomplete,
+  Chip,
 } from "@mui/material";
 import { useState } from "react";
 import { createUser, updateUser } from "../services/userService";
+import { getMajors } from "../services/majorService";
 import { User } from "../types";
 import { useEffect } from "react";
 
@@ -29,10 +32,29 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const [availableMajors, setAvailableMajors] = useState<
+    { id: number; name: string }[]
+  >([]);
+  const [selectedMajors, setSelectedMajors] = useState<
+    { id: number; name: string }[]
+  >([]);
+
   const editingUser = !!userToEdit;
 
   useEffect(() => {
     if (open) {
+      const fetchMajors = async () => {
+        try {
+          const response = await getMajors();
+          console.log("Majors fetched:", response.data);
+          setAvailableMajors(response.data || []);
+        } catch (error) {
+          console.error("Failed to load majors:", error);
+          setAvailableMajors([]);
+        }
+      };
+
+      fetchMajors();
       if (userToEdit) {
         setUsername(userToEdit.username);
       } else {
@@ -42,6 +64,34 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
       setConfirmPassword("");
       setErrorMessage(null);
       setSuccessMessage(null);
+      setSelectedMajors([]);
+    }
+  }, [open, userToEdit]);
+
+  useEffect(() => {
+    if (open) {
+      const fetchMajors = async () => {
+        try {
+          const response = await getMajors();
+          setAvailableMajors(response.data);
+        } catch (error) {
+          console.error("Failed to load majors:", error);
+        }
+      };
+
+      fetchMajors();
+
+      // Resto del reseteo del modal
+      if (userToEdit) {
+        setUsername(userToEdit.username);
+      } else {
+        setUsername("");
+      }
+      setPassword("");
+      setConfirmPassword("");
+      setErrorMessage(null);
+      setSuccessMessage(null);
+      setSelectedMajors([]); // limpiar selección si es nuevo
     }
   }, [open, userToEdit]);
 
@@ -209,6 +259,32 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
               ? "Las contraseñas no coinciden."
               : ""
           }
+        />
+        <Autocomplete
+          multiple
+          options={availableMajors}
+          getOptionLabel={(option) => option.name}
+          value={selectedMajors}
+          onChange={(_, newValue) => setSelectedMajors(newValue)}
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => (
+              <Chip
+                label={option.name}
+                {...getTagProps({ index })}
+                variant="outlined"
+              />
+            ))
+          }
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+              label="Carreras asociadas"
+              placeholder="Selecciona una o más"
+              margin="normal"
+            />
+          )}
+          fullWidth
         />
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
