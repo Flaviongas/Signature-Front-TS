@@ -6,26 +6,25 @@ import {
   TableHead,
   TableRow,
   Paper,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { User } from "../types";
 
-interface User {
-  id: number;
-  username: string;
-  password: string;
-}
-
-interface UserListProps {
+interface Props {
   users: User[];
+  onDelete: (userId: number) => void;
+  onEdit: (user: User) => void;
 }
 
-function UserList({ users }: UserListProps) {
+function UserList({ users, onDelete, onEdit }: Props) {
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="Lista de Usuarios">
         <TableHead>
           <TableRow>
             <TableCell>Nombre de Usuario</TableCell>
-            <TableCell>Contraseña</TableCell>
             <TableCell>Editar</TableCell>
             <TableCell>Eliminar</TableCell>
           </TableRow>
@@ -34,8 +33,16 @@ function UserList({ users }: UserListProps) {
           {users.map((user) => (
             <TableRow key={user.id}>
               <TableCell>{user.username}</TableCell>
-              <TableCell>{user.password}</TableCell>
-              <TableCell></TableCell>
+              <TableCell>
+                <IconButton color="primary" onClick={() => onEdit(user)}>
+                  <EditIcon />
+                </IconButton>
+              </TableCell>
+              <TableCell>
+                <IconButton color="error" onClick={() => onDelete(user.id)}>
+                  <DeleteIcon />
+                </IconButton>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
