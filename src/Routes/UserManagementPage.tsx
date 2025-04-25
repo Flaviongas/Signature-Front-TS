@@ -1,15 +1,50 @@
 import { Box, Typography, Container, Button } from "@mui/material";
-import CreateUserModal from "../components/CreateUsereModal";
+import CreateUserModal from "../components/UserModal";
 import UserList from "../components/UserList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { User } from "../types";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import { getUsers, deleteUser } from "../services/userService";
 
 function UserManagementPage() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [users, _] = useState<User[]>([]);
   const navigate = useNavigate();
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [editUser, setEditUser] = useState<User | null>(null);
+
+  const fetchUsers = () => {
+    getUsers()
+      .then((res) => {
+        console.log("Datos obtenidos de la API:", res.data);
+        setUsers(res.data);
+      })
+
+      .catch((err) => console.error("Error al obtener usuarios:", err));
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleEditUser = (user: User) => {
+    setEditUser(user);
+    setIsOpen(true);
+  };
+
+  const handleDeleteUser = async (userId: number) => {
+    try {
+      await deleteUser(userId);
+
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+
+      console.log("Usuario eliminado con éxito.");
+    } catch (error) {
+      console.error("Error eliminando el usuario:", error);
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -65,13 +100,25 @@ function UserManagementPage() {
                 bgcolor: "#2F4BC0",
               },
             }}
-            onClick={() => setIsOpen(true)}
+            onClick={() => {
+              setEditUser(null);
+              setIsOpen(true);
+            }}
           >
             Crear Usuario
           </Button>
-          <CreateUserModal open={isOpen} onClose={() => setIsOpen(false)} />
+          <CreateUserModal
+            open={isOpen}
+            onClose={() => setIsOpen(false)}
+            onUserCreated={fetchUsers}
+            userToEdit={editUser}
+          />
 
-          <UserList users={users} />
+          <UserList
+            users={users}
+            onDelete={handleDeleteUser}
+            onEdit={handleEditUser}
+          />
         </Box>
       </Container>
     </Box>

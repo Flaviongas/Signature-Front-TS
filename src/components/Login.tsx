@@ -8,7 +8,8 @@ import Alert from "@mui/material/Alert";
 
 type LoginProps = {
   onLoginSuccess: (token: string) => void;
-  backLink: "https://signature.gidua.xyz" | "http://localhost:8000";
+  // backLink: "https://signature.gidua.xyz" | "http://localhost:8000";
+  backLink: "http://localhost:8000" | "http://localhost:8000";
 };
 
 function LoginForm({ onLoginSuccess, backLink }: LoginProps) {
