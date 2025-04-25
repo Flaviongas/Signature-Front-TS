@@ -25,7 +25,6 @@ type Props = {
 
 function RecipeModalMajor({ isOpen, onClose }: Props) {
   const apiToken = localStorage.getItem("Token");
-  console.log("apiToken", apiToken);
 
   const { selectedMajor } = useContext(MajorContext);
 
@@ -36,11 +35,9 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
   } = useForm<majorForm>({ resolver: zodResolver(majorSchema) });
 
   const apiUrl = import.meta.env.VITE_API_URL + "/api/subjects/";
-  console.log("apiUrl", apiUrl);
 
   // Envía los datos del formulario a la API para crear una asignatura
   const onSubmit = async (formData: majorForm) => {
-    console.log(formData);
 
     try {
       await axios.post(

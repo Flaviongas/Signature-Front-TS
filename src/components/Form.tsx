@@ -17,7 +17,6 @@ type Props = {
 
 function StudentForm({ subjectId, onStudentAdded }: Props) {
   const authToken = localStorage.getItem("Token");
-  console.log("auth_token ", authToken);
   const { selectedMajor } = useContext(MajorContext);
   const apiUrl = import.meta.env.VITE_API_URL + "/api/students/";
   const {

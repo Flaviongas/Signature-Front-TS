@@ -22,7 +22,6 @@ function LoginForm({ onLoginSuccess, backLink }: LoginProps) {
     event.preventDefault();
     setErrorMessage("");
     setIsLoading(true);
-    console.log({ username, password });
 
     try {
       const response = await fetch(`${backLink}/login/`, {

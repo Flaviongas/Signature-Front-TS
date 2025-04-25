@@ -26,7 +26,6 @@ function SubjectsGrid() {
   const { setSubjectData } = useContext(SubjectContext);
 
   const apiUrl = import.meta.env.VITE_API_URL + "/api/subjects/";
-  console.log("apiUrl subjectsgrid: ", apiUrl);
 
   const [shouldRefresh, setShouldRefresh] = useState(false);
 

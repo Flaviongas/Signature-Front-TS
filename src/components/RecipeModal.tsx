@@ -14,14 +14,15 @@ import {
   TableCell,
   Checkbox,
   Box,
+  Input,
 } from "@mui/material";
 import { Student, Attendance, ShortSubject } from "../types";
-import useExcel from "../hooks/useExcel";
 import axios from "axios";
 import Form from "./Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
 import MajorContext from "../contexts/MajorContext";
+import createExcel from "../hooks/createExcel";
 
 type Props = {
   isOpen: boolean;
@@ -36,6 +37,8 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [isPlaceVisible, setIsPlaceVisible] = useState(false);
   const [buttonText, setButtonText] = useState("Agregar Estudiantes");
   const [studentsList, setStudentsList] = useState<Student[]>([]);
+  const [section, setSection] = useState<string>("");
+  const [classLink, setClassLink] = useState<string>("");
   const { selectedMajor } = useContext(MajorContext);
 
   // Reinicia la vista cada vez que se abre el modal
@@ -75,11 +78,14 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
       students: checkedStudents,
     };
 
-    useExcel(attendanceData, ISODate, shortSubject, selectedMajor);
+    createExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink);
 
-    setCheckedStudents([]);
     setSelectedDate("");
+    setCheckedStudents([]);
     onClose();
+    setClassLink("");
+    setSection("");
+    console.log("cleaning up")
   };
 
   // Alterna visibilidad del formulario para agregar estudiantes
@@ -92,6 +98,8 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   function cleanup() {
     setSelectedDate("");
     setCheckedStudents([]);
+    setClassLink("");
+    setSection("");
     onClose();
   }
 
@@ -212,36 +220,75 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
           </TableBody>
         </Table>
       </DialogContent>
+      <DialogActions sx={{ justifyContent: "space-between", p: 2, gap: 1 }}>
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <Input
+            onChange={(e) => setSection(e.currentTarget.value)}
+            sx={{
+              bgcolor: "#f5f5f5",
 
-      <DialogActions sx={{ justifyContent: "flex-end", p: 2, gap: 1 }}>
-        <Button
-          variant="contained"
-          onClick={handleSubmitAttendance}
-          sx={{
-            bgcolor: "#3454D1",
-            "&:hover": { bgcolor: "#2F4BC0" },
-            fontSize: {
-              xs: "0.6rem",
-              sm: "0.875rem",
-            },
-          }}
-        >
-          descargar excel
-        </Button>
-        <Button
-          variant="contained"
-          onClick={onClose}
-          sx={{
-            bgcolor: "#D1495B",
-            "&:hover": { bgcolor: "#C43145" },
-            fontSize: {
-              xs: "0.6rem",
-              sm: "0.875rem",
-            },
-          }}
-        >
-          Cerrar
-        </Button>
+              "&:hover": { bgcolor: "#e0e0e0" },
+              fontSize: {
+                xs: "0.3rem",
+                sm: "0.75rem",
+              },
+              px: 2,
+              py: 1,
+              textAlign: "center",
+              "& input::placeholder": {
+                textAlign: "center",
+              },
+            }}
+            placeholder="Sección (Opcional)"
+          >
+          </Input>
+          <Input
+            onChange={(e) => setClassLink(e.currentTarget.value)}
+            sx={{
+              bgcolor: "#f5f5f5",
+
+              "&:hover": { bgcolor: "#e0e0e0" },
+              fontSize: {
+                xs: "0.3rem",
+                sm: "0.75rem",
+              },
+              px: 2,
+              py: 1,
+            }}
+            placeholder="Link de la Clase (Opcional)"
+          >
+          </Input>
+        </div>
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <Button
+            variant="contained"
+            onClick={handleSubmitAttendance}
+            sx={{
+              bgcolor: "#3454D1",
+              "&:hover": { bgcolor: "#2F4BC0" },
+              fontSize: {
+                xs: "0.6rem",
+                sm: "0.875rem",
+              },
+            }}
+          >
+            descargar excel
+          </Button>
+          <Button
+            variant="contained"
+            onClick={onClose}
+            sx={{
+              bgcolor: "#D1495B",
+              "&:hover": { bgcolor: "#C43145" },
+              fontSize: {
+                xs: "0.6rem",
+                sm: "0.875rem",
+              },
+            }}
+          >
+            Cerrar
+          </Button>
+        </div>
       </DialogActions>
     </Dialog>
   );

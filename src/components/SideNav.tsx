@@ -31,7 +31,6 @@ function SideNav() {
   // Función que se ejecuta al enviar el formulario de búsqueda
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    console.log(searchQuery);
   };
 
   // Renderización condicional según si los datos están cargando o no

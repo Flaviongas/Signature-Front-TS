@@ -18,12 +18,15 @@ const headers = [
   "APELLIDOS",
   "SECCIÓN",
   "ASIGNATURA (Nombre de malla curricular) / NIVEL",
+  "LINK DE CLASE",
 ];
-export default function useExcel(
+export default function createExcel(
   asistenciaData: Attendance,
   ISODate: string,
   shortSubject: ShortSubject,
-  selectedMajors: { id: number; name: string }
+  selectedMajors: { id: number; name: string },
+  section: string,
+  classLink: string
 ) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("ASISTENCIA");
@@ -37,7 +40,7 @@ export default function useExcel(
       .replace("/", ""),
   }));
   //   HOLA
-  ["A1", "B1", "C1", "D1", "E1", "F1", "G1"].map((key) => {
+  ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"].map((key) => {
     worksheet.getCell(key).fill = {
       type: "pattern",
       pattern: "solid",
@@ -61,9 +64,10 @@ export default function useExcel(
       DV: student.dv,
       NOMBRES: student.first_name + " " + student.second_name,
       APELLIDOS: student.last_name + " " + student.second_last_name,
-      SECCIÓN: "1",
+      SECCIÓN: section ? section : "1",
       ASIGNATURA_Nombre_de_malla_curricular__NIVEL:
         shortSubject?.name.toUpperCase(),
+      LINK_DE_CLASE: classLink ? classLink : "",
     });
   });
   worksheet.columns.forEach((column) => {
@@ -105,10 +109,10 @@ export default function useExcel(
       `REGISTROS DE ASISTENCIA - SAAC ( ${weekday
         .toString()
         .toUpperCase()} ${ISODate.split("T")[0]
-        .split("-")
-        .reverse()
-        .join("-")
-        .slice(0, 5)} ${selectedMajors.name} ).xlsx`
+          .split("-")
+          .reverse()
+          .join("-")
+          .slice(0, 5)} ${selectedMajors.name} ).xlsx`
     );
   }
   generateExcel();
