@@ -25,7 +25,6 @@ type Props = {
 
 function RecipeModalMajor({ isOpen, onClose }: Props) {
   const apiToken = localStorage.getItem("Token");
-  console.log("apiToken", apiToken);
 
   const { selectedMajor } = useContext(MajorContext);
 
@@ -40,7 +39,8 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
 
   // Envía los datos del formulario a la API para crear una asignatura
   const onSubmit = async (formData: majorForm) => {
-    console.log(formData);
+    console.log("formdata" + formData);
+    console.log("formdata" + selectedMajor.id);
 
     try {
       await axios.post(
@@ -56,8 +56,11 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
           },
         }
       );
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error(
+        "Error al crear asignatura:",
+        error.response?.data || error.message
+      );
     }
 
     onClose();

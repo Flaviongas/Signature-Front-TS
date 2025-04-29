@@ -20,7 +20,7 @@ export type Major = {
   id: number;
   name: string;
   faculty: string;
-  subjects: [];
+  subjects: Subject[];
 };
 
 export type Subject = {
@@ -45,4 +45,5 @@ export type User = {
   id: number;
   username: string;
   password: string;
+  majors: Major[];
 };
