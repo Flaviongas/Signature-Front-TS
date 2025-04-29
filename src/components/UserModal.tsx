@@ -57,41 +57,26 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
       fetchMajors();
       if (userToEdit) {
         setUsername(userToEdit.username);
-      } else {
-        setUsername("");
-      }
-      setPassword("");
-      setConfirmPassword("");
-      setErrorMessage(null);
-      setSuccessMessage(null);
-      setSelectedMajors([]);
-    }
-  }, [open, userToEdit]);
 
-  useEffect(() => {
-    if (open) {
-      const fetchMajors = async () => {
-        try {
-          const response = await getMajors();
-          setAvailableMajors(response.data);
-        } catch (error) {
-          console.error("Failed to load majors:", error);
+        if (userToEdit.majors) {
+          // 👇 IMPORTANTE: setear las majors que ya tiene
+          setSelectedMajors(
+            userToEdit.majors.map((major) => ({
+              id: major.id,
+              name: major.name,
+            }))
+          );
+        } else {
+          setSelectedMajors([]);
         }
-      };
-
-      fetchMajors();
-
-      // Resto del reseteo del modal
-      if (userToEdit) {
-        setUsername(userToEdit.username);
       } else {
         setUsername("");
+        setSelectedMajors([]);
       }
       setPassword("");
       setConfirmPassword("");
       setErrorMessage(null);
       setSuccessMessage(null);
-      setSelectedMajors([]); // limpiar selección si es nuevo
     }
   }, [open, userToEdit]);
 
@@ -154,7 +139,10 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
     }
 
     try {
-      const userPayload: any = { username };
+      const userPayload: any = {
+        username,
+        major_ids: selectedMajors.map((major) => major.id),
+      };
 
       if (password) {
         userPayload.password = password;
