@@ -93,7 +93,6 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
     setOpenSnackbar(false);
     onClose();
   };
-  console.log("Editing user:", editingUser);
 
   const handleCreateUser = async () => {
     setErrorMessage(null);
@@ -174,8 +173,9 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
           }
         } else {
           setErrorMessage(
-            error.response.data.password?.[0] || "Error al crear el usuario"
+            error.response.data.password?.[0] || error.response.data.majors
           );
+          
         }
         setOpenSnackbar(true);
       } else {
@@ -278,13 +278,11 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
       <DialogActions sx={{ p: 2 }}>
         <Button
           variant="contained"
+          color="secondary"
           onClick={handleCreateUser}
           disabled={loading}
           sx={{
-            bgcolor: "#3454D1",
-            "&:hover": {
-              bgcolor: "#2F4BC0",
-            },
+            fontWeight:"bold"
           }}
         >
           {editingUser ? "Guardar cambios" : "Crear"}
@@ -292,12 +290,10 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
         <Button
           variant="contained"
           onClick={handleCloseModal}
+          color="primary"
           disabled={loading}
           sx={{
-            backgroundColor: "#D1495B",
-            "&:hover": {
-              backgroundColor: "#C43145",
-            },
+              fontWeight:"bold"
           }}
         >
           Cancelar

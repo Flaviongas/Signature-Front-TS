@@ -12,6 +12,8 @@ import { User, Major } from "../types";
 import MajorContext from "../contexts/MajorContext";
 import { getUser } from "../services/userService";
 
+import theme from '../theme.ts'
+
 function SideNav() {
   const { setSelectedMajor } = useContext(MajorContext);
 
@@ -69,7 +71,7 @@ function SideNav() {
         borderRadius: 0,
       }}
     >
-      <Typography variant="h5" fontWeight={600} textAlign="center" mb={2}>
+      <Typography variant="h5"  sx={{ fontWeight: 600, textAlign: "center", mb: 2 }} >
         Carreras
       </Typography>
       <form onSubmit={handleSubmit}>
@@ -104,14 +106,16 @@ function SideNav() {
                 borderRadius: 2,
                 mb: 1,
                 "&:hover": {
-                  bgcolor: "#3454D1",
+                  bgcolor: theme.palette.primary.main,
                   color: "white",
                 },
               }}
             >
               <ListItemText
                 primary={
-                  <Typography textAlign="center">{major.name}</Typography>
+                  <Typography textAlign="center" sx={{
+                    fontWeight: "bold",
+                  }}>{major.name}</Typography>
                 }
               />
             </ListItemButton>

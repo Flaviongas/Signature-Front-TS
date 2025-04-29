@@ -11,6 +11,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { User } from "../types";
+import theme from "../theme.ts";
 
 interface Props {
   users: User[];
@@ -18,9 +19,10 @@ interface Props {
   onEdit: (user: User) => void;
 }
 
+
 // Definir estilos reutilizables para las celdas y el encabezado
 const headerCellStyle = {
-  backgroundColor: "#3454D1",
+  backgroundColor: theme.palette.secondary.main,
   color: "#fff",
   fontWeight: "bold",
   fontSize: "1rem",
@@ -72,15 +74,14 @@ function UserList({ users, onDelete, onEdit }: Props) {
               <TableCell sx={bodyCellStyle}>{user.username}</TableCell>
               <TableCell sx={bodyCellStyle} align="center">
                 <IconButton
-                  color="primary"
                   onClick={() => onEdit(user)}
                   sx={{
                     transition: "all 0.3s ease",
-                    backgroundColor: "#d84b20",
+                    backgroundColor: "#f84b20",
                     color: "white",
                     "&:hover": {
-                      backgroundColor: "#c35b1f",
-                      transform: "scale(1.1)",
+                      backgroundColor: "#c35011",
+                      
                     },
                   }}
                 >
@@ -89,15 +90,13 @@ function UserList({ users, onDelete, onEdit }: Props) {
               </TableCell>
               <TableCell sx={bodyCellStyle} align="center">
                 <IconButton
-                  color="error"
                   onClick={() => onDelete(user.id)}
                   sx={{
                     transition: "all 0.3s ease",
-                    backgroundColor: "#C43145",
+                    backgroundColor:theme.palette.primary.main,
                     color: "white",
                     "&:hover": {
-                      backgroundColor: "#a42f3a",
-                      transform: "scale(1.1)",
+                      backgroundColor: theme.palette.primary.dark,
                     },
                   }}
                 >

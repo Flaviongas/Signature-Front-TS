@@ -65,15 +65,13 @@ function UserManagementPage() {
         >
           <Button
             variant="contained"
+            color="secondary"
             startIcon={<ArrowBackIcon />}
             onClick={() => navigate(-1)}
             sx={{
               textTransform: "none",
               ml: 3,
-              bgcolor: "#3454D1",
-              "&:hover": {
-                bgcolor: "#2F4BC0",
-              },
+              fontWeight: "bold",
             }}
           >
             Volver
@@ -93,12 +91,10 @@ function UserManagementPage() {
 
           <Button
             variant="contained"
+            color="secondary"
             sx={{
               my: 5,
-              bgcolor: "#3454D1",
-              "&:hover": {
-                bgcolor: "#2F4BC0",
-              },
+              fontWeight: "bold",
             }}
             onClick={() => {
               setEditUser(null);

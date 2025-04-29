@@ -233,12 +233,10 @@ function SubjectsGrid() {
                     </Typography>
                     <Button
                       variant="contained"
+                      color="secondary"
                       sx={{
                         width: "75%",
-                        bgcolor: "#3454D1",
-                        ":hover": {
-                          bgcolor: "#2F4BC0",
-                        },
+                        fontWeight: "bold",
                       }}
                       onClick={() =>
                         handleOpenRecipeModal(
@@ -294,16 +292,16 @@ function SubjectsGrid() {
         </Typography>
       </Box>
     );
-
-  return (
-    <Container
+    
+    return (
+      <Container
       sx={{
         position: "relative",
         padding: 3,
         display: "flex",
         flexDirection: "column",
         justifyContent: {
-          xs: "center",
+        xs: "center",
         },
       }}
     >
@@ -314,13 +312,11 @@ function SubjectsGrid() {
       >
         <Button
           variant="contained"
+          color="secondary"
           sx={{
             minWidth: "150px",
             px: 5,
-            bgcolor: "#3454D1",
-            "&:hover": {
-              bgcolor: "#2F4BC0",
-            },
+            fontWeight: "bold",
           }}
           onClick={() => navigate("/users")}
         >

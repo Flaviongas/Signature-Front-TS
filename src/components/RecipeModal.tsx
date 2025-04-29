@@ -154,10 +154,10 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
 
         <Button
           variant="contained"
+          color="secondary"
           sx={{
             mb: 2,
-            bgcolor: "#3454D1",
-            "&:hover": { bgcolor: "#2F4BC0" },
+            fontWeight: 'bold',
             fontSize: {
               xs: "0.75rem",
               sm: "0.875rem",
@@ -262,10 +262,10 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
         <div style={{ display: "flex", gap: "1rem" }}>
           <Button
             variant="contained"
+            color ="secondary"
             onClick={handleSubmitAttendance}
             sx={{
-              bgcolor: "#3454D1",
-              "&:hover": { bgcolor: "#2F4BC0" },
+              fontWeight: "bold",
               fontSize: {
                 xs: "0.6rem",
                 sm: "0.875rem",
@@ -277,9 +277,9 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
           <Button
             variant="contained"
             onClick={onClose}
+            color="primary"
             sx={{
-              bgcolor: "#D1495B",
-              "&:hover": { bgcolor: "#C43145" },
+              fontWeight:"bold",
               fontSize: {
                 xs: "0.6rem",
                 sm: "0.875rem",

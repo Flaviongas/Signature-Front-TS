@@ -9,6 +9,7 @@ import logo from "../assets/signature.svg";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
+import theme  from "../theme.ts"
 
 // type Props = {};
 
@@ -30,7 +31,7 @@ function MainContent() {
   const drawerContent = (
     <Box
       sx={{
-        bgcolor: "#3454D1",
+        backgroundColor: theme.palette.secondary.main,
         height: "100%",
       }}
     >
@@ -49,14 +50,9 @@ function MainContent() {
       <Box p={2} mt={1}>
         <Button
           variant="contained"
+          color="primary"
           onClick={logOut}
-          sx={{
-            backgroundColor: "#D1495B",
-            width: "100%",
-            "&:hover": {
-              backgroundColor: "#C43145",
-            },
-          }}
+          fullWidth
         >
           Cerrar sesión
         </Button>
@@ -98,7 +94,6 @@ function MainContent() {
                 "& .MuiDrawer-paper": {
                   boxSizing: "border-box",
                   width: 288,
-                  bgcolor: "#3454D1",
                 },
               }}
             >
