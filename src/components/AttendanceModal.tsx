@@ -39,6 +39,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [studentsList, setStudentsList] = useState<Student[]>([]);
   const [section, setSection] = useState<string>("");
   const [classLink, setClassLink] = useState<string>("");
+  const [comment, setComment] = useState<string>("");
   const { selectedMajor } = useContext(MajorContext);
 
   // Reinicia la vista cada vez que se abre el modal
@@ -78,7 +79,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
       students: checkedStudents,
     };
 
-    createExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink);
+    createExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink, comment);
 
     setSelectedDate("");
     setCheckedStudents([]);
@@ -256,6 +257,22 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
               py: 1,
             }}
             placeholder="Link de la Clase (Opcional)"
+          >
+          </Input>
+          <Input
+            onChange={(e) => setComment(e.currentTarget.value)}
+            sx={{
+              bgcolor: "#f5f5f5",
+
+              "&:hover": { bgcolor: "#e0e0e0" },
+              fontSize: {
+                xs: "0.3rem",
+                sm: "0.75rem",
+              },
+              px: 2,
+              py: 1,
+            }}
+            placeholder="Comentario (Opcional)"
           >
           </Input>
         </div>

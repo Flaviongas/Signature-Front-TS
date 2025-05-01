@@ -23,7 +23,7 @@ type Props = {
   onClose: () => void;
 };
 
-function RecipeModalMajor({ isOpen, onClose }: Props) {
+export default function AddMajorModal({ isOpen, onClose }: Props) {
   const apiToken = localStorage.getItem("Token");
 
   const { selectedMajor } = useContext(MajorContext);
@@ -110,4 +110,3 @@ function RecipeModalMajor({ isOpen, onClose }: Props) {
   );
 }
 
-export default RecipeModalMajor;
