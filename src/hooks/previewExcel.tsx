@@ -1,7 +1,6 @@
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 
-import * as ExcelJS from "exceljs";
 import { Attendance, ShortSubject, Student } from "../types";
 const DAYS = [
   "Domingo",
@@ -45,74 +44,7 @@ export default function previewExcel(
   comment: string
 ) {
   console.log("asistenciaData", asistenciaData);
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet("ASISTENCIA");
 
-  worksheet.columns = headers.map((header_name) => ({
-    header: header_name,
-    key: header_name
-      .replaceAll(" ", "_")
-      .replace("(", "")
-      .replace(")", "")
-      .replace("/", ""),
-  }));
-  ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"].map((key) => {
-    worksheet.getCell(key).fill = {
-      type: "pattern",
-      pattern: "solid",
-      fgColor: { argb: "c00000" },
-    };
-    worksheet.getCell(key).font = {
-      color: { argb: "FFFFFF" },
-      bold: true,
-    };
-  });
-
-  asistenciaData.students.forEach((student: Student) => {
-    worksheet.addRow({
-      FECHA: asistenciaData.fecha
-        .split("T")[0]
-        .replaceAll("-", "/")
-        .split("/")
-        .reverse()
-        .join("/"),
-      RUT_sin_puntos: student.rut.toString(),
-      DV: student.dv,
-      NOMBRES: student.first_name + " " + student.second_name,
-      APELLIDOS: student.last_name + " " + student.second_last_name,
-      SECCIÓN: section ? section : "1",
-      ASIGNATURA_Nombre_de_malla_curricular__NIVEL:
-        shortSubject?.name.toUpperCase(),
-      LINK_DE_CLASE: classLink ? classLink : "",
-      COMENTARIO: comment ? comment : "",
-    });
-  });
-  worksheet.columns.forEach((column) => {
-    if (!column.values) return null;
-    const lengths = column.values.map((v) => (v ? v.toString().length + 7 : 0));
-    const maxLength = Math.max(...lengths.filter((v) => typeof v === "number"));
-    column.width = maxLength;
-  });
-  workbook.eachSheet((sheet) => {
-    sheet.eachRow((row) => {
-      row.eachCell((cell) => {
-        if (!cell.font?.size) {
-          cell.font = Object.assign(cell.font || {}, { size: 11 });
-        }
-        if (!cell.font?.name) {
-          cell.font = Object.assign(cell.font || {}, {
-            name: "Century Gothic",
-          });
-        }
-        cell.border = {
-          top: { style: "thin" },
-          left: { style: "thin" },
-          bottom: { style: "thin" },
-          right: { style: "thin" },
-        };
-      });
-    });
-  });
   const pdfData: rowData[] = [];
   asistenciaData.students.forEach((student: Student) => {
     const rowData = {
@@ -133,7 +65,6 @@ export default function previewExcel(
       COMENTARIO: comment ? comment : "",
     };
 
-    worksheet.addRow(rowData);
     pdfData.push(rowData);
   });
 
