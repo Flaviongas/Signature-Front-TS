@@ -293,6 +293,20 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
           <Button
             variant="contained"
             color ="secondary"
+            onClick={previewAttendance}
+            sx={{
+              bgcolor: "#3454D1",
+              "&:hover": { bgcolor: "#2F4BC0" },
+              fontSize: {
+                xs: "0.6rem",
+                sm: "0.875rem",
+              },
+            }}
+          >
+            Previsualizar excel
+          </Button>
+          <Button
+            variant="contained"
             onClick={handleSubmitAttendance}
             sx={{
               fontWeight: "bold",

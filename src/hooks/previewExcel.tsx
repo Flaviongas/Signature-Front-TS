@@ -10,7 +10,7 @@ const DAYS = [
   "Miércoles",
   "Jueves",
   "Viernes",
-  "Sábado",
+  "Sábado",git 
 ];
 const headers = [
   "FECHA",

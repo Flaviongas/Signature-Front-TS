@@ -57,7 +57,7 @@ function SubjectsGrid() {
   // Actualiza el contexto de materias cada vez que cambian los datos o la carrera
   useEffect(() => {
     setSubjectData(filteredSubjects);
-  }, [selectedMajor, data, setSubjectData]);
+  }, [selectedMajor, data, setSubjectData, filteredSubjects]);
 
   // Abre el modal con estudiantes de una materia específica
   const handleOpenModal = (
