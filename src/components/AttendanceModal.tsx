@@ -20,10 +20,11 @@ import { Student, Attendance, ShortSubject } from "../types";
 import axios from "axios";
 import Form from "./Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faTimes, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import MajorContext from "../contexts/MajorContext";
-import createExcel from "../hooks/createExcel";
 import previewExcel from "../hooks/previewExcel";
+import downloadExcel from "../hooks/downloadExcel";
+import sendExcel from "../hooks/sendExcel";
 
 type Props = {
   isOpen: boolean;
@@ -41,6 +42,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [section, setSection] = useState<string>("");
   const [classLink, setClassLink] = useState<string>("");
   const [comment, setComment] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const { selectedMajor } = useContext(MajorContext);
 
   // Reinicia la vista cada vez que se abre el modal
@@ -71,34 +73,40 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
     setSelectedDate(event.target.value);
   };
 
-  // Genera y descarga archivo Excel con la asistencia
-  const previewAttendance = () => {
-
+  const dataExcel = () => {
     const currentDate = new Date();
     const ISODate = currentDate.toISOString();
     const attendanceData: Attendance = {
       fecha: selectedDate ? new Date(selectedDate).toISOString() : ISODate,
       students: checkedStudents,
     };
+    return { attendanceData: attendanceData, ISODate: ISODate }
+  }
 
-    previewExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink, comment);
 
+  const sendEmail = () => {
+    const { attendanceData, ISODate } = dataExcel();
+
+    sendExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink, comment, email);
   };
-  const handleSubmitAttendance = () => {
-    const currentDate = new Date();
-    const ISODate = currentDate.toISOString();
-    const attendanceData: Attendance = {
-      fecha: selectedDate ? new Date(selectedDate).toISOString() : ISODate,
-      students: checkedStudents,
-    };
 
-    createExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink, comment);
+  const previewAttendance = () => {
+    const { attendanceData, ISODate } = dataExcel();
+    previewExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink, comment);
+  };
+
+  // Genera y descarga archivo Excel con la asistencia
+  const handleSubmitAttendance = () => {
+
+    const { attendanceData, ISODate } = dataExcel();
+    downloadExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink, comment);
 
     setSelectedDate("");
     setCheckedStudents([]);
     onClose();
     setClassLink("");
     setSection("");
+    setComment("");
     console.log("cleaning up")
   };
 
@@ -142,7 +150,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   };
 
   return (
-    <Dialog open={isOpen} onClose={cleanup} maxWidth="lg" fullWidth>
+    <Dialog open={isOpen} onClose={cleanup} maxWidth="xl" fullWidth>
       <DialogTitle
         sx={{
           display: "flex",
@@ -246,6 +254,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
                 xs: "0.3rem",
                 sm: "0.75rem",
               },
+              width: "100px",
               px: 2,
               py: 1,
               textAlign: "center",
@@ -253,7 +262,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
                 textAlign: "center",
               },
             }}
-            placeholder="Sección (Opcional)"
+            placeholder="Sección"
           >
           </Input>
           <Input
@@ -269,7 +278,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
               px: 2,
               py: 1,
             }}
-            placeholder="Link de la Clase (Opcional)"
+            placeholder="Link de la Clase"
           >
           </Input>
           <Input
@@ -285,11 +294,41 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
               px: 2,
               py: 1,
             }}
-            placeholder="Comentario (Opcional)"
+            placeholder="Comentario"
           >
           </Input>
         </div>
         <div style={{ display: "flex", gap: "1rem" }}>
+          <Input
+            onChange={(e) => setEmail(e.currentTarget.value)}
+            sx={{
+              bgcolor: "#f5f5f5",
+
+              "&:hover": { bgcolor: "#e0e0e0" },
+              fontSize: {
+                xs: "0.3rem",
+                sm: "0.75rem",
+              },
+              px: 2,
+              py: 1,
+            }}
+            placeholder="Enviar por correo"
+          >
+          </Input>
+          <Button
+            variant="contained"
+            onClick={sendEmail}
+            sx={{
+              bgcolor: "#3454D1",
+              "&:hover": { bgcolor: "#2F4BC0" },
+              fontSize: {
+                xs: "0.6rem",
+                sm: "0.875rem",
+              },
+            }}
+          >
+            <FontAwesomeIcon icon={faEnvelope} />
+          </Button>
           <Button
             variant="contained"
             color ="secondary"
@@ -303,7 +342,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
               },
             }}
           >
-            Previsualizar excel
+            Previsualizar
           </Button>
           <Button
             variant="contained"
@@ -316,7 +355,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
               },
             }}
           >
-            descargar excel
+            descargar
           </Button>
           <Button
             variant="contained"
