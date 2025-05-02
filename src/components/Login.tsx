@@ -41,6 +41,7 @@ function LoginForm({ onLoginSuccess, backLink }: LoginProps) {
       // Guarda el token y notifica al componente padre
       localStorage.setItem("Token", data.token);
       localStorage.setItem("UserId", data.user.id.toString());
+      localStorage.setItem("IsSuperUser", data.user.is_superuser.toString());
       onLoginSuccess(data.token.toString());
     } catch (error) {
       if (error instanceof Error) {

@@ -34,7 +34,7 @@ type rowData = {
   ASIGNATURA_Nombre_de_malla_curricular__NIVEL: string;
   LINK_DE_CLASE: string;
   COMENTARIO: string;
-}
+};
 export default function previewExcel(
   asistenciaData: Attendance,
   ISODate: string,
@@ -137,25 +137,23 @@ export default function previewExcel(
     pdfData.push(rowData);
   });
 
-
   async function generatePreview() {
     const weekday_number = new Date(asistenciaData.fecha).getDay();
     const weekday = DAYS[weekday_number];
     const filename = `REGISTROS DE ASISTENCIA - SAAC (${weekday
       .toString()
       .toUpperCase()} ${ISODate.split("T")[0]
-        .split("-")
-        .reverse()
-        .join("-")
-        .slice(0, 5)} ${selectedMajors.name})`;
-
+      .split("-")
+      .reverse()
+      .join("-")
+      .slice(0, 5)} ${selectedMajors.name})`;
 
     generatePdfPreview(pdfData, filename);
   }
 
   function generatePdfPreview(data: rowData[], title: string) {
     const doc = new jsPDF({
-      orientation: 'landscape'
+      orientation: "landscape",
     });
 
     doc.setFontSize(14);
@@ -166,7 +164,7 @@ export default function previewExcel(
     doc.text("NO DESCARGAR - SOLO PARA PREVISUALIZACIÓN", 14, 8);
 
     const pdfHeaders = headers;
-    const tableData = data.map(row => [
+    const tableData = data.map((row) => [
       row.FECHA,
       row.RUT_sin_puntos,
       row.DV,
@@ -175,24 +173,24 @@ export default function previewExcel(
       row.SECCIÓN,
       row.ASIGNATURA_Nombre_de_malla_curricular__NIVEL,
       row.LINK_DE_CLASE,
-      row.COMENTARIO
+      row.COMENTARIO,
     ]);
 
     autoTable(doc, {
       head: [pdfHeaders],
       body: tableData,
       startY: 20,
-      theme: 'grid',
+      theme: "grid",
       styles: {
         fontSize: 8,
         cellPadding: 2,
-        overflow: 'linebreak',
-        font: 'helvetica'
+        overflow: "linebreak",
+        font: "helvetica",
       },
       headStyles: {
         fillColor: [192, 0, 0],
         textColor: [255, 255, 255],
-        fontStyle: 'bold'
+        fontStyle: "bold",
       },
       columnStyles: {
         0: { cellWidth: 18 },
@@ -202,12 +200,12 @@ export default function previewExcel(
         4: { cellWidth: 35 },
         5: { cellWidth: 20 },
         6: { cellWidth: 45 },
-        7: { cellWidth: 40 }
-      }
+        7: { cellWidth: 40 },
+      },
     });
 
-    const pdfUrl = doc.output('bloburl');
-    window.open(pdfUrl.toString(), '_blank');
+    const pdfUrl = doc.output("bloburl");
+    window.open(pdfUrl.toString(), "_blank");
   }
 
   generatePreview();

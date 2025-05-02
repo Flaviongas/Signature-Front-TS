@@ -2,11 +2,13 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../components/Login";
 import MainContent from "./MainContent";
 import UserManagementPage from "./UserManagementPage";
-// import { useNavigate } from "react-router-dom";
 
-// Utilidad para chequear si hay token en localStorage
 const isAuthenticated = () => {
   return !!localStorage.getItem("Token");
+};
+
+const isSuperUser = () => {
+  return localStorage.getItem("IsSuperUser") === "true";
 };
 
 function AppRoutes() {
@@ -41,7 +43,11 @@ function AppRoutes() {
         path="/users"
         element={
           isAuthenticated() ? (
-            <UserManagementPage />
+            isSuperUser() ? (
+              <UserManagementPage />
+            ) : (
+              <Navigate to="/" replace />
+            )
           ) : (
             <Navigate to="/login" replace />
           )
