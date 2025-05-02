@@ -331,7 +331,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
           </Button>
           <Button
             variant="contained"
-            color ="secondary"
+            color="secondary"
             onClick={previewAttendance}
             sx={{
               bgcolor: "#3454D1",
@@ -356,20 +356,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
             }}
           >
             descargar
-          </Button>
-          <Button
-            variant="contained"
-            onClick={onClose}
-            color="primary"
-            sx={{
-              fontWeight:"bold",
-              fontSize: {
-                xs: "0.6rem",
-                sm: "0.875rem",
-              },
-            }}
-          >
-            Cerrar
           </Button>
         </div>
       </DialogActions>
