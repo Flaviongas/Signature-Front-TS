@@ -81,7 +81,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
       students: checkedStudents,
     };
 
-    previewExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink);
+    previewExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink, comment);
 
   };
   const handleSubmitAttendance = () => {

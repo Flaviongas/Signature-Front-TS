@@ -21,6 +21,7 @@ const headers = [
   "SECCIÓN",
   "ASIGNATURA/ NIVEL",
   "LINK DE CLASE",
+  "COMENTARIO",
 ];
 
 type rowData = {
@@ -32,6 +33,7 @@ type rowData = {
   SECCIÓN: string;
   ASIGNATURA_Nombre_de_malla_curricular__NIVEL: string;
   LINK_DE_CLASE: string;
+  COMENTARIO: string;
 }
 export default function previewExcel(
   asistenciaData: Attendance,
@@ -39,8 +41,10 @@ export default function previewExcel(
   shortSubject: ShortSubject,
   selectedMajors: { id: number; name: string },
   section: string,
-  classLink: string
+  classLink: string,
+  comment: string
 ) {
+  console.log("asistenciaData", asistenciaData);
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("ASISTENCIA");
 
@@ -80,6 +84,7 @@ export default function previewExcel(
       ASIGNATURA_Nombre_de_malla_curricular__NIVEL:
         shortSubject?.name.toUpperCase(),
       LINK_DE_CLASE: classLink ? classLink : "",
+      COMENTARIO: comment ? comment : "",
     });
   });
   worksheet.columns.forEach((column) => {
@@ -125,6 +130,7 @@ export default function previewExcel(
       ASIGNATURA_Nombre_de_malla_curricular__NIVEL:
         shortSubject?.name.toUpperCase(),
       LINK_DE_CLASE: classLink ? classLink : "",
+      COMENTARIO: comment ? comment : "",
     };
 
     worksheet.addRow(rowData);
@@ -168,7 +174,8 @@ export default function previewExcel(
       row.APELLIDOS,
       row.SECCIÓN,
       row.ASIGNATURA_Nombre_de_malla_curricular__NIVEL,
-      row.LINK_DE_CLASE
+      row.LINK_DE_CLASE,
+      row.COMENTARIO
     ]);
 
     autoTable(doc, {
