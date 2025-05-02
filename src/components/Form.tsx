@@ -34,12 +34,12 @@ function StudentForm({ subjectId, onStudentAdded }: Props) {
         {
           subjects: [subjectId],
           rut: formData.rut,
-          checkDigit: formData.dv,
-          firstName: formData.first_name,
-          secondName: formData.second_name,
-          lastName: formData.last_name,
-          secondLastName: formData.second_last_name,
-          majorId: selectedMajor.id,
+          dv: formData.dv,
+          first_name: formData.first_name,
+          second_name: formData.second_name,
+          last_name: formData.last_name,
+          second_last_name: formData.second_last_name,
+          major: selectedMajor.id,
         },
         {
           headers: {

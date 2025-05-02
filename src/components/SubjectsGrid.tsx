@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import {
   Box,
   Typography,
@@ -12,7 +12,6 @@ import axios from "axios";
 
 import MajorContext from "../contexts/MajorContext";
 import { ShortSubject, Student, Subject } from "../types";
-import SubjectContext from "../contexts/SubjectContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsRotate, faPlus } from "@fortawesome/free-solid-svg-icons";
 import useGetData from "../hooks/useGetData";
@@ -25,7 +24,6 @@ import useIsSuperUser from "../hooks/useIsSuperUser";
 
 function SubjectsGrid() {
   const { selectedMajor } = useContext(MajorContext);
-  const { setSubjectData } = useContext(SubjectContext);
   const navigate = useNavigate();
   const isSuperUser = useIsSuperUser();
 
@@ -56,10 +54,6 @@ function SubjectsGrid() {
     subject.major.includes(selectedMajor.id)
   );
 
-  // Actualiza el contexto de materias cada vez que cambian los datos o la carrera
-  useEffect(() => {
-    setSubjectData(filteredSubjects);
-  }, [selectedMajor, data, setSubjectData, filteredSubjects]);
 
   // Abre el modal con estudiantes de una materia específica
   const handleOpenModal = (

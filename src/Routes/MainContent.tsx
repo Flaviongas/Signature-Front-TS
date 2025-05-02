@@ -1,24 +1,21 @@
 import { useState } from "react";
 import SideNav from "../components/SideNav";
 import Dashboard from "../components/Dashboard";
-import { MajorShort, Subject } from "../types";
+import { MajorShort } from "../types";
 import MajorContext from "../contexts/MajorContext";
-import SubjectContext from "../contexts/SubjectContext";
 
 import logo from "../assets/signature.svg";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import theme  from "../theme.ts"
+import theme from "../theme.ts"
 
-// type Props = {};
 
 function MainContent() {
   const [selectedMajor, setSelectedMajor] = useState<MajorShort>({
     id: 0,
     name: "",
   });
-  const [SubjectData, setSubjectData] = useState<Subject[]>([]);
 
   const logOut = () => {
     localStorage.setItem("Token", "");
@@ -62,51 +59,49 @@ function MainContent() {
 
   return (
     <MajorContext.Provider value={{ selectedMajor, setSelectedMajor }}>
-      <SubjectContext.Provider value={{ SubjectData, setSubjectData }}>
-        <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
-          <Box
-            component="nav"
-            sx={{ width: { md: 288 }, flexShrink: { md: 0 } }}
+      <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
+        <Box
+          component="nav"
+          sx={{ width: { md: 288 }, flexShrink: { md: 0 } }}
+        >
+          {/* Drawer para móviles */}
+          <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{ keepMounted: true }}
+            sx={{
+              display: { xs: "block", md: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: 240,
+              },
+            }}
           >
-            {/* Drawer para móviles */}
-            <Drawer
-              variant="temporary"
-              open={mobileOpen}
-              onClose={handleDrawerToggle}
-              ModalProps={{ keepMounted: true }}
-              sx={{
-                display: { xs: "block", md: "none" },
-                "& .MuiDrawer-paper": {
-                  boxSizing: "border-box",
-                  width: 240,
-                },
-              }}
-            >
-              {drawerContent}
-            </Drawer>
+            {drawerContent}
+          </Drawer>
 
-            {/* Drawer permanente para desktop */}
-            <Drawer
-              variant="permanent"
-              open
-              sx={{
-                display: { xs: "none", md: "block" },
-                "& .MuiDrawer-paper": {
-                  boxSizing: "border-box",
-                  width: 288,
-                },
-              }}
-            >
-              {drawerContent}
-            </Drawer>
-          </Box>
-
-          {/* Contenido principal */}
-          <Box sx={{ flex: 1, bgcolor: "#EFEFEF", overflowY: "auto" }}>
-            <Dashboard onDrawerToggle={handleDrawerToggle} />
-          </Box>
+          {/* Drawer permanente para desktop */}
+          <Drawer
+            variant="permanent"
+            open
+            sx={{
+              display: { xs: "none", md: "block" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: 288,
+              },
+            }}
+          >
+            {drawerContent}
+          </Drawer>
         </Box>
-      </SubjectContext.Provider>
+
+        {/* Contenido principal */}
+        <Box sx={{ flex: 1, bgcolor: "#EFEFEF", overflowY: "auto" }}>
+          <Dashboard onDrawerToggle={handleDrawerToggle} />
+        </Box>
+      </Box>
     </MajorContext.Provider>
   );
 }
