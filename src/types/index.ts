@@ -47,3 +47,9 @@ export type User = {
   password: string;
   majors: Major[];
 };
+
+export type createUserPayload = {
+  username: string;
+  password?: string;
+  major_ids: number[];
+};

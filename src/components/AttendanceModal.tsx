@@ -23,6 +23,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faTimes } from "@fortawesome/free-solid-svg-icons";
 import MajorContext from "../contexts/MajorContext";
 import createExcel from "../hooks/createExcel";
+import previewExcel from "../hooks/previewExcel";
 
 type Props = {
   isOpen: boolean;
@@ -71,6 +72,18 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   };
 
   // Genera y descarga archivo Excel con la asistencia
+  const previewAttendance = () => {
+
+    const currentDate = new Date();
+    const ISODate = currentDate.toISOString();
+    const attendanceData: Attendance = {
+      fecha: selectedDate ? new Date(selectedDate).toISOString() : ISODate,
+      students: checkedStudents,
+    };
+
+    previewExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink);
+
+  };
   const handleSubmitAttendance = () => {
     const currentDate = new Date();
     const ISODate = currentDate.toISOString();
@@ -279,6 +292,20 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
         <div style={{ display: "flex", gap: "1rem" }}>
           <Button
             variant="contained"
+            onClick={previewAttendance}
+            sx={{
+              bgcolor: "#3454D1",
+              "&:hover": { bgcolor: "#2F4BC0" },
+              fontSize: {
+                xs: "0.6rem",
+                sm: "0.875rem",
+              },
+            }}
+          >
+            Previsualizar excel
+          </Button>
+          <Button
+            variant="contained"
             onClick={handleSubmitAttendance}
             sx={{
               bgcolor: "#3454D1",
@@ -290,20 +317,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
             }}
           >
             descargar excel
-          </Button>
-          <Button
-            variant="contained"
-            onClick={onClose}
-            sx={{
-              bgcolor: "#D1495B",
-              "&:hover": { bgcolor: "#C43145" },
-              fontSize: {
-                xs: "0.6rem",
-                sm: "0.875rem",
-              },
-            }}
-          >
-            Cerrar
           </Button>
         </div>
       </DialogActions>
