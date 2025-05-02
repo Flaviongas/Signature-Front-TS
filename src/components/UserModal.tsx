@@ -13,7 +13,7 @@ import {
 import { useState } from "react";
 import { createUser, updateUser } from "../services/userService";
 import { getMajors } from "../services/majorService";
-import { User } from "../types";
+import { createUserPayload, User } from "../types";
 import { useEffect } from "react";
 
 type Props = {
@@ -138,7 +138,7 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
     }
 
     try {
-      const userPayload: any = {
+      const userPayload: createUserPayload = {
         username,
         major_ids: selectedMajors.map((major) => major.id),
       };
@@ -208,8 +208,8 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
             errorMessage && !username
               ? "El nombre de usuario es obligatorio."
               : errorMessage && !validateUsername(username)
-              ? "El nombre de usuario solo puede contener letras y números."
-              : ""
+                ? "El nombre de usuario solo puede contener letras y números."
+                : ""
           }
         />
         <TextField

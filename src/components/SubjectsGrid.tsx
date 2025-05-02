@@ -13,13 +13,13 @@ import axios from "axios";
 import MajorContext from "../contexts/MajorContext";
 import { ShortSubject, Student, Subject } from "../types";
 import SubjectContext from "../contexts/SubjectContext";
-import RecipeModal from "./RecipeModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsRotate, faPlus } from "@fortawesome/free-solid-svg-icons";
-import RecipeModalMajor from "./RecipeModalMajor";
 import useGetData from "../hooks/useGetData";
 
 import { useNavigate } from "react-router-dom";
+import AttendanceModal from "./AttendanceModal";
+import AddMajorModal from "./AddMajorModal";
 
 function SubjectsGrid() {
   const { selectedMajor } = useContext(MajorContext);
@@ -37,13 +37,13 @@ function SubjectsGrid() {
     name: "",
   });
 
-  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
-  const [isMajorRecipeModalOpen, setIsMajorRecipeModalOpen] = useState(false);
+  const [isAssistanceModalOpen, setIsAssistanceModalOpen] = useState(false);
+  const [isMajorModalOpen, setIsMajorModalOpen] = useState(false);
 
-  const openRecipeModal = () => setIsRecipeModalOpen(true);
-  const closeRecipeModal = () => setIsRecipeModalOpen(false);
-  const openMajorRecipeModal = () => setIsMajorRecipeModalOpen(true);
-  const closeMajorRecipeModal = () => setIsMajorRecipeModalOpen(false);
+  const openModal = () => setIsAssistanceModalOpen(true);
+  const closeModal = () => setIsAssistanceModalOpen(false);
+  const openMajorModal = () => setIsMajorModalOpen(true);
+  const closeMajorModal = () => setIsMajorModalOpen(false);
 
   const [modalStudents, setModalStudents] = useState<Student[]>([]);
 
@@ -60,18 +60,18 @@ function SubjectsGrid() {
   }, [selectedMajor, data, setSubjectData]);
 
   // Abre el modal con estudiantes de una materia específica
-  const handleOpenRecipeModal = (
+  const handleOpenModal = (
     students: Student[],
     subjectId: number,
     subjectName: string
   ) => {
     setModalStudents(students);
     setCurrentShortSubject({ id: subjectId, name: subjectName });
-    openRecipeModal();
+    openModal();
   };
 
-  const handleOpenMajorRecipeModal = () => {
-    openMajorRecipeModal();
+  const handleOpenMajorModal = () => {
+    openMajorModal();
   };
 
   const handleRefresh = () => {
@@ -80,7 +80,7 @@ function SubjectsGrid() {
 
   const refreshAndCloseMajorModal = () => {
     handleRefresh();
-    closeMajorRecipeModal();
+    closeMajorModal();
   };
   // Elimina la asignatura del card
   const handleDeleteSubject = async (id: number, name: string) => {
@@ -159,7 +159,7 @@ function SubjectsGrid() {
               No hay materias disponibles para esta carrera.
             </Typography>
             <Box key="add">
-              <Card sx={cardStyles} onClick={handleOpenMajorRecipeModal}>
+              <Card sx={cardStyles} onClick={handleOpenMajorModal}>
                 <FontAwesomeIcon
                   style={{
                     color: "black",
@@ -239,7 +239,7 @@ function SubjectsGrid() {
                         fontWeight: "bold",
                       }}
                       onClick={() =>
-                        handleOpenRecipeModal(
+                        handleOpenModal(
                           filteredStudents,
                           subject.id,
                           subject.name
@@ -259,7 +259,7 @@ function SubjectsGrid() {
                 m: 2,
               }}
             >
-              <Card sx={cardStyles} onClick={handleOpenMajorRecipeModal}>
+              <Card sx={cardStyles} onClick={handleOpenMajorModal}>
                 <FontAwesomeIcon
                   style={{
                     margin: "auto",
@@ -274,14 +274,14 @@ function SubjectsGrid() {
           </Box>
         )}
 
-        <RecipeModal
+        <AttendanceModal
           data={modalStudents}
-          isOpen={isRecipeModalOpen}
-          onClose={closeRecipeModal}
+          isOpen={isAssistanceModalOpen}
+          onClose={closeModal}
           shortSubject={currentShortSubject}
         />
-        <RecipeModalMajor
-          isOpen={isMajorRecipeModalOpen}
+        <AddMajorModal
+          isOpen={isMajorModalOpen}
           onClose={refreshAndCloseMajorModal}
         />
       </Box>

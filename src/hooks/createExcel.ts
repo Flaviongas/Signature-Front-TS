@@ -19,6 +19,7 @@ const headers = [
   "SECCIÓN",
   "ASIGNATURA (Nombre de malla curricular) / NIVEL",
   "LINK DE CLASE",
+  "COMENTARIO",
 ];
 export default function createExcel(
   asistenciaData: Attendance,
@@ -26,7 +27,8 @@ export default function createExcel(
   shortSubject: ShortSubject,
   selectedMajors: { id: number; name: string },
   section: string,
-  classLink: string
+  classLink: string,
+  comment: string
 ) {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("ASISTENCIA");
@@ -39,8 +41,7 @@ export default function createExcel(
       .replace(")", "")
       .replace("/", ""),
   }));
-  //   HOLA
-  ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1"].map((key) => {
+  ["A1", "B1", "C1", "D1", "E1", "F1", "G1", "H1", "I1"].map((key) => {
     worksheet.getCell(key).fill = {
       type: "pattern",
       pattern: "solid",
@@ -68,6 +69,7 @@ export default function createExcel(
       ASIGNATURA_Nombre_de_malla_curricular__NIVEL:
         shortSubject?.name.toUpperCase(),
       LINK_DE_CLASE: classLink ? classLink : "",
+      COMENTARIO: comment ? comment : "",
     });
   });
   worksheet.columns.forEach((column) => {
