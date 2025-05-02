@@ -10,7 +10,7 @@ const DAYS = [
   "Miércoles",
   "Jueves",
   "Viernes",
-  "Sábado",git 
+  "Sábado",
 ];
 const headers = [
   "FECHA",
@@ -143,10 +143,10 @@ export default function previewExcel(
     const filename = `REGISTROS DE ASISTENCIA - SAAC (${weekday
       .toString()
       .toUpperCase()} ${ISODate.split("T")[0]
-      .split("-")
-      .reverse()
-      .join("-")
-      .slice(0, 5)} ${selectedMajors.name})`;
+        .split("-")
+        .reverse()
+        .join("-")
+        .slice(0, 5)} ${selectedMajors.name})`;
 
     generatePdfPreview(pdfData, filename);
   }
