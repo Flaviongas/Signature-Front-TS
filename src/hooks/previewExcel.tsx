@@ -45,7 +45,7 @@ export default function previewExcel(
 ) {
   console.log("asistenciaData", asistenciaData);
 
-  const pdfData: rowData[] = [];
+  const data: rowData[] = [];
   asistenciaData.students.forEach((student: Student) => {
     const rowData = {
       FECHA: asistenciaData.fecha
@@ -65,81 +65,71 @@ export default function previewExcel(
       COMENTARIO: comment ? comment : "",
     };
 
-    pdfData.push(rowData);
+    data.push(rowData);
   });
 
+  const weekday_number = new Date(asistenciaData.fecha).getDay();
+  const weekday = DAYS[weekday_number];
+  const title = `REGISTROS DE ASISTENCIA - SAAC (${weekday
+    .toString()
+    .toUpperCase()} ${ISODate.split("T")[0]
+      .split("-")
+      .reverse()
+      .join("-")
+      .slice(0, 5)} ${selectedMajors.name})`;
 
-  async function generatePreview() {
-    const weekday_number = new Date(asistenciaData.fecha).getDay();
-    const weekday = DAYS[weekday_number];
-    const filename = `REGISTROS DE ASISTENCIA - SAAC (${weekday
-      .toString()
-      .toUpperCase()} ${ISODate.split("T")[0]
-        .split("-")
-        .reverse()
-        .join("-")
-        .slice(0, 5)} ${selectedMajors.name})`;
+  const doc = new jsPDF({
+    orientation: 'landscape'
+  });
 
+  doc.setFontSize(14);
+  doc.setTextColor(40);
+  doc.text(title, 14, 15);
+  doc.setFontSize(18);
+  doc.setTextColor(255, 0, 0);
+  doc.text("NO DESCARGAR - SOLO PARA PREVISUALIZACIÓN", 14, 8);
 
-    generatePdfPreview(pdfData, filename);
-  }
+  const pdfHeaders = headers;
+  const tableData = data.map(row => [
+    row.FECHA,
+    row.RUT_sin_puntos,
+    row.DV,
+    row.NOMBRES,
+    row.APELLIDOS,
+    row.SECCIÓN,
+    row.ASIGNATURA_Nombre_de_malla_curricular__NIVEL,
+    row.LINK_DE_CLASE,
+    row.COMENTARIO
+  ]);
 
-  function generatePdfPreview(data: rowData[], title: string) {
-    const doc = new jsPDF({
-      orientation: 'landscape'
-    });
+  autoTable(doc, {
+    head: [pdfHeaders],
+    body: tableData,
+    startY: 20,
+    styles: {
+      fontSize: 8,
+      cellPadding: 1,
+      overflow: 'linebreak',
+      font: 'helvetica'
+    },
+    headStyles: {
+      fillColor: [192, 0, 0],
+      textColor: [255, 255, 255],
+      fontStyle: 'bold'
+    },
+    columnStyles: {
+      0: { cellWidth: 18 },
+      1: { cellWidth: 20 },
+      2: { cellWidth: 8 },
+      3: { cellWidth: 35 },
+      4: { cellWidth: 35 },
+      5: { cellWidth: 20 },
+      6: { cellWidth: 45 },
+      7: { cellWidth: 40 }
+    }
+  });
 
-    doc.setFontSize(14);
-    doc.setTextColor(40);
-    doc.text(title, 14, 15);
-    doc.setFontSize(18);
-    doc.setTextColor(255, 0, 0);
-    doc.text("NO DESCARGAR - SOLO PARA PREVISUALIZACIÓN", 14, 8);
+  const pdfUrl = doc.output('bloburl');
+  window.open(pdfUrl.toString(), '_blank');
 
-    const pdfHeaders = headers;
-    const tableData = data.map(row => [
-      row.FECHA,
-      row.RUT_sin_puntos,
-      row.DV,
-      row.NOMBRES,
-      row.APELLIDOS,
-      row.SECCIÓN,
-      row.ASIGNATURA_Nombre_de_malla_curricular__NIVEL,
-      row.LINK_DE_CLASE,
-      row.COMENTARIO
-    ]);
-
-    autoTable(doc, {
-      head: [pdfHeaders],
-      body: tableData,
-      startY: 20,
-      theme: 'grid',
-      styles: {
-        fontSize: 8,
-        cellPadding: 2,
-        overflow: 'linebreak',
-        font: 'helvetica'
-      },
-      headStyles: {
-        fillColor: [192, 0, 0],
-        textColor: [255, 255, 255],
-        fontStyle: 'bold'
-      },
-      columnStyles: {
-        0: { cellWidth: 18 },
-        1: { cellWidth: 20 },
-        2: { cellWidth: 8 },
-        3: { cellWidth: 35 },
-        4: { cellWidth: 35 },
-        5: { cellWidth: 20 },
-        6: { cellWidth: 45 },
-        7: { cellWidth: 40 }
-      }
-    });
-
-    const pdfUrl = doc.output('bloburl');
-    window.open(pdfUrl.toString(), '_blank');
-  }
-
-  generatePreview();
 }

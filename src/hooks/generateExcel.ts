@@ -1,6 +1,7 @@
-import * as FileSaver from "file-saver";
 import * as ExcelJS from "exceljs";
 import { Attendance, ShortSubject, Student } from "../types";
+const workbook = new ExcelJS.Workbook();
+const worksheet = workbook.addWorksheet("ASISTENCIA");
 const DAYS = [
   "Domingo",
   "Lunes",
@@ -21,18 +22,17 @@ const headers = [
   "LINK DE CLASE",
   "COMENTARIO",
 ];
-export default function createExcel(
+
+
+export default function generateExcel(
   asistenciaData: Attendance,
   ISODate: string,
   shortSubject: ShortSubject,
   selectedMajors: { id: number; name: string },
   section: string,
   classLink: string,
-  comment: string
+  comment: string,
 ) {
-  const workbook = new ExcelJS.Workbook();
-  const worksheet = workbook.addWorksheet("ASISTENCIA");
-
   worksheet.columns = headers.map((header_name) => ({
     header: header_name,
     key: header_name
@@ -106,16 +106,16 @@ export default function createExcel(
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    FileSaver.saveAs(
-      blob,
-      `REGISTROS DE ASISTENCIA - SAAC ( ${weekday
-        .toString()
-        .toUpperCase()} ${ISODate.split("T")[0]
-          .split("-")
-          .reverse()
-          .join("-")
-          .slice(0, 5)} ${selectedMajors.name} ).xlsx`
-    );
+    const filename = `REGISTROS DE ASISTENCIA - SAAC ( ${weekday
+      .toString()
+      .toUpperCase()} ${ISODate.split("T")[0]
+        .split("-")
+        .reverse()
+        .join("-")
+        .slice(0, 5)} ${selectedMajors.name} ).xlsx`;
+
+    return { filename: filename, blob: blob };
   }
-  generateExcel();
+  return generateExcel();
+
 }
