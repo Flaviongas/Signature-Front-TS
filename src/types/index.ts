@@ -46,6 +46,7 @@ export type User = {
   username: string;
   password: string;
   majors: Major[];
+  is_superuser: boolean;
 };
 
 export type createUserPayload = {

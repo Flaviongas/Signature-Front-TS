@@ -21,9 +21,13 @@ import { useNavigate } from "react-router-dom";
 import AttendanceModal from "./AttendanceModal";
 import AddMajorModal from "./AddMajorModal";
 
+import useIsSuperUser from "../hooks/useIsSuperUser";
+
 function SubjectsGrid() {
   const { selectedMajor } = useContext(MajorContext);
   const { setSubjectData } = useContext(SubjectContext);
+  const navigate = useNavigate();
+  const isSuperUser = useIsSuperUser();
 
   const apiUrl = import.meta.env.VITE_API_URL + "/api/subjects/";
 
@@ -51,8 +55,6 @@ function SubjectsGrid() {
   const filteredSubjects = data.filter((subject) =>
     subject.major.includes(selectedMajor.id)
   );
-
-  const navigate = useNavigate();
 
   // Actualiza el contexto de materias cada vez que cambian los datos o la carrera
   useEffect(() => {
@@ -307,26 +309,28 @@ function SubjectsGrid() {
         },
       }}
     >
-      <Box
-        sx={{
-          alignSelf: { xs: "center", md: "flex-end" },
-        }}
-      >
-        <Button
-          variant="contained"
+      {isSuperUser && (
+        <Box
           sx={{
-            minWidth: "150px",
-            px: 5,
-            bgcolor: "#3454D1",
-            "&:hover": {
-              bgcolor: "#2F4BC0",
-            },
+            alignSelf: { xs: "center", md: "flex-end" },
           }}
-          onClick={() => navigate("/users")}
         >
-          Gestionar Usuarios
-        </Button>
-      </Box>
+          <Button
+            variant="contained"
+            sx={{
+              minWidth: "150px",
+              px: 5,
+              bgcolor: "#3454D1",
+              "&:hover": {
+                bgcolor: "#2F4BC0",
+              },
+            }}
+            onClick={() => navigate("/users")}
+          >
+            Gestionar Usuarios
+          </Button>
+        </Box>
+      )}
       {content}
     </Container>
   );

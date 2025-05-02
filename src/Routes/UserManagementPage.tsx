@@ -115,7 +115,7 @@ function UserManagementPage() {
           />
 
           <UserList
-            users={users}
+            users={users.filter((user) => !user.is_superuser)}
             onDelete={handleDeleteUser}
             onEdit={handleEditUser}
           />
