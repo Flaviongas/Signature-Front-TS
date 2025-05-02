@@ -11,6 +11,14 @@ export default function sendExcel(
   comment: string,
   email: string,
 ) {
+  const token = localStorage.getItem("Token");
+  const BASE_URL = import.meta.env.VITE_API_URL
+  const api = axios.create({
+    baseURL: `${BASE_URL}/`,
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  });
 
 
   async function sendEmail() {
@@ -19,8 +27,9 @@ export default function sendExcel(
     formData.append("file", blob);
     formData.append("filename", filename);
     formData.append("email", email);
-    axios.post('/sendEmailExcel', formData)
-    // TODO: Create backend route
+    formData.append("subject", shortSubject.name)
+    console.log("formData: ", formData);
+    api.post('sendEmail/', formData)
   }
 
   sendEmail();

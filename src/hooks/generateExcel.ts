@@ -1,7 +1,5 @@
 import * as ExcelJS from "exceljs";
 import { Attendance, ShortSubject, Student } from "../types";
-const workbook = new ExcelJS.Workbook();
-const worksheet = workbook.addWorksheet("ASISTENCIA");
 const DAYS = [
   "Domingo",
   "Lunes",
@@ -33,6 +31,8 @@ export default function generateExcel(
   classLink: string,
   comment: string,
 ) {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("ASISTENCIA");
   worksheet.columns = headers.map((header_name) => ({
     header: header_name,
     key: header_name
@@ -113,6 +113,7 @@ export default function generateExcel(
         .reverse()
         .join("-")
         .slice(0, 5)} ${selectedMajors.name} ).xlsx`;
+
 
     return { filename: filename, blob: blob };
   }
