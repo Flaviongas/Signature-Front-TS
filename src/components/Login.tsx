@@ -5,7 +5,7 @@ import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
-
+import theme from "../theme.ts";
 type LoginProps = {
   onLoginSuccess: (token: string) => void;
   // backLink: "https://signature.gidua.xyz" | "http://localhost:8000";
@@ -72,13 +72,14 @@ function LoginForm({ onLoginSuccess, backLink }: LoginProps) {
       }}
     >
       <Paper
+        color="secondary"
         elevation={8}
         sx={{
           width: "100%",
           maxWidth: 480,
           p: 4,
           borderRadius: "1rem",
-          backgroundColor: "#5386E4",
+          backgroundColor: theme.palette.secondary.main,
         }}
       >
         {/* Logo centrado */}
@@ -120,6 +121,7 @@ function LoginForm({ onLoginSuccess, backLink }: LoginProps) {
 
           {/* Botón de envío con estado de carga */}
           <Button
+            color="primary"
             type="submit"
             variant="contained"
             fullWidth
@@ -127,13 +129,13 @@ function LoginForm({ onLoginSuccess, backLink }: LoginProps) {
             sx={{
               my: 2,
               p: 1,
-              backgroundColor: "#D1495B",
+              backgroundColor: theme.palette.primary.main,
               borderRadius: 2,
               fontWeight: 600,
               fontSize: "1rem",
               transition: "background-color 0.3s",
               "&:hover": {
-                backgroundColor: "#C43145",
+                backgroundColor: theme.palette.primary.dark,
               },
               "&:disabled": {
                 opacity: 0.5,

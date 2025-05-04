@@ -25,6 +25,7 @@ import MajorContext from "../contexts/MajorContext";
 import previewExcel from "../hooks/previewExcel";
 import downloadExcel from "../hooks/downloadExcel";
 import sendExcel from "../hooks/sendExcel";
+import theme from "../theme.ts";
 
 type Props = {
   isOpen: boolean;
@@ -316,11 +317,12 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
           >
           </Input>
           <Button
+            color="secondary"
             variant="contained"
             onClick={sendEmail}
             sx={{
-              bgcolor: "#3454D1",
-              "&:hover": { bgcolor: "#2F4BC0" },
+              bgcolor: theme.palette.secondary.dark,
+              "&:hover": { bgcolor: theme.palette.secondary.main },
               fontSize: {
                 xs: "0.6rem",
                 sm: "0.875rem",
@@ -334,8 +336,8 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
             color="secondary"
             onClick={previewAttendance}
             sx={{
-              bgcolor: "#3454D1",
-              "&:hover": { bgcolor: "#2F4BC0" },
+              bgcolor: theme.palette.secondary.main,
+              "&:hover": { bgcolor: theme.palette.secondary.dark },
               fontSize: {
                 xs: "0.6rem",
                 sm: "0.875rem",
@@ -345,9 +347,14 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
             Previsualizar
           </Button>
           <Button
+            color="primary"
             variant="contained"
             onClick={handleSubmitAttendance}
             sx={{
+              bgcolor: theme.palette.primary.main,
+              "&:hover": {
+                bgcolor: theme.palette.primary.dark,
+              },
               fontWeight: "bold",
               fontSize: {
                 xs: "0.6rem",

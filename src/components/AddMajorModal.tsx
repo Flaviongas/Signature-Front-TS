@@ -17,7 +17,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { majorForm, majorSchema } from "../schemas/major";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import theme from "../theme.ts";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -93,14 +93,22 @@ export default function AddMajorModal({ isOpen, onClose }: Props) {
 
         <DialogActions sx={{ p: 2 }}>
           {/* Botón para enviar el formulario */}
-          <Button type="submit" variant="contained" sx={{ bgcolor: "#3454D1" }}>
+          <Button 
+          color="secondary"
+          type="submit" variant="contained" sx={{ bgcolor: theme.palette.secondary.main,"&:hover": {
+                      backgroundColor: theme.palette.secondary.dark,
+                    },}}>
             Crear
           </Button>
           {/* Botón para cerrar el modal */}
           <Button
+            color="primary"
             onClick={onClose}
             variant="contained"
-            sx={{ bgcolor: "#D1495B" }}
+            sx={{ bgcolor: theme.palette.primary.main ,
+                "&:hover": {
+                      backgroundColor: theme.palette.primary.dark,
+                    }, }}  
           >
             Cerrar
           </Button>
