@@ -15,7 +15,7 @@ jobs:
       uses: tailscale/github-action@v3
       with:
         authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-      tags: tag:signature
+        tags: tag:signature
 
     - name: SSH Remote Commands
       uses: appleboy/ssh-action@v1.2.2
