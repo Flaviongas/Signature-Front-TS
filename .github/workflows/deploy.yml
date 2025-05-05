@@ -26,7 +26,7 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: 22
         script: |
-          pag
+          cd /var/www/example.org/ 
           cd signature
           git pull
           npm install
