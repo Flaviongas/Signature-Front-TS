@@ -59,7 +59,7 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
         setUsername(userToEdit.username);
 
         if (userToEdit.majors) {
-          // 👇 IMPORTANTE: setear las majors que ya tiene
+          // IMPORTANTE: setear las majors que ya tiene
           setSelectedMajors(
             userToEdit.majors.map((major) => ({
               id: major.id,
@@ -175,7 +175,6 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
           setErrorMessage(
             error.response.data.password?.[0] || error.response.data.majors
           );
-          
         }
         setOpenSnackbar(true);
       } else {
@@ -208,8 +207,8 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
             errorMessage && !username
               ? "El nombre de usuario es obligatorio."
               : errorMessage && !validateUsername(username)
-                ? "El nombre de usuario solo puede contener letras y números."
-                : ""
+              ? "El nombre de usuario solo puede contener letras y números."
+              : ""
           }
         />
         <TextField
@@ -282,7 +281,7 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
           onClick={handleCreateUser}
           disabled={loading}
           sx={{
-            fontWeight:"bold"
+            fontWeight: "bold",
           }}
         >
           {editingUser ? "Guardar cambios" : "Crear"}
@@ -293,7 +292,7 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
           color="primary"
           disabled={loading}
           sx={{
-              fontWeight:"bold"
+            fontWeight: "bold",
           }}
         >
           Cancelar

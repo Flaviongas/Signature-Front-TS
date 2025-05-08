@@ -133,14 +133,11 @@ function StudentForm({ subjectId, onStudentAdded }: Props) {
           <Button
             type="submit"
             variant="contained"
+            color="info"
             sx={{
-              bgcolor: "#3454D1",
               width: { xs: "50%", sm: "25%", md: "100%" },
               p: 2.6,
               mb: 3,
-              "&:hover": {
-                bgcolor: "#2F4BC0",
-              },
             }}
           >
             <FontAwesomeIcon icon={faUserPlus} />

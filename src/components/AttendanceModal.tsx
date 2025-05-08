@@ -15,12 +15,18 @@ import {
   Checkbox,
   Box,
   Input,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { Student, Attendance, ShortSubject } from "../types";
 import axios from "axios";
 import Form from "./Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faTimes, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faTimes,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons";
 import MajorContext from "../contexts/MajorContext";
 import previewExcel from "../hooks/previewExcel";
 import downloadExcel from "../hooks/downloadExcel";
@@ -36,7 +42,12 @@ type Props = {
 
 function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [checkedStudents, setCheckedStudents] = useState<Student[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>(() => {
+    const today = new Date();
+    const offset = today.getTimezoneOffset();
+    const localDate = new Date(today.getTime() - offset * 60000);
+    return localDate.toISOString().split("T")[0]; // 'YYYY-MM-DD'
+  });
   const [isPlaceVisible, setIsPlaceVisible] = useState(false);
   const [buttonText, setButtonText] = useState("Agregar Estudiantes");
   const [studentsList, setStudentsList] = useState<Student[]>([]);
@@ -45,6 +56,16 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [comment, setComment] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const { selectedMajor } = useContext(MajorContext);
+
+  // Estados para feedback
+  const [loading, setLoading] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  // Verifica un correo estandar
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   // Reinicia la vista cada vez que se abre el modal
   useEffect(() => {
@@ -81,26 +102,67 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
       fecha: selectedDate ? new Date(selectedDate).toISOString() : ISODate,
       students: checkedStudents,
     };
-    return { attendanceData: attendanceData, ISODate: ISODate }
-  }
+    return { attendanceData: attendanceData, ISODate: ISODate };
+  };
 
-
-  const sendEmail = () => {
+  const sendEmail = async () => {
     const { attendanceData, ISODate } = dataExcel();
+    setLoading(true);
+    setErrorMessage("");
+    await new Promise((res) => setTimeout(res, 1000)); // ELIMINAR EL SERVIDOR REAL, YA QUE EN LOCAL ES TAN RAPIDO QUE SE DEBIO SIMULAR UN RETRASO PARA OBSERVAR EL FEEDBACK DEL BOTON QUE ENVIA EL EMAIL
 
-    sendExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink, comment, email);
+    try {
+      await sendExcel(
+        attendanceData,
+        ISODate,
+        shortSubject,
+        selectedMajor,
+        section,
+        classLink,
+        comment,
+        email
+      );
+      setSuccessMessage("Correo enviado correctamente");
+      setEmail("");
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message || // lo que tú defines en el backend
+        err?.response?.data?.detail || // en caso de usar DRF con ValidationError
+        err?.message ||
+        "Error al enviar el correo. Intenta de nuevo.";
+
+      setErrorMessage(msg);
+    } finally {
+      setLoading(false);
+      setOpenSnackbar(true);
+    }
   };
 
   const previewAttendance = () => {
     const { attendanceData, ISODate } = dataExcel();
-    previewExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink, comment);
+    previewExcel(
+      attendanceData,
+      ISODate,
+      shortSubject,
+      selectedMajor,
+      section,
+      classLink,
+      comment
+    );
   };
 
   // Genera y descarga archivo Excel con la asistencia
   const handleSubmitAttendance = () => {
-
     const { attendanceData, ISODate } = dataExcel();
-    downloadExcel(attendanceData, ISODate, shortSubject, selectedMajor, section, classLink, comment);
+    downloadExcel(
+      attendanceData,
+      ISODate,
+      shortSubject,
+      selectedMajor,
+      section,
+      classLink,
+      comment
+    );
 
     setSelectedDate("");
     setCheckedStudents([]);
@@ -108,7 +170,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
     setClassLink("");
     setSection("");
     setComment("");
-    console.log("cleaning up")
+    console.log("cleaning up");
   };
 
   // Alterna visibilidad del formulario para agregar estudiantes
@@ -180,7 +242,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
           color="secondary"
           sx={{
             mb: 2,
-            fontWeight: 'bold',
+            fontWeight: "bold",
             fontSize: {
               xs: "0.75rem",
               sm: "0.875rem",
@@ -244,7 +306,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
         </Table>
       </DialogContent>
       <DialogActions sx={{ justifyContent: "space-between", p: 2, gap: 1 }}>
-        <div style={{ display: "flex", gap: "1rem" }}>
+        <Box sx={{ display: "flex", gap: "1rem" }}>
           <Input
             onChange={(e) => setSection(e.currentTarget.value)}
             sx={{
@@ -264,8 +326,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
               },
             }}
             placeholder="Sección"
-          >
-          </Input>
+          ></Input>
           <Input
             onChange={(e) => setClassLink(e.currentTarget.value)}
             sx={{
@@ -280,8 +341,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
               py: 1,
             }}
             placeholder="Link de la Clase"
-          >
-          </Input>
+          ></Input>
           <Input
             onChange={(e) => setComment(e.currentTarget.value)}
             sx={{
@@ -296,15 +356,16 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
               py: 1,
             }}
             placeholder="Comentario"
-          >
-          </Input>
-        </div>
-        <div style={{ display: "flex", gap: "1rem" }}>
+          ></Input>
+        </Box>
+        <Box sx={{ display: "flex", gap: "1rem" }}>
           <Input
+            value={email}
+            disabled={loading}
+            placeholder="Enviar por correo"
             onChange={(e) => setEmail(e.currentTarget.value)}
             sx={{
               bgcolor: "#f5f5f5",
-
               "&:hover": { bgcolor: "#e0e0e0" },
               fontSize: {
                 xs: "0.3rem",
@@ -313,12 +374,12 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
               px: 2,
               py: 1,
             }}
-            placeholder="Enviar por correo"
-          >
-          </Input>
+          ></Input>
           <Button
             color="secondary"
             variant="contained"
+            loading={loading}
+            disabled={loading || !isValidEmail(email)}
             onClick={sendEmail}
             sx={{
               bgcolor: theme.palette.secondary.dark,
@@ -333,7 +394,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
           </Button>
           <Button
             variant="contained"
-            color="secondary"
             onClick={previewAttendance}
             sx={{
               bgcolor: theme.palette.secondary.main,
@@ -347,7 +407,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
             Previsualizar
           </Button>
           <Button
-            color="primary"
             variant="contained"
             onClick={handleSubmitAttendance}
             sx={{
@@ -364,8 +423,21 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
           >
             descargar
           </Button>
-        </div>
+        </Box>
       </DialogActions>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={errorMessage ? "error" : "success"}
+          sx={{ width: "100%" }}
+        >
+          {errorMessage || successMessage}
+        </Alert>
+      </Snackbar>
     </Dialog>
   );
 }
