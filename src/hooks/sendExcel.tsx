@@ -35,6 +35,5 @@ export default async function sendExcel(
   formData.append("filename", filename);
   formData.append("email", email);
   formData.append("subject", shortSubject.name);
-  console.log("formData: ", formData);
   return api.post("sendEmail/", formData);
 }

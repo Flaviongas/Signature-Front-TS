@@ -17,7 +17,6 @@ function UserManagementPage() {
   const fetchUsers = () => {
     getUsers()
       .then((res) => {
-        console.log("Datos obtenidos de la API:", res.data);
         setUsers(res.data);
       })
 
@@ -39,7 +38,6 @@ function UserManagementPage() {
 
       setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
 
-      console.log("Usuario eliminado con éxito.");
     } catch (error) {
       console.error("Error eliminando el usuario:", error);
     }
