@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { z } from "zod";
 import {
   Dialog,
   DialogTitle,
@@ -64,8 +65,12 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   // Verifica un correo estandar
-  const isValidEmail = (email: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  //
+  const isValidEmail = (email: string) => {
+    const emailSchema = z.string().email();
+    const isValid = emailSchema.safeParse(email);
+    return isValid.success;
+  }
 
   // Reinicia la vista cada vez que se abre el modal
   useEffect(() => {
