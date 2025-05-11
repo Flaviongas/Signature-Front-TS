@@ -46,7 +46,6 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
       const fetchMajors = async () => {
         try {
           const response = await getMajors();
-          console.log("Majors fetched:", response.data);
           setAvailableMajors(response.data || []);
         } catch (error) {
           console.error("Failed to load majors:", error);
@@ -147,7 +146,6 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
         userPayload.password = password;
       }
 
-      console.log("Datos que se van a enviar al backend:", userPayload);
       if (editingUser && userToEdit) {
         await updateUser(userToEdit.id, userPayload);
         setSuccessMessage("Usuario editado correctamente.");
@@ -207,8 +205,8 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
             errorMessage && !username
               ? "El nombre de usuario es obligatorio."
               : errorMessage && !validateUsername(username)
-              ? "El nombre de usuario solo puede contener letras y números."
-              : ""
+                ? "El nombre de usuario solo puede contener letras y números."
+                : ""
           }
         />
         <TextField

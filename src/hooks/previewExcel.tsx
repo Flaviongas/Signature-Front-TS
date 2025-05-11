@@ -43,7 +43,6 @@ export default function previewExcel(
   classLink: string,
   comment: string
 ) {
-  console.log("asistenciaData", asistenciaData);
 
   const data: rowData[] = [];
   asistenciaData.students.forEach((student: Student) => {

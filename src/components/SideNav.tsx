@@ -27,7 +27,6 @@ function SideNav() {
       if (userId) {
         try {
           const response = await getUser(parseInt(userId));
-          console.log("Respuesta completa:", response.data);
           const userData: User = response.data;
           setUserMajors(userData.majors);
           setLoading(false);
@@ -71,7 +70,7 @@ function SideNav() {
         borderRadius: 0,
       }}
     >
-      <Typography variant="h5"  sx={{ fontWeight: 600, textAlign: "center", mb: 2 }} >
+      <Typography variant="h5" sx={{ fontWeight: 600, textAlign: "center", mb: 2 }} >
         Carreras
       </Typography>
       <form onSubmit={handleSubmit}>
