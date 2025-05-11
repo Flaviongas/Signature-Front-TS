@@ -1,19 +1,12 @@
 import { useContext, useState } from "react";
-import {
-  Box,
-  Typography,
-  IconButton,
-  Card,
-  Button,
-  Container,
-} from "@mui/material";
+import { Box, Typography, Card, Button, Container } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 
 import MajorContext from "../contexts/MajorContext";
 import { ShortSubject, Student, Subject } from "../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsRotate, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import useGetData from "../hooks/useGetData";
 
 import { useNavigate } from "react-router-dom";
@@ -21,6 +14,8 @@ import AttendanceModal from "./AttendanceModal";
 import AddMajorModal from "./AddMajorModal";
 
 import useIsSuperUser from "../hooks/useIsSuperUser";
+
+import theme from "../theme";
 
 function SubjectsGrid() {
   const { selectedMajor } = useContext(MajorContext);
@@ -53,7 +48,6 @@ function SubjectsGrid() {
   const filteredSubjects = data.filter((subject) =>
     subject.major.includes(selectedMajor.id)
   );
-
 
   // Abre el modal con estudiantes de una materia específica
   const handleOpenModal = (
@@ -102,10 +96,7 @@ function SubjectsGrid() {
     minHeight: 215,
     width: 270,
     boxShadow: 3,
-    transition: "transform 0.3s",
-    "&:hover": {
-      transform: "scale(1.02)",
-    },
+
     cursor: "pointer",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -142,11 +133,7 @@ function SubjectsGrid() {
             sx={{
               ml: { xs: 0, md: 2 },
             }}
-          >
-            <IconButton onClick={handleRefresh} sx={{ fontSize: 30 }}>
-              <FontAwesomeIcon icon={faArrowsRotate} />
-            </IconButton>
-          </Box>
+          ></Box>
         </Typography>
 
         {filteredSubjects.length === 0 && !loading ? (
@@ -188,28 +175,41 @@ function SubjectsGrid() {
                     m: 2,
                   }}
                 >
-                  <Card sx={{ ...cardStyles, position: "relative" }}>
-                    <IconButton
-                      onClick={() =>
-                        handleDeleteSubject(subject.id, subject.name)
-                      }
-                      size="small"
-                      sx={{
+                  <Card
+                    sx={{
+                      ...cardStyles,
+                      position: "relative",
+                      "&::before": {
+                        content: '""',
                         position: "absolute",
-                        top: 4,
-                        right: 4,
-                      }}
-                    >
+                        top: 0,
+                        left: 0,
+                        height: "7px",
+                        width: "0%",
+                        bgcolor: theme.palette.info.main,
+                        transition: "width 0.4s ease",
+                      },
+                      "&:hover::before": {
+                        width: "100%",
+                      },
+                    }}
+                  >
+                    {isSuperUser && (
                       <CloseIcon
-                        fontSize="small"
                         color="error"
                         sx={{
                           stroke: "currentColor",
-                          strokeWidth: 1.5,
-                          fontSize: 25,
+                          strokeWidth: 2,
+                          position: "absolute",
+                          top: 10,
+                          right: 10,
                         }}
+                        onClick={() =>
+                          handleDeleteSubject(subject.id, subject.name)
+                        }
                       />
-                    </IconButton>
+                    )}
+
                     <Typography
                       variant="h6"
                       align="center"
@@ -255,17 +255,19 @@ function SubjectsGrid() {
                 m: 2,
               }}
             >
-              <Card sx={cardStyles} onClick={handleOpenMajorModal}>
-                <FontAwesomeIcon
-                  style={{
-                    margin: "auto",
-                    padding: "16px",
-                    borderRadius: "4px",
-                  }}
-                  fontSize={50}
-                  icon={faPlus}
-                />
-              </Card>
+              {isSuperUser && (
+                <Card sx={cardStyles} onClick={handleOpenMajorModal}>
+                  <FontAwesomeIcon
+                    style={{
+                      margin: "auto",
+                      padding: "16px",
+                      borderRadius: "4px",
+                    }}
+                    fontSize={50}
+                    icon={faPlus}
+                  />
+                </Card>
+              )}
             </Box>
           </Box>
         )}
