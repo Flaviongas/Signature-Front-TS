@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react"
 import SideNav from "../components/SideNav";
 import Dashboard from "../components/Dashboard";
 import { MajorShort } from "../types";
-import MajorContext from "../contexts/MajorContext";
+
 
 import logo from "../assets/signature.svg";
 import Button from "@mui/material/Button";
@@ -16,6 +16,17 @@ function MainContent() {
     id: 0,
     name: "",
   });
+
+  useEffect(() => {
+    const storedMajor = localStorage.getItem("SelectedMajor");
+    if (storedMajor) {
+      const parsed = JSON.parse(storedMajor);
+      // Solo actualiza si aún no hay uno seleccionado
+      if (parsed.id && selectedMajor.id === 0) {
+        setSelectedMajor(parsed);
+      }
+    }
+  }, []);
 
   const logOut = () => {
     localStorage.setItem("Token", "");
@@ -58,51 +69,49 @@ function MainContent() {
   );
 
   return (
-    <MajorContext.Provider value={{ selectedMajor, setSelectedMajor }}>
-      <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
-        <Box
-          component="nav"
-          sx={{ width: { md: 288 }, flexShrink: { md: 0 } }}
+    <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
+      <Box
+        component="nav"
+        sx={{ width: { md: 288 }, flexShrink: { md: 0 } }}
+      >
+        {/* Drawer para móviles */}
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            display: { xs: "block", md: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: 240,
+            },
+          }}
         >
-          {/* Drawer para móviles */}
-          <Drawer
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{ keepMounted: true }}
-            sx={{
-              display: { xs: "block", md: "none" },
-              "& .MuiDrawer-paper": {
-                boxSizing: "border-box",
-                width: 240,
-              },
-            }}
-          >
-            {drawerContent}
-          </Drawer>
+          {drawerContent}
+        </Drawer>
 
-          {/* Drawer permanente para desktop */}
-          <Drawer
-            variant="permanent"
-            open
-            sx={{
-              display: { xs: "none", md: "block" },
-              "& .MuiDrawer-paper": {
-                boxSizing: "border-box",
-                width: 288,
-              },
-            }}
-          >
-            {drawerContent}
-          </Drawer>
-        </Box>
-
-        {/* Contenido principal */}
-        <Box sx={{ flex: 1, bgcolor: "#EFEFEF", overflowY: "auto" }}>
-          <Dashboard onDrawerToggle={handleDrawerToggle} />
-        </Box>
+        {/* Drawer permanente para desktop */}
+        <Drawer
+          variant="permanent"
+          open
+          sx={{
+            display: { xs: "none", md: "block" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: 288,
+            },
+          }}
+        >
+          {drawerContent}
+        </Drawer>
       </Box>
-    </MajorContext.Provider>
+
+      {/* Contenido principal */}
+      <Box sx={{ flex: 1, bgcolor: "#EFEFEF", overflowY: "auto" }}>
+        <Dashboard onDrawerToggle={handleDrawerToggle} />
+      </Box>
+    </Box>
   );
 }
 
