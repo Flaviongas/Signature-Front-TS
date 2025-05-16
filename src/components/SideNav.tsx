@@ -93,14 +93,11 @@ function SideNav() {
           .map((major) => (
             <ListItemButton
               key={major.id}
-              onClick={() =>
-                setSelectedMajor({
-                  id: major.id,
-                  name: major.name,
-                  // Si necesitas más información del major, puedes pasar el objeto completo
-                  // y actualizar el tipo en MajorContext
-                })
-              }
+              onClick={() =>{
+                const selected = { id: major.id, name: major.name };
+                setSelectedMajor(selected);
+                localStorage.setItem("SelectedMajor", JSON.stringify(selected));
+              }}
               sx={{
                 borderRadius: 2,
                 mb: 1,
