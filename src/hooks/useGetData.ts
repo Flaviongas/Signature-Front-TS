@@ -7,7 +7,7 @@ export default function useGetData<T>(url: string, refresh?: boolean) {
   const [error, setError] = useState<string>();
 
   useEffect(() => {
-    const controller = new AbortController();
+    const controller  = new AbortController();
     const { signal } = controller;
     async function hook() {
       setLoading(true);
