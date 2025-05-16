@@ -179,6 +179,7 @@ function SubjectsGrid() {
                     sx={{
                       ...cardStyles,
                       position: "relative",
+                      
                       "&::before": {
                         content: '""',
                         position: "absolute",
@@ -230,9 +231,11 @@ function SubjectsGrid() {
                     <Button
                       variant="contained"
                       color="secondary"
+                      fullWidth
                       sx={{
-                        width: "75%",
                         fontWeight: "bold",
+                        mb:1,
+                        width: '100%',
                       }}
                       onClick={() =>
                         handleOpenModal(
@@ -243,6 +246,24 @@ function SubjectsGrid() {
                       }
                     >
                       Asistencia
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      sx={{     
+                        width: '100%',
+                        fontWeight: "bold",                     
+                      }}
+                      onClick={() => navigate("/students", {
+                        state: { 
+                          majorId: selectedMajor.id, 
+                          subjectId: subject.id,
+                          majorName: selectedMajor.name,
+                          subjectName: subject.name
+                        }
+                      })}
+                    >
+                      Gestionar asignatura
                     </Button>
                   </Card>
                 </Box>
@@ -298,17 +319,31 @@ function SubjectsGrid() {
         padding: 3,
         display: "flex",
         flexDirection: "column",
-        justifyContent: {
-          xs: "center",
-        },
       }}
     >
       {isSuperUser && (
         <Box
           sx={{
-            alignSelf: { xs: "center", md: "flex-end" },
+            display: "flex",
+            justifyContent: { xs: "center", md: "space-between" },
+            flexDirection: { xs: "column", md: "row" },
+            alignSelf: { xs: "center"},
+            gap: 2,
+            width: '100%'
           }}
-        >
+        > 
+        <Button
+            variant="contained"
+            color="secondary"
+            sx={{
+              minWidth: "150px",
+              px: 5,
+              fontWeight: "bold",
+            }}
+            onClick={() => navigate("/students-management")}
+          >
+            Gestionar estudiantes
+          </Button>
           <Button
             variant="contained"
             color="secondary"
@@ -319,9 +354,12 @@ function SubjectsGrid() {
             }}
             onClick={() => navigate("/users")}
           >
-            Gestionar Usuarios
+            Gestionar usuarios
           </Button>
+          
+          
         </Box>
+        
       )}
       {content}
     </Container>
