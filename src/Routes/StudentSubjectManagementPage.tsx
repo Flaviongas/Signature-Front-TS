@@ -23,8 +23,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import SearchIcon from "@mui/icons-material/Search";
 import { Student } from "../types";
 import { getSubject } from "../services/subjectService";
-// import { addSubject, deleteSubject } from "../services/studentService";
-import { deleteSubject } from "../services/studentService";
+import { removeStudentSubject } from "../services/studentService";
 import AddStudentToSubjectModal from "../components/AddStudentToSubjectModal.js";
 
 function StudentSubjectManagentPage() {
@@ -37,7 +36,7 @@ function StudentSubjectManagentPage() {
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
-  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
+  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
@@ -76,7 +75,7 @@ function StudentSubjectManagentPage() {
   };
   
   // Nueva función para eliminar estudiante de la asignatura
-  const handleRemoveStudent = (studentId: string) => {
+  const handleRemoveStudent = (studentId: number) => {
     setSelectedStudentId(studentId);
     setIsRemoveDialogOpen(true);
   };
@@ -87,14 +86,16 @@ function StudentSubjectManagentPage() {
 
     setActionLoading(true);
     try {
-      await deleteSubject({
+      console.log("Eliminando estudiante con ID:", selectedStudentId, subjectId);
+      console.log("Tipos:", typeof selectedStudentId, typeof subjectId);
+      await removeStudentSubject({
         student_id: selectedStudentId,
-        subjectId: subjectId.toString()
+        subject_id: subjectId
       });
       
       // Actualizar el estado después de eliminar el estudiante
       setStudents(prevStudents => 
-        prevStudents.filter(student => student.id.toString() !== selectedStudentId)
+        prevStudents.filter(student => student.id !== selectedStudentId)
       );
       
       setIsRemoveDialogOpen(false);
@@ -216,21 +217,11 @@ function StudentSubjectManagentPage() {
                       variant="contained" 
                       size="small"
                       color="error"
-                      onClick={() => handleRemoveStudent(student.id.toString())}
+                      onClick={() => handleRemoveStudent(student.id)}
                       sx={{ mr: 1 }}
                     >
                       Quitar
-                    </Button>
-                    <Button 
-                      variant="outlined" 
-                      size="small"
-                      color="primary"
-                      onClick={() => {
-                        console.log(`Ver detalles del estudiante: ${student.id}`);
-                      }}
-                    >
-                      Detalles
-                    </Button>
+                    </Button>                  
                   </TableCell>
                 </TableRow>
               ))
