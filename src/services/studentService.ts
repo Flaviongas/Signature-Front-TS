@@ -6,19 +6,14 @@ const token = localStorage.getItem("Token");
 const api = axios.create({
   baseURL: `${BASE_URL}/api`,
   headers: {
+    "Content-Type": "application/json",
     Authorization: `Token ${token}`,
   },
 });
 
 interface SubjectData {
-    student_id: string;
-    subjectId: string;
-}
-
-interface UpdateData {
-    student_id: string;
-    current_subject_id: string;
-    new_subject_id: string;
+    student_id: number;
+    subject_id: number;
 }
 
 interface MajorData {
@@ -51,13 +46,17 @@ interface DeleteStudentData{
 }
 
 // Operaciones existentes
-export const addSubject = (data: SubjectData) => api.post(`/students/add-subject/`, data);
-export const updateSubject = (data: UpdateData) => api.put(`/students/update-subject/`, data);
-export const deleteSubject = (data: SubjectData) => api.delete(`/students/remove-subject/`, { data });
+export const assignSubjectToStudent = (data: SubjectData) => api.post(`/students/add-subject/`, data);
+export const removeStudentSubject = (data: SubjectData) => api.delete(`/students/remove-subject/`, { 
+  data: {
+    student_id: data.student_id,
+    subject_id: data.subject_id
+  } 
+});
 
 
 // Nuevas operaciones para la gestión de estudiantes
 export const getStudentsByMajor = (data: MajorData) => api.post('/students/get-student-bymajor/', data);
-export const createStudent = (data: StudentData) => api.post('/students/create-student', data);
+export const createStudent = (data: StudentData) => api.post('/students/create-student/', data);
 export const updateStudent = (data: UpdateStudentData) => api.put(`/students/update-student/`, data);
 export const deleteStudent = (data: DeleteStudentData) => api.delete(`/students/delete-student/`, { data });
