@@ -17,14 +17,14 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { Student } from "../types";
-import { getStudentsByMajor, addSubject } from "../services/studentService";
+import { getStudentsByMajor, assignSubjectToStudent } from "../services/studentService";
 
 interface AddStudentToSubjectModalProps {
   open: boolean;
   onClose: () => void;
   onStudentsAdded: () => void;
   majorId: number;
-  subjectId: string;
+  subjectId: number;
   currentStudentIds: number[];
 }
 
@@ -90,9 +90,9 @@ function AddStudentToSubjectModal({
     try {
       // Añadir cada estudiante seleccionado a la asignatura
       const promises = selectedStudents.map((studentId) =>
-        addSubject({
-          student_id: studentId.toString(),
-          subjectId: subjectId
+        assignSubjectToStudent({
+          student_id: studentId,
+          subject_id: subjectId
         })
       );
 
