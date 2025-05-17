@@ -16,10 +16,9 @@ function StudentManagementPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [editStudent, setEditStudent] = useState<Student | null>(null);
   const [loading, setLoading] = useState(true);
-
   const { selectedMajor } = useContext(MajorContext);
+
   const fetchStudents = () => {
-    console.log("Entro", selectedMajor);
     if (!selectedMajor || !selectedMajor.id) {
       setLoading(false);
       setStudents([]);
@@ -29,7 +28,6 @@ function StudentManagementPage() {
     setLoading(true);
     getStudentsByMajor({ major_id: selectedMajor.id })
       .then((res) => {
-        console.log("Respuesta completa:", res);
         setStudents(res.data);
         setLoading(false);
         

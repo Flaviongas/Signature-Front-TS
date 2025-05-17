@@ -13,15 +13,12 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useContext, useEffect, useState } from "react";
 import { Student } from "../types";
-// import { createStudent, updateStudent, getStudentsByMajor} from "../services/studentService";
-// import useGetData from "../hooks/useGetData";
+import { createStudent, updateStudent} from "../services/studentService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { studentValidationSchema, studentFormSchema } from "../schemas/student";
 import MajorContext from "../contexts/MajorContext";
-import axios from "axios";
 
-// import { getStudentsByMajor } from "../services/studentService";
 
 interface StudentModalProps {
   open: boolean;
@@ -36,17 +33,8 @@ function StudentModal({
   onStudentCreated,
   studentToEdit,
 }: StudentModalProps) {
-  // const [firstName, setFirstName] = useState("");
-  // const [lastName, setLastName] = useState("");
-  // const [rut, setRut] = useState("");
-  // const [selectedMajor, setSelectedMajor] = useState<number | "">("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const authToken = localStorage.getItem("Token");
-
-  const apiUrl = `${import.meta.env.VITE_API_URL}/api/students/`;
-  // const { data: majors } = useGetData(majorUrl);
   const { selectedMajor } = useContext(MajorContext);
 
   const {
@@ -72,39 +60,43 @@ function StudentModal({
     }
   }, [studentToEdit, open, setValue, reset]);
 
-  setError(null); // Borrar el error al abrir el modal
 
   const handleCreateStudent = async (data: studentFormSchema) => {
-    setLoading(true)
-    try {
-      const payload = {
-        ...data,
-        subjects: [], 
-        major: selectedMajor.id,
-      };
-
-      if (studentToEdit) {
-        await axios.put(`${apiUrl}${studentToEdit.id}/`, payload, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${authToken}`,
-          },
-        });
-      } else {
-        await axios.post(apiUrl, payload, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${authToken}`,
-          },
-        });
-      }
-
-      onStudentCreated();
-      handleClose();
-    } catch (err: unknown) {
-      console.error("Error al guardar estudiante:", err);
+  setLoading(true);
+  try {
+    if (studentToEdit) {
+      await updateStudent({
+        id: studentToEdit.id,
+        first_name: data.first_name,
+        second_name: data.second_name,
+        last_name: data.last_name,
+        second_last_name: data.second_last_name,
+        rut: data.rut,
+        dv: data.dv,
+        major_id: selectedMajor.id
+      });
+    } else {
+      // Usar createStudent del servicio
+      await createStudent({
+        first_name: data.first_name,
+        second_name: data.second_name,
+        last_name: data.last_name,
+        second_last_name: data.second_last_name,
+        rut: data.rut,
+        dv: data.dv,
+        major_id: selectedMajor.id
+      });
     }
-  };
+
+    onStudentCreated();
+    handleClose();
+  } catch (err: unknown) {
+    console.error("Error al guardar estudiante:", err);
+    setError("Ocurrió un error al guardar el estudiante");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleClose = () => {
     reset();
@@ -199,6 +191,7 @@ function StudentModal({
             margin="dense"
             label="RUT"
             type="text"
+            inputProps={{ maxLength: 8 }} // Limitar a 8 caracteres
             fullWidth
             {...register("rut")}
             error={!!errors.rut}
