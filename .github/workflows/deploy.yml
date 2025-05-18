@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: main
-  pull_request:
-    branches: main
+  #   branches: main
+  # pull_request:
+  #   branches: main
 
 jobs:
   deploy:
@@ -11,26 +11,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Tailscale
-      uses: tailscale/github-action@v3
-      with:
-        authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
-        tags: tag:signature
+      - name: Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          tags: tag:signature
 
-    - name: SSH Remote Commands
-      uses: appleboy/ssh-action@v1.2.2
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        password: ${{ secrets.PASSWORD }}
-        port: 22
-        script: |
-          cd /var/www/example.org/ 
-          cd Signature-Front-TS 
-          git pull
-          npm install
-          npm run build
-          mv dist/ signature/
-          rm -rf ../signature/
-          mv signature/ ..
+      - name: SSH Remote Commands
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/example.org/ 
+            cd Signature-Front-TS 
+            git pull
+            npm install
+            npm run build
+            mv dist/ signature/
+            rm -rf ../signature/
+            mv signature/ ..
