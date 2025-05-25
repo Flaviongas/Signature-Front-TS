@@ -9,6 +9,7 @@ import {
   IconButton,
   CircularProgress,
   Box,
+  Alert,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useContext, useEffect, useState } from "react";
@@ -18,7 +19,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { studentValidationSchema, studentFormSchema } from "../schemas/student";
 import MajorContext from "../contexts/MajorContext";
-
+import axios, { AxiosError } from "axios";
 
 interface StudentModalProps {
   open: boolean;
@@ -34,7 +35,8 @@ function StudentModal({
   studentToEdit,
 }: StudentModalProps) {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [generalError, setGeneralError] = useState<string | null>(null);
   const { selectedMajor } = useContext(MajorContext);
 
   const {
@@ -42,7 +44,7 @@ function StudentModal({
     handleSubmit,
     reset,
     setValue,
-    formState: { errors },
+    formState: { errors: formErrors },
   } = useForm<studentFormSchema>({
     resolver: zodResolver(studentValidationSchema),
   });
@@ -58,49 +60,76 @@ function StudentModal({
     } else {
       reset();
     }
+    // Limpiar errores al abrir/cerrar modal o cambiar estudiante
+    setErrors({});
+    setGeneralError(null);
   }, [studentToEdit, open, setValue, reset]);
 
-
   const handleCreateStudent = async (data: studentFormSchema) => {
-  setLoading(true);
-  try {
-    if (studentToEdit) {
-      await updateStudent({
-        id: studentToEdit.id,
-        first_name: data.first_name,
-        second_name: data.second_name,
-        last_name: data.last_name,
-        second_last_name: data.second_last_name,
-        rut: data.rut,
-        dv: data.dv,
-        major_id: selectedMajor.id
-      });
-    } else {
-      // Usar createStudent del servicio
-      await createStudent({
-        first_name: data.first_name,
-        second_name: data.second_name,
-        last_name: data.last_name,
-        second_last_name: data.second_last_name,
-        rut: data.rut,
-        dv: data.dv,
-        major_id: selectedMajor.id
-      });
-    }
+    setLoading(true);
+    setErrors({});
+    setGeneralError(null);
+    
+    try {
+      if (studentToEdit) {
+        await updateStudent({
+          id: studentToEdit.id,
+          first_name: data.first_name,
+          second_name: data.second_name,
+          last_name: data.last_name,
+          second_last_name: data.second_last_name,
+          rut: data.rut,
+          dv: data.dv,
+          major_id: selectedMajor.id
+        });
+      } else {
+        await createStudent({
+          first_name: data.first_name,
+          second_name: data.second_name,
+          last_name: data.last_name,
+          second_last_name: data.second_last_name,
+          rut: data.rut,
+          dv: data.dv,
+          major_id: selectedMajor.id
+        });
+      }
 
-    onStudentCreated();
-    handleClose();
-  } catch (err: unknown) {
-    console.error("Error al guardar estudiante:", err);
-    setError("Ocurrió un error al guardar el estudiante");
-  } finally {
-    setLoading(false);
-  }
-};
+      onStudentCreated();
+      handleClose();
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError;
+        if (axiosError.response?.data && typeof axiosError.response.data === 'object') {
+          // Manejo de errores del serializer
+          setErrors(axiosError.response.data as Record<string, string[]>);
+        } else {
+          // Error general de la API
+          setGeneralError(axiosError.message || "Error en la comunicación con el servidor");
+        }
+      } else {
+        // Otro tipo de error
+        setGeneralError("Ocurrió un error inesperado");
+        console.error("Error no manejado:", err);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleClose = () => {
     reset();
+    setErrors({});
+    setGeneralError(null);
     onClose();
+  };
+
+  // Función para obtener el mensaje de error (combina errores de formulario y backend)
+  const getErrorMessage = (fieldName: string) => {
+    return (
+      (errors[fieldName] && errors[fieldName][0]) || 
+      formErrors[fieldName as keyof studentFormSchema]?.message || 
+      ''
+    );
   };
 
   return (
@@ -140,11 +169,18 @@ function StudentModal({
         component="form"
         onSubmit={handleSubmit(handleCreateStudent)}>
         <DialogContent sx={{ pt: 3 }}>
-          {error && (
-            <Typography color="error" variant="body2" sx={{ mb: 2 }}>
-              {error}
-            </Typography>
+          {generalError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {generalError}
+            </Alert>
           )}
+          
+          {errors.non_field_errors && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {errors.non_field_errors[0]}
+            </Alert>
+          )}
+          
           <TextField
             autoFocus
             margin="dense"
@@ -152,19 +188,18 @@ function StudentModal({
             type="text"
             fullWidth
             {...register("first_name")}
-            error={!!errors.first_name}
-            helperText={errors.first_name?.message}
+            error={!!formErrors.first_name || !!errors.first_name}
+            helperText={getErrorMessage("first_name")}
             sx={{ mb: 2 }}
           />
           <TextField
-            autoFocus
             margin="dense"
             label="Segundo Nombre"
             type="text"
             fullWidth
             {...register("second_name")}
-            error={!!errors.second_name}
-            helperText={errors.second_name?.message}
+            error={!!formErrors.second_name || !!errors.second_name}
+            helperText={getErrorMessage("second_name")}
             sx={{ mb: 2 }}
           />
           <TextField
@@ -173,8 +208,8 @@ function StudentModal({
             type="text"
             fullWidth
             {...register("last_name")}
-            error={!!errors.last_name}
-            helperText={errors.last_name?.message}
+            error={!!formErrors.last_name || !!errors.last_name}
+            helperText={getErrorMessage("last_name")}
             sx={{ mb: 2 }}
           />
           <TextField
@@ -183,29 +218,30 @@ function StudentModal({
             type="text"
             fullWidth
             {...register("second_last_name")}
-            error={!!errors.second_last_name}
-            helperText={errors.second_last_name?.message}
+            error={!!formErrors.second_last_name || !!errors.second_last_name}
+            helperText={getErrorMessage("second_last_name")}
             sx={{ mb: 2 }}
           />
           <TextField
             margin="dense"
             label="RUT"
             type="text"
-            inputProps={{ maxLength: 8 }} // Limitar a 8 caracteres
+            inputProps={{ maxLength: 8 }}
             fullWidth
             {...register("rut")}
-            error={!!errors.rut}
-            helperText={errors.rut?.message}
+            error={!!formErrors.rut || !!errors.rut}
+            helperText={getErrorMessage("rut")}
             sx={{ mb: 2 }}
           />
           <TextField
             margin="dense"
             label="DV"
             type="text"
+            inputProps={{ maxLength: 1 }}
             fullWidth
             {...register("dv")}
-            error={!!errors.dv}
-            helperText={errors.dv?.message}
+            error={!!formErrors.dv || !!errors.dv}
+            helperText={getErrorMessage("dv")}
             sx={{ mb: 2 }}
           />
         </DialogContent>

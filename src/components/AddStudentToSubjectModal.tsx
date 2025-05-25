@@ -13,11 +13,14 @@ import {
   CircularProgress,
   Typography,
   Box,
-  InputAdornment
+  InputAdornment,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { Student } from "../types";
-import { getStudentsByMajor, assignSubjectToStudent } from "../services/studentService";
+import {
+  getStudentsByMajor,
+  assignSubjectToStudent,
+} from "../services/studentService";
 
 interface AddStudentToSubjectModalProps {
   open: boolean;
@@ -34,7 +37,7 @@ function AddStudentToSubjectModal({
   onStudentsAdded,
   majorId,
   subjectId,
-  currentStudentIds
+  currentStudentIds,
 }: AddStudentToSubjectModalProps) {
   const [loading, setLoading] = useState(false);
   const [availableStudents, setAvailableStudents] = useState<Student[]>([]);
@@ -92,7 +95,7 @@ function AddStudentToSubjectModal({
       const promises = selectedStudents.map((studentId) =>
         assignSubjectToStudent({
           student_id: studentId,
-          subject_id: subjectId
+          subject_id: subjectId,
         })
       );
 
@@ -107,7 +110,12 @@ function AddStudentToSubjectModal({
   };
 
   return (
-    <Dialog open={open} onClose={() => !submitting && onClose()} maxWidth="sm" fullWidth>
+    <Dialog
+      open={open}
+      onClose={() => !submitting && onClose()}
+      maxWidth="sm"
+      fullWidth
+    >
       <DialogTitle>Añadir Estudiantes a la Asignatura</DialogTitle>
       <DialogContent>
         <TextField
@@ -131,22 +139,32 @@ function AddStudentToSubjectModal({
             <CircularProgress />
           </Box>
         ) : filteredStudents.length === 0 ? (
-          <Typography variant="body2" color="text.secondary" align="center" sx={{ my: 2 }}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            sx={{ my: 2 }}
+          >
             No hay estudiantes disponibles para añadir
           </Typography>
         ) : (
-          <List sx={{ maxHeight: 300, overflow: 'auto', mt: 2 }}>
+          <List sx={{ maxHeight: 300, overflow: "auto", mt: 2 }}>
             {filteredStudents.map((student) => (
-              <ListItem key={student.id} dense onClick={() => handleToggleStudent(student.id)} sx={{ cursor: 'pointer' }}>
+              <ListItem
+                key={student.id}
+                dense
+                onClick={() => handleToggleStudent(student.id)}
+                sx={{ cursor: "pointer" }}
+              >
                 <Checkbox
                   edge="start"
                   checked={selectedStudents.includes(student.id)}
                   tabIndex={-1}
                   disableRipple
                 />
-                <ListItemText 
-                  primary={`${student.first_name} ${student.last_name}`} 
-                  secondary={`RUT: ${student.rut}`} 
+                <ListItemText
+                  primary={`${student.first_name} ${student.last_name}`}
+                  secondary={`RUT: ${student.rut}`}
                 />
               </ListItem>
             ))}
@@ -157,9 +175,9 @@ function AddStudentToSubjectModal({
         <Button onClick={onClose} disabled={submitting}>
           Cancelar
         </Button>
-        <Button 
-          onClick={handleSubmit} 
-          variant="contained" 
+        <Button
+          onClick={handleSubmit}
+          variant="contained"
           color="primary"
           disabled={selectedStudents.length === 0 || submitting}
         >
