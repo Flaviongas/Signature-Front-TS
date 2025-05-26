@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { getStudentsByMajor, deleteStudent } from "../services/studentService";
 import { useContext } from "react";
 import MajorContext from "../contexts/MajorContext";
+import UploadModal from "../components/UploadModal";
 
 function StudentManagementPage() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ function StudentManagementPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [editStudent, setEditStudent] = useState<Student | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const { selectedMajor } = useContext(MajorContext);
 
   const fetchStudents = () => {
@@ -30,7 +32,7 @@ function StudentManagementPage() {
       .then((res) => {
         setStudents(res.data);
         setLoading(false);
-        
+
       })
       .catch((err) => {
         console.error("Error al obtener estudiantes:", err);
@@ -52,7 +54,7 @@ function StudentManagementPage() {
       const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este estudiante?");
       if (!confirmDelete) return;
 
-      await deleteStudent({student_id :studentId});
+      await deleteStudent({ student_id: studentId });
       setStudents((prevStudents) => prevStudents.filter((student) => student.id !== studentId));
     } catch (error) {
       console.error("Error eliminando el estudiante:", error);
@@ -102,22 +104,44 @@ function StudentManagementPage() {
           <Typography variant="h4" fontWeight="bold" mb={2} textAlign="center">
             Gestión de Estudiantes
           </Typography>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+            gap: 2
+          }}>
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{
+                my: 5,
+                fontWeight: "bold",
+              }}
+              onClick={() => {
+                setEditStudent(null);
+                setIsOpen(true);
+              }}
+            >
+              Crear Estudiante
+            </Button>
 
-          <Button
-            variant="contained"
-            color="secondary"
-            sx={{
-              my: 5,
-              fontWeight: "bold",
-            }}
-            onClick={() => {
-              setEditStudent(null);
-              setIsOpen(true);
-            }}
-          >
-            Crear Estudiante
-          </Button>
 
+            <Button
+              variant="contained"
+              color="info"
+              sx={{
+                my: 5,
+                fontWeight: "bold",
+              }}
+              onClick={() => {
+                setIsUserModalOpen(true)
+              }}
+            >
+              Subir estudiantes
+            </Button>
+          </Box>
+
+          <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onStudentCreated={fetchStudents} uploadText="estudiantes" route="/uploadStudentCSV" />
           <StudentModal
             open={isOpen}
             onClose={() => setIsOpen(false)}
@@ -135,8 +159,8 @@ function StudentManagementPage() {
             />
           )}
         </Box>
-      </Container>
-    </Box>
+      </Container >
+    </Box >
   );
 }
 
