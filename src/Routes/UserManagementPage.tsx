@@ -6,11 +6,13 @@ import { User } from "../types";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { getUsers, deleteUser } from "../services/userService";
+import UploadModal from "../components/UploadModal";
 
 function UserManagementPage() {
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const [editUser, setEditUser] = useState<User | null>(null);
 
@@ -87,20 +89,43 @@ function UserManagementPage() {
             Gestión de Usuarios
           </Typography>
 
-          <Button
-            variant="contained"
-            color="secondary"
-            sx={{
-              my: 5,
-              fontWeight: "bold",
-            }}
-            onClick={() => {
-              setEditUser(null);
-              setIsOpen(true);
-            }}
-          >
-            Crear Usuario
-          </Button>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+            gap: 2
+          }}>
+
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{
+                my: 5,
+                fontWeight: "bold",
+              }}
+              onClick={() => {
+                setEditUser(null);
+                setIsOpen(true);
+              }}
+            >
+              Crear Usuario
+            </Button>
+
+            <Button
+              variant="contained"
+              color="info"
+              sx={{
+                my: 5,
+                fontWeight: "bold",
+              }}
+              onClick={() => {
+                setIsUserModalOpen(true);
+              }}
+            >
+              Subir CSV con Usuarios
+            </Button>
+          </Box>
+          <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onStudentCreated={fetchUsers} uploadText="usuarios" route="uploadUserCSV/" />
           <CreateUserModal
             open={isOpen}
             onClose={() => setIsOpen(false)}
@@ -114,8 +139,8 @@ function UserManagementPage() {
             onEdit={handleEditUser}
           />
         </Box>
-      </Container>
-    </Box>
+      </Container >
+    </Box >
   );
 }
 

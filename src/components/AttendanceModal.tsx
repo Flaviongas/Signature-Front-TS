@@ -50,7 +50,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
     return localDate.toISOString().split("T")[0]; // 'YYYY-MM-DD'
   });
   const [isPlaceVisible, setIsPlaceVisible] = useState(false);
-  const [buttonText, setButtonText] = useState("Agregar Estudiantes");
   const [studentsList, setStudentsList] = useState<Student[]>([]);
   const [section, setSection] = useState<string>("");
   const [classLink, setClassLink] = useState<string>("");
@@ -76,7 +75,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   useEffect(() => {
     if (isOpen) {
       setIsPlaceVisible(false);
-      setButtonText("Agregar Estudiantes");
     }
   }, [isOpen]);
 
@@ -176,10 +174,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   };
 
   // Alterna visibilidad del formulario para agregar estudiantes
-  const handleTogglePlaceVisibility = () => {
-    setIsPlaceVisible((prev) => !prev);
-    setButtonText(isPlaceVisible ? "Agregar Estudiantes" : "Ocultar");
-  };
 
   // Limpieza del modal al cerrarlo
   function cleanup() {
@@ -238,22 +232,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
             onChange={handleDateChange}
           />
         </Box>
-
-        <Button
-          variant="contained"
-          color="secondary"
-          sx={{
-            mb: 2,
-            fontWeight: "bold",
-            fontSize: {
-              xs: "0.75rem",
-              sm: "0.875rem",
-            },
-          }}
-          onClick={handleTogglePlaceVisibility}
-        >
-          {buttonText}
-        </Button>
 
         {isPlaceVisible && (
           <Form
