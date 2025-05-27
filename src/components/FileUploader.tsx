@@ -35,7 +35,7 @@ const ProgressContainer = styled(Box)(({ theme }) => ({
 }));
 
 
-export default function FileUploader({ onClose, onStudentCreated, uploadText, route }: { onClose: () => void; onStudentCreated: () => void, uploadText: string, route: string }) {
+export default function FileUploader({ onClose, onSomethingCreated, uploadText, route }: { onClose: () => void; onSomethingCreated: () => void, uploadText: string, route: string }) {
   const [dragOver, setDragOver] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
@@ -45,17 +45,21 @@ export default function FileUploader({ onClose, onStudentCreated, uploadText, ro
   const [uploadProgress, setUploadProgress] = useState(0);
 
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
+    checkFileTypeCSV(e);
+  }
+
+function showSnackBarError(message: string){
+      setStatus('error');
+      setErrorMessage(message);
+      setOpenSnackbar(true);
+}
+function showSnackBarSuccess(message: string){
+      setStatus('success');
+      setSuccessMessage(message);
+      setOpenSnackbar(true);
   }
 
   useEffect(() => {
-    console.log("File changed:", file);
-    console.log("onStudentCreated called:", onStudentCreated);
-    console.log(setErrorMessage)
-    console.log(setSuccessMessage)
-    console.log(successMessage)
   }, [file]);
 
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
@@ -67,13 +71,27 @@ export default function FileUploader({ onClose, onStudentCreated, uploadText, ro
     setDragOver(false);
   }
 
+function checkFileTypeCSV(e: ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLDivElement>) {
+    if ('dataTransfer' in e && e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+        if (e.dataTransfer.files[0].type === "text/csv") {
+            setFile(e.dataTransfer.files[0]);
+            return;
+        }
+    } 
+    else if ('target' in e && e.target && 'files' in e.target && e.target.files && e.target.files.length > 0) {
+        if (e.target.files[0].type === "text/csv") {
+            setFile(e.target.files[0]);
+            return;
+        }
+    }
+    showSnackBarError("Por favor, sube un archivo CSV.");
+}
+
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
     setDragOver(false);
 
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      setFile(e.dataTransfer.files[0]);
-    }
+    checkFileTypeCSV(e);
   }
 
   async function handleFileUpload() {
@@ -89,6 +107,7 @@ export default function FileUploader({ onClose, onStudentCreated, uploadText, ro
       await axios.post(BASE_URL + route, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Token ${localStorage.getItem('Token')}`,
         },
         onUploadProgress: (progressEvent) => {
           const progress = progressEvent.total
@@ -97,13 +116,15 @@ export default function FileUploader({ onClose, onStudentCreated, uploadText, ro
           setUploadProgress(progress);
         },
       });
-
       setStatus('success');
       setUploadProgress(100);
-    } catch {
-      setStatus('error');
-      setErrorMessage("Error al subir el archivo");
-      setOpenSnackbar(true);
+      setFile(null);
+      showSnackBarSuccess(`Archivo ${file.name} subido exitosamente.`);
+      onSomethingCreated();
+      onClose()
+    } catch(error: any) {
+      console.error("Error uploading file:", error);
+      showSnackBarError("Error al subir el archivo. Por favor, inténtalo de nuevo.");
       setUploadProgress(0);
     }
   }
@@ -125,7 +146,7 @@ export default function FileUploader({ onClose, onStudentCreated, uploadText, ro
             setFile(null);
             setStatus('idle');
             setUploadProgress(0);
-          }, 300); // Delay to ensure the modal closes before resetting state
+          }, 300);
         }}>
         <FontAwesomeIcon icon={faTimes} />
       </IconButton>
@@ -222,13 +243,6 @@ export default function FileUploader({ onClose, onStudentCreated, uploadText, ro
         )}
       </Box>
 
-      {
-        status === 'success' && (
-          <Typography variant="h4" fontWeight="bold" mb={2} textAlign="center">
-            Archivo subido con éxito
-          </Typography>
-        )
-      }
 
       {
 

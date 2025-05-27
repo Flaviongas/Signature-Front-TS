@@ -29,7 +29,7 @@ export default function UploadModal({
       fullWidth
       maxWidth="sm"
     >
-      <FileUploader onClose={onClose} onStudentCreated={onStudentCreated} uploadText={uploadText} route={route} />
+      <FileUploader onClose={onClose} onSomethingCreated={onStudentCreated} uploadText={uploadText} route={route} />
     </Dialog >
   );
 }

@@ -125,7 +125,7 @@ function UserManagementPage() {
               Subir CSV con Usuarios
             </Button>
           </Box>
-          <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onStudentCreated={fetchUsers} uploadText="usuarios" route="/uploadUserCSV" />
+          <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onStudentCreated={fetchUsers} uploadText="usuarios" route="uploadUserCSV/" />
           <CreateUserModal
             open={isOpen}
             onClose={() => setIsOpen(false)}

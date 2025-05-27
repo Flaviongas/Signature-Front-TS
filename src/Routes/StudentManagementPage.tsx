@@ -141,7 +141,7 @@ function StudentManagementPage() {
             </Button>
           </Box>
 
-          <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onStudentCreated={fetchStudents} uploadText="estudiantes" route="/uploadStudentCSV" />
+          <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onStudentCreated={fetchStudents} uploadText="estudiantes" route="uploadStudentCSV/" />
           <StudentModal
             open={isOpen}
             onClose={() => setIsOpen(false)}
