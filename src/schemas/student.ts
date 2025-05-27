@@ -3,7 +3,7 @@ import { z } from "zod";
 export const studentValidationSchema = z.object({
   rut: z
     .string()
-    .min(7, { message: "minimo 7 digitos sin letras" })
+    .min(7, { message: "Minimo 7 digitos sin letras" })
     .max(8, { message: "Maximo 8 digitos sin letras" })
     .nonempty("El campo no puede estar vacio")
     .refine(

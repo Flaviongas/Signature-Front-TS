@@ -81,7 +81,7 @@ function UserList({ users, onDelete, onEdit }: Props) {
                     color: "white",
                     "&:hover": {
                       backgroundColor: "#c35011",
-                      
+
                     },
                   }}
                 >
@@ -93,7 +93,7 @@ function UserList({ users, onDelete, onEdit }: Props) {
                   onClick={() => onDelete(user.id)}
                   sx={{
                     transition: "all 0.3s ease",
-                    backgroundColor:theme.palette.primary.main,
+                    backgroundColor: theme.palette.primary.main,
                     color: "white",
                     "&:hover": {
                       backgroundColor: theme.palette.primary.dark,

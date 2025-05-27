@@ -137,7 +137,7 @@ function StudentManagementPage() {
                 setIsUserModalOpen(true)
               }}
             >
-              Subir estudiantes
+              Subir estudiantes (No implementado)
             </Button>
           </Box>
 

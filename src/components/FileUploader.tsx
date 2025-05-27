@@ -48,15 +48,15 @@ export default function FileUploader({ onClose, onSomethingCreated, uploadText, 
     checkFileTypeCSV(e);
   }
 
-function showSnackBarError(message: string){
-      setStatus('error');
-      setErrorMessage(message);
-      setOpenSnackbar(true);
-}
-function showSnackBarSuccess(message: string){
-      setStatus('success');
-      setSuccessMessage(message);
-      setOpenSnackbar(true);
+  function showSnackBarError(message: string) {
+    setStatus('error');
+    setErrorMessage(message);
+    setOpenSnackbar(true);
+  }
+  function showSnackBarSuccess(message: string) {
+    setStatus('success');
+    setSuccessMessage(message);
+    setOpenSnackbar(true);
   }
 
   useEffect(() => {
@@ -71,21 +71,21 @@ function showSnackBarSuccess(message: string){
     setDragOver(false);
   }
 
-function checkFileTypeCSV(e: ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLDivElement>) {
+  function checkFileTypeCSV(e: ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLDivElement>) {
     if ('dataTransfer' in e && e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
-        if (e.dataTransfer.files[0].type === "text/csv") {
-            setFile(e.dataTransfer.files[0]);
-            return;
-        }
-    } 
+      if (e.dataTransfer.files[0].type === "text/csv") {
+        setFile(e.dataTransfer.files[0]);
+        return;
+      }
+    }
     else if ('target' in e && e.target && 'files' in e.target && e.target.files && e.target.files.length > 0) {
-        if (e.target.files[0].type === "text/csv") {
-            setFile(e.target.files[0]);
-            return;
-        }
+      if (e.target.files[0].type === "text/csv") {
+        setFile(e.target.files[0]);
+        return;
+      }
     }
     showSnackBarError("Por favor, sube un archivo CSV.");
-}
+  }
 
   function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
@@ -122,7 +122,7 @@ function checkFileTypeCSV(e: ChangeEvent<HTMLInputElement> | React.DragEvent<HTM
       showSnackBarSuccess(`Archivo ${file.name} subido exitosamente.`);
       onSomethingCreated();
       onClose()
-    } catch(error: any) {
+    } catch (error: any) {
       console.error("Error uploading file:", error);
       showSnackBarError("Error al subir el archivo. Por favor, inténtalo de nuevo.");
       setUploadProgress(0);
@@ -243,9 +243,7 @@ function checkFileTypeCSV(e: ChangeEvent<HTMLInputElement> | React.DragEvent<HTM
         )}
       </Box>
 
-
       {
-
         <Snackbar
           open={openSnackbar}
           autoHideDuration={3000}

@@ -142,7 +142,7 @@ function SubjectsGrid() {
               No hay materias disponibles para esta carrera.
             </Typography>
             <Box key="add">
-              <Card sx={cardStyles} onClick={handleOpenMajorModal}>
+              <Card sx={{ ...cardStyles, cursor: "pointer" }} onClick={handleOpenMajorModal}>
                 <FontAwesomeIcon
                   style={{
                     color: "black",
@@ -179,7 +179,8 @@ function SubjectsGrid() {
                     sx={{
                       ...cardStyles,
                       position: "relative",
-                      
+                      cursor: "default",
+
                       "&::before": {
                         content: '""',
                         position: "absolute",
@@ -234,7 +235,7 @@ function SubjectsGrid() {
                       fullWidth
                       sx={{
                         fontWeight: "bold",
-                        mb:1,
+                        mb: 1,
                         width: '100%',
                       }}
                       onClick={() =>
@@ -250,13 +251,13 @@ function SubjectsGrid() {
                     <Button
                       variant="contained"
                       color="secondary"
-                      sx={{     
+                      sx={{
                         width: '100%',
-                        fontWeight: "bold",                     
+                        fontWeight: "bold",
                       }}
                       onClick={() => navigate("/students", {
-                        state: { 
-                          majorId: selectedMajor.id, 
+                        state: {
+                          majorId: selectedMajor.id,
                           subjectId: subject.id,
                           majorName: selectedMajor.name,
                           subjectName: subject.name
@@ -327,12 +328,12 @@ function SubjectsGrid() {
             display: "flex",
             justifyContent: { xs: "center", md: "space-between" },
             flexDirection: { xs: "column", md: "row" },
-            alignSelf: { xs: "center"},
+            alignSelf: { xs: "center" },
             gap: 2,
             width: '100%'
           }}
-        > 
-        <Button
+        >
+          <Button
             variant="contained"
             color="secondary"
             sx={{
@@ -356,10 +357,10 @@ function SubjectsGrid() {
           >
             Gestionar usuarios
           </Button>
-          
-          
+
+
         </Box>
-        
+
       )}
       {content}
     </Container>
