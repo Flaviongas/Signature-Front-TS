@@ -108,7 +108,17 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
     return { attendanceData: attendanceData, ISODate: ISODate };
   };
 
+  const areStudentsChecked = () => {
+    if (checkedStudents.length === 0) {
+    setErrorMessage("Debes seleccionar al menos un estudiante.");
+    setOpenSnackbar(true);
+    return false;
+    }
+    return true;
+  }
+
   const sendEmail = async () => {
+    if (!areStudentsChecked()) return;
     const { attendanceData, ISODate } = dataExcel();
     setLoading(true);
     setErrorMessage("");
@@ -155,6 +165,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   // Genera y descarga archivo Excel con la asistencia
   const handleSubmitAttendance = () => {
     const { attendanceData, ISODate } = dataExcel();
+    if (!areStudentsChecked()) return;
     downloadExcel(
       attendanceData,
       ISODate,
