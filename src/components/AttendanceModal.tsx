@@ -370,7 +370,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
             color="secondary"
             variant="contained"
             loading={loading}
-            disabled={loading || !isValidEmail(email)}
+            disabled={loading || !isValidEmail(email) || checkedStudents.length === 0}
             onClick={sendEmail}
             sx={{
               bgcolor: theme.palette.secondary.dark,
@@ -411,6 +411,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
                 sm: "0.875rem",
               },
             }}
+            disabled={checkedStudents.length === 0}
           >
             descargar
           </Button>
