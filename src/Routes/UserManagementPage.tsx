@@ -36,14 +36,13 @@ function UserManagementPage() {
 
   const handleDeleteUser = async (userId: number) => {
     try {
-      const reponse = await deleteUser(userId);
-
-      if (reponse.status !== 200) {
-        console.error("Error al eliminar el usuario:", reponse);
+      if (!window.confirm("¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.")) {
         return;
       }
+      const reponse = await deleteUser(userId);
 
-      setUsers((prevUsers) =>{
+      if (reponse.status === 200 || reponse.status === 204) {
+        setUsers((prevUsers) =>{
         const userIndex = prevUsers.findIndex((u) => u.id === userId);
         if (userIndex !== -1) {
           const updatedUsers = [...prevUsers];
@@ -52,7 +51,9 @@ function UserManagementPage() {
         }
         return prevUsers;
       })
-
+      } else {
+        console.error("Error al eliminar el usuario:", reponse);
+      }
     } catch (error) {
       console.error("Error eliminando el usuario:", error);
     }
