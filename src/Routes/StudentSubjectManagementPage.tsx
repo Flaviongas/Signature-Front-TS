@@ -86,8 +86,6 @@ function StudentSubjectManagentPage() {
 
     setActionLoading(true);
     try {
-      console.log("Eliminando estudiante con ID:", selectedStudentId, subjectId);
-      console.log("Tipos:", typeof selectedStudentId, typeof subjectId);
       await removeStudentSubject({
         student_id: selectedStudentId,
         subject_id: subjectId

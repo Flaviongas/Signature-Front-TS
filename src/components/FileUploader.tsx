@@ -124,7 +124,7 @@ export default function FileUploader({ onClose, onSomethingCreated, uploadText, 
       onClose()
     } catch (error: any) {
       console.error("Error uploading file:", error);
-      showSnackBarError("Error al subir el archivo. Por favor, inténtalo de nuevo.");
+      showSnackBarError(error.response?.data?.error || "Error al subir el archivo. Por favor, inténtalo de nuevo.");
       setUploadProgress(0);
     }
   }

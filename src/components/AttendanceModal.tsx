@@ -109,7 +109,17 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
     return { attendanceData: attendanceData, ISODate: ISODate };
   };
 
+  const areStudentsChecked = () => {
+    if (checkedStudents.length === 0) {
+    setErrorMessage("Debes seleccionar al menos un estudiante.");
+    setOpenSnackbar(true);
+    return false;
+    }
+    return true;
+  }
+
   const sendEmail = async () => {
+    if (!areStudentsChecked()) return;
     const { attendanceData, ISODate } = dataExcel();
     setLoading(true);
     setErrorMessage("");
@@ -156,6 +166,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   // Genera y descarga archivo Excel con la asistencia
   const handleSubmitAttendance = () => {
     const { attendanceData, ISODate } = dataExcel();
+    if (!areStudentsChecked()) return;
     downloadExcel(
       attendanceData,
       ISODate,
@@ -332,7 +343,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
             color="secondary"
             variant="contained"
             loading={loading}
-            disabled={loading || !isValidEmail(email)}
+            disabled={loading || !isValidEmail(email) || checkedStudents.length === 0}
             onClick={sendEmail}
             sx={{
               bgcolor: theme.palette.secondary.dark,
@@ -373,6 +384,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
                 sm: "0.875rem",
               },
             }}
+            disabled={checkedStudents.length === 0}
           >
             descargar
           </Button>
