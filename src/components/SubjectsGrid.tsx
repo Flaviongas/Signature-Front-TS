@@ -201,10 +201,11 @@ function SubjectsGrid() {
                         color="error"
                         sx={{
                           stroke: "currentColor",
+                          cursor: "pointer",
                           strokeWidth: 2,
                           position: "absolute",
-                          top: 10,
-                          right: 10,
+                          top: 8,
+                          right: 3,
                         }}
                         onClick={() =>
                           handleDeleteSubject(subject.id, subject.name)

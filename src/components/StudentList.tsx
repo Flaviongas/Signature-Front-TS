@@ -38,7 +38,7 @@ import {
   
   function StudentList({ students, onDelete, onEdit }: Props) {
 
-    return (
+     return (
       <TableContainer
         component={Paper}
         sx={{
@@ -46,19 +46,20 @@ import {
           borderRadius: 2,
           height: "70vh",
           overflowY: "auto",
+          overflowX: "auto",
+          // Estilos para la barra de desplazamiento vertical
           "&::-webkit-scrollbar": {
-            width: "10px",
+            width: "5px",
+            height: "5px", // Añadido para la barra horizontal
           },
           "&::-webkit-scrollbar-track": {
             backgroundColor: "#f1f1f1",
           },
           "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#3454D1",
+            backgroundColor: theme.palette.secondary.main,
             borderRadius: "10px",
           },
-          "&::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "#2F4BC0",
-          },
+
         }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="Lista de Estudiantes">
@@ -88,11 +89,13 @@ import {
                     <IconButton
                       onClick={() => onEdit(student)}
                       sx={{
+                        borderRadius: "8px",
+                        padding: "10px 20px",
                         transition: "all 0.3s ease",
-                        backgroundColor: "#f84b20",
+                        backgroundColor: theme.palette.info.main,
                         color: "white",
                         "&:hover": {
-                          backgroundColor: "#c35011",
+                          backgroundColor: theme.palette.info.dark,
                         },
                       }}
                     >
@@ -103,6 +106,8 @@ import {
                     <IconButton
                       onClick={() => onDelete(student.id)}
                       sx={{
+                        borderRadius: "8px",
+                        padding: "10px 20px",
                         transition: "all 0.3s ease",
                         backgroundColor: theme.palette.primary.main,
                         color: "white",
