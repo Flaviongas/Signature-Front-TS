@@ -54,8 +54,21 @@ function StudentManagementPage() {
       const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este estudiante?");
       if (!confirmDelete) return;
 
-      await deleteStudent({ student_id: studentId });
-      setStudents((prevStudents) => prevStudents.filter((student) => student.id !== studentId));
+      const response = await deleteStudent({ student_id: studentId });
+
+      if (response.status !== 200) {
+        console.error("Error al eliminar el estudiante:", response);
+        return;
+      }
+      setStudents((prevStudents) => {
+        const studentIndex = prevStudents.findIndex((s) => s.id === studentId);
+        if (studentIndex !== -1) {
+          const updatedStudents = [...prevStudents];
+          updatedStudents.splice(studentIndex, 1);
+          return updatedStudents;
+        }
+        return prevStudents;
+      });
     } catch (error) {
       console.error("Error eliminando el estudiante:", error);
     }

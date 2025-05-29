@@ -36,9 +36,22 @@ function UserManagementPage() {
 
   const handleDeleteUser = async (userId: number) => {
     try {
-      await deleteUser(userId);
+      const reponse = await deleteUser(userId);
 
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId));
+      if (reponse.status !== 200) {
+        console.error("Error al eliminar el usuario:", reponse);
+        return;
+      }
+
+      setUsers((prevUsers) =>{
+        const userIndex = prevUsers.findIndex((u) => u.id === userId);
+        if (userIndex !== -1) {
+          const updatedUsers = [...prevUsers];
+          updatedUsers.splice(userIndex, 1);
+          return updatedUsers;
+        }
+        return prevUsers;
+      })
 
     } catch (error) {
       console.error("Error eliminando el usuario:", error);
