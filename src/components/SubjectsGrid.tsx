@@ -1,8 +1,6 @@
 import { useContext, useState } from "react";
 import { Box, Typography, Card, Button, Container } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import axios from "axios";
-
 import MajorContext from "../contexts/MajorContext";
 import { ShortSubject, Student, Subject } from "../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,7 +12,7 @@ import AttendanceModal from "./AttendanceModal";
 import AddMajorModal from "./AddMajorModal";
 
 import useIsSuperUser from "../hooks/useIsSuperUser";
-
+import { deleteSubject } from "../services/subjectService";
 import theme from "../theme";
 
 function SubjectsGrid() {
@@ -72,25 +70,20 @@ function SubjectsGrid() {
     handleRefresh();
     closeMajorModal();
   };
-  // Elimina la asignatura del card
+
   const handleDeleteSubject = async (id: number, name: string) => {
     const confirmDelete = window.confirm(
       `¿Estás seguro de que deseas eliminar la asignatura ${name}?`
     );
     if (!confirmDelete) return;
-
-    const token = localStorage.getItem("Token");
     try {
-      const url = import.meta.env.VITE_API_URL + "/api/subjects";
-      await axios.delete(`${url}/${id}/`, {
-        headers: { Authorization: `Token ${token}` },
-      });
+      await deleteSubject(id);
       handleRefresh();
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Error al eliminar la asignatura:", error);
+      alert("Error al eliminar la asignatura. Por favor, inténtalo de nuevo.");
     }
   };
-
   const cardStyles = {
     display: "flex",
     minHeight: 215,
@@ -173,6 +166,7 @@ function SubjectsGrid() {
                   key={subject.id}
                   sx={{
                     m: 2,
+                    display: "flex",
                   }}
                 >
                   <Card
