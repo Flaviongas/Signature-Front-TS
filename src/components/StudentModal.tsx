@@ -9,6 +9,7 @@ import {
   CircularProgress,
   Box,
   Alert,
+  Snackbar,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useContext, useEffect, useState } from "react";
@@ -34,8 +35,9 @@ function StudentModal({
   studentToEdit,
 }: StudentModalProps) {
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string[]>>({});
-  const [generalError, setGeneralError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const { selectedMajor } = useContext(MajorContext);
 
   const {
@@ -60,14 +62,14 @@ function StudentModal({
       reset();
     }
     // Limpiar errores al abrir/cerrar modal o cambiar estudiante
-    setErrors({});
-    setGeneralError(null);
+    setErrorMessage(null);
+    setSuccessMessage(null);
   }, [studentToEdit, open, setValue, reset]);
 
   const handleCreateStudent = async (data: studentFormSchema) => {
     setLoading(true);
-    setErrors({});
-    setGeneralError(null);
+    setErrorMessage(null);
+    setSuccessMessage(null);
     
     try {
       if (studentToEdit) {
@@ -81,6 +83,7 @@ function StudentModal({
           dv: data.dv,
           major_id: selectedMajor.id
         });
+        setSuccessMessage("Estudiante actualizado correctamente.");
       } else {
         await createStudent({
           first_name: data.first_name,
@@ -91,25 +94,46 @@ function StudentModal({
           dv: data.dv,
           major_id: selectedMajor.id
         });
+        setSuccessMessage("Estudiante creado correctamente.");
       }
 
+      setOpenSnackbar(true);
       onStudentCreated();
-      handleClose();
+      setTimeout(() => {
+        handleClose();
+      }, 1000);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError;
         if (axiosError.response?.data && typeof axiosError.response.data === 'object') {
           // Manejo de errores del serializer
-          setErrors(axiosError.response.data as Record<string, string[]>);
+          const errorData = axiosError.response.data as Record<string, string[]>;
+          
+          if (errorData.non_field_errors) {
+            setErrorMessage(errorData.non_field_errors[0]);
+          } else if (errorData.rut) {
+            setErrorMessage(`RUT: ${errorData.rut[0]}`);
+          } else if (errorData.dv) {
+            setErrorMessage(`DV: ${errorData.dv[0]}`);
+          } else if (errorData.first_name) {
+            setErrorMessage(`Primer nombre: ${errorData.first_name[0]}`);
+          } else if (errorData.last_name) {
+            setErrorMessage(`Primer apellido: ${errorData.last_name[0]}`);
+          } else {
+            // Si hay otros errores que no hemos manejado específicamente
+            const firstErrorField = Object.keys(errorData)[0];
+            setErrorMessage(`${firstErrorField}: ${errorData[firstErrorField][0]}`);
+          }
         } else {
           // Error general de la API
-          setGeneralError(axiosError.message || "Error en la comunicación con el servidor");
+          setErrorMessage(axiosError.message || "Error en la comunicación con el servidor");
         }
       } else {
         // Otro tipo de error
-        setGeneralError("Ocurrió un error inesperado");
+        setErrorMessage("Ocurrió un error inesperado");
         console.error("Error no manejado:", err);
       }
+      setOpenSnackbar(true);
     } finally {
       setLoading(false);
     }
@@ -117,155 +141,155 @@ function StudentModal({
 
   const handleClose = () => {
     reset();
-    setErrors({});
-    setGeneralError(null);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    setOpenSnackbar(false);
     onClose();
   };
 
-  // Función para obtener el mensaje de error (combina errores de formulario y backend)
+  // Función para obtener el mensaje de error de validación del formulario
   const getErrorMessage = (fieldName: string) => {
-    return (
-      (errors[fieldName] && errors[fieldName][0]) || 
-      formErrors[fieldName as keyof studentFormSchema]?.message || 
-      ''
-    );
+    return formErrors[fieldName as keyof studentFormSchema]?.message || '';
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      fullWidth
-      maxWidth="sm"
-      PaperProps={{
-        sx: {
-          borderRadius: 2,
-          boxShadow: 10,
-        },
-      }}
-    >
-      <DialogTitle
-        sx={{
-          bgcolor: "secondary.main",
-          color: "white",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+    <>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        fullWidth
+        maxWidth="sm"
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            boxShadow: 10,
+          },
         }}
       >
-        {studentToEdit ? "Editar Estudiante" : "Crear Nuevo Estudiante"}
-        <IconButton
-          edge="end"
-          color="inherit"
-          onClick={handleClose}
-          aria-label="close"
+        <DialogTitle
+          sx={{
+            bgcolor: "secondary.main",
+            color: "white",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
         >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-
-      <Box 
-        component="form"
-        onSubmit={handleSubmit(handleCreateStudent)}>
-        <DialogContent sx={{ pt: 3 }}>
-          {generalError && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {generalError}
-            </Alert>
-          )}
-          
-          {errors.non_field_errors && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {errors.non_field_errors[0]}
-            </Alert>
-          )}
-          
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Primer Nombre"
-            type="text"
-            fullWidth
-            {...register("first_name")}
-            error={!!formErrors.first_name || !!errors.first_name}
-            helperText={getErrorMessage("first_name")}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            label="Segundo Nombre"
-            type="text"
-            fullWidth
-            {...register("second_name")}
-            error={!!formErrors.second_name || !!errors.second_name}
-            helperText={getErrorMessage("second_name")}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            label="Primer Apellido"
-            type="text"
-            fullWidth
-            {...register("last_name")}
-            error={!!formErrors.last_name || !!errors.last_name}
-            helperText={getErrorMessage("last_name")}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            label="Segundo Apellido"
-            type="text"
-            fullWidth
-            {...register("second_last_name")}
-            error={!!formErrors.second_last_name || !!errors.second_last_name}
-            helperText={getErrorMessage("second_last_name")}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            label="RUT"
-            type="text"
-            inputProps={{ maxLength: 8 }}
-            fullWidth
-            {...register("rut")}
-            error={!!formErrors.rut || !!errors.rut}
-            helperText={getErrorMessage("rut")}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            label="DV"
-            type="text"
-            inputProps={{ maxLength: 1 }}
-            fullWidth
-            {...register("dv")}
-            error={!!formErrors.dv || !!errors.dv}
-            helperText={getErrorMessage("dv")}
-            sx={{ mb: 2 }}
-          />
-        </DialogContent>
-
-        <DialogActions sx={{ px: 3, pb: 3 }}>
-          <Button onClick={handleClose} variant="outlined" color="secondary">
-            Cancelar
-          </Button>
-          <Button
-            type="submit"
-            variant="contained"
-            color="secondary"
-            disabled={loading}
+          {studentToEdit ? "Editar Estudiante" : "Crear Nuevo Estudiante"}
+          <IconButton
+            edge="end"
+            color="inherit"
+            onClick={handleClose}
+            aria-label="close"
           >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : studentToEdit ? (
-              "Guardar Cambios"
-            ) : (
-              "Crear Estudiante"
-            )}
-          </Button>
-        </DialogActions>
-      </Box>
-    </Dialog>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+
+        <Box 
+          component="form"
+          onSubmit={handleSubmit(handleCreateStudent)}>
+          <DialogContent sx={{ pt: 3 }}>
+            <TextField
+              autoFocus
+              margin="dense"
+              label="Primer Nombre"
+              type="text"
+              fullWidth
+              {...register("first_name")}
+              error={!!formErrors.first_name}
+              helperText={getErrorMessage("first_name")}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Segundo Nombre"
+              type="text"
+              fullWidth
+              {...register("second_name")}
+              error={!!formErrors.second_name}
+              helperText={getErrorMessage("second_name")}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Primer Apellido"
+              type="text"
+              fullWidth
+              {...register("last_name")}
+              error={!!formErrors.last_name}
+              helperText={getErrorMessage("last_name")}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="Segundo Apellido"
+              type="text"
+              fullWidth
+              {...register("second_last_name")}
+              error={!!formErrors.second_last_name}
+              helperText={getErrorMessage("second_last_name")}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="RUT"
+              type="text"
+              inputProps={{ maxLength: 8 }}
+              fullWidth
+              {...register("rut")}
+              error={!!formErrors.rut}
+              helperText={getErrorMessage("rut")}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="dense"
+              label="DV"
+              type="text"
+              inputProps={{ maxLength: 1 }}
+              fullWidth
+              {...register("dv")}
+              error={!!formErrors.dv}
+              helperText={getErrorMessage("dv")}
+              sx={{ mb: 2 }}
+            />
+          </DialogContent>
+
+          <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button onClick={handleClose} variant="outlined" color="secondary">
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="secondary"
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : studentToEdit ? (
+                "Guardar Cambios"
+              ) : (
+                "Crear Estudiante"
+              )}
+            </Button>
+          </DialogActions>
+        </Box>
+      </Dialog>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={() => setOpenSnackbar(false)}
+      >
+        <Alert
+          severity={errorMessage ? "error" : "success"}
+          sx={{ width: "100%" }}
+        >
+          {errorMessage || successMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 }
 
