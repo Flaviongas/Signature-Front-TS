@@ -15,6 +15,7 @@ import { createUser, updateUser } from "../services/userService";
 import { getMajors } from "../services/majorService";
 import { createUserPayload, User } from "../types";
 import { useEffect } from "react";
+import theme from "../theme";
 
 type Props = {
   open: boolean;
@@ -189,7 +190,7 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
 
   return (
     <Dialog open={open} onClose={handleCloseModal}>
-      <DialogTitle>
+      <DialogTitle sx= {{background:theme.palette.secondary.main, color:"white", fontWeight:"bold"}}>
         {editingUser ? "Editar usuario" : "Crear nuevo usuario"}
       </DialogTitle>
       <DialogContent>
@@ -274,6 +275,18 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
         <Button
+          variant="outlined" 
+          color="secondary"
+          onClick={handleCloseModal}
+          disabled={loading}
+          sx={{
+            color: theme.palette.secondary.dark,
+            backgroundColor: "transparent",
+          }}
+        >
+          Cancelar
+        </Button>
+        <Button
           variant="contained"
           color="secondary"
           onClick={handleCreateUser}
@@ -282,19 +295,9 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
             fontWeight: "bold",
           }}
         >
-          {editingUser ? "Guardar cambios" : "Crear"}
+          {editingUser ? "Guardar cambios" : "Crear usuario"}
         </Button>
-        <Button
-          variant="contained"
-          onClick={handleCloseModal}
-          color="primary"
-          disabled={loading}
-          sx={{
-            fontWeight: "bold",
-          }}
-        >
-          Cancelar
-        </Button>
+
       </DialogActions>
       <Snackbar
         open={openSnackbar}

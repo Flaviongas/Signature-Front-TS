@@ -45,19 +45,19 @@ function UserList({ users, onDelete, onEdit }: Props) {
         borderRadius: 2,
         height: "70vh",
         overflowY: "auto",
+        overflowX: "auto",
         "&::-webkit-scrollbar": {
-          width: "10px",
+          width: "5px",
+          height: "5px", 
         },
         "&::-webkit-scrollbar-track": {
           backgroundColor: "#f1f1f1",
         },
         "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "#3454D1",
+          backgroundColor: theme.palette.secondary.main,
           borderRadius: "10px",
         },
-        "&::-webkit-scrollbar-thumb:hover": {
-          backgroundColor: "#2F4BC0", // Color cuando el scroll está en hover
-        },
+        
       }}
     >
       <Table sx={{ minWidth: 650 }} aria-label="Lista de Usuarios">
@@ -76,11 +76,13 @@ function UserList({ users, onDelete, onEdit }: Props) {
                 <IconButton
                   onClick={() => onEdit(user)}
                   sx={{
+                    borderRadius: "8px",
+                    padding: "10px 20px",
                     transition: "all 0.3s ease",
-                    backgroundColor: "#f84b20",
+                    backgroundColor: theme.palette.info.main,
                     color: "white",
                     "&:hover": {
-                      backgroundColor: "#c35011",
+                      backgroundColor: theme.palette.info.dark,
 
                     },
                   }}
@@ -92,6 +94,8 @@ function UserList({ users, onDelete, onEdit }: Props) {
                 <IconButton
                   onClick={() => onDelete(user.id)}
                   sx={{
+                    borderRadius: "8px",
+                    padding: "10px 20px",
                     transition: "all 0.3s ease",
                     backgroundColor: theme.palette.primary.main,
                     color: "white",
