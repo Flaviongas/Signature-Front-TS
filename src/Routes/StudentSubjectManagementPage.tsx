@@ -158,7 +158,7 @@ function StudentSubjectManagentPage() {
       {/* Botón para añadir nuevos estudiantes */}
       <Button 
         variant="contained" 
-        color="primary" 
+        color="secondary" 
         onClick={handleAddStudent}
         sx={{ mb: 3 }}
       >
@@ -190,7 +190,7 @@ function StudentSubjectManagentPage() {
               <TableCell sx={{ fontWeight: "bold" }}>Nombre</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Apellido</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>RUT</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Acciones</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Borrar</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
