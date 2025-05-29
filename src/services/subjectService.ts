@@ -12,3 +12,4 @@ const api = axios.create({
 });
 
 export const getSubject = (id: number) => api.get(`/subjects/${id}/`);
+export const deleteSubject = (id: number) => api.delete(`/subjects/${id}/`);
