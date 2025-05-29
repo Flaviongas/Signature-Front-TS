@@ -51,7 +51,7 @@ function StudentManagementPage() {
 
   const handleDeleteStudent = async (studentId: number) => {
     try {
-      const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este estudiante?");
+      const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este estudiante? Esta acción no se puede deshacer.");
       if (!confirmDelete) return;
 
       const response = await deleteStudent({ student_id: studentId });
