@@ -86,6 +86,7 @@ export default function AddMajorModal({ isOpen, onClose }: Props) {
             fullWidth
             variant="outlined"
             margin="dense"
+            inputProps={{ maxLength: 60 }}
             error={!!errors.name}
             helperText={errors?.name?.message}
           />

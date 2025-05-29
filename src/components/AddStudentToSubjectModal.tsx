@@ -22,6 +22,7 @@ import {
   assignSubjectToStudent,
 } from "../services/studentService";
 
+import theme from "../theme";
 interface AddStudentToSubjectModalProps {
   open: boolean;
   onClose: () => void;
@@ -172,13 +173,14 @@ function AddStudentToSubjectModal({
         )}
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} disabled={submitting}>
+        <Button onClick={onClose} color="secondary" variant="outlined" disabled={submitting}>
           Cancelar
         </Button>
         <Button
           onClick={handleSubmit}
           variant="contained"
-          color="primary"
+          sx = {{
+            backgroundColor: theme.palette.secondary.main,}}
           disabled={selectedStudents.length === 0 || submitting}
         >
           {submitting ? "Añadiendo..." : "Añadir seleccionados"}
