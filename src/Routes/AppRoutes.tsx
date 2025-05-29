@@ -40,6 +40,20 @@ function AppRoutes({authenticated}: { authenticated: boolean }) {
       localStorage.setItem("SelectedMajor", JSON.stringify(selectedMajor));
     }
   }, [selectedMajor]);
+
+  // Componente de protección para rutas de administración
+  const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+    if (!authenticated) {
+      return <Navigate to="/login" replace />;
+    }
+    
+    if (!isSuperUser()) {
+      return <Navigate to="/" replace />;
+    }
+    
+    return <>{children}</>;
+  };
+  
   return (
     <MajorContext.Provider value={{ selectedMajor, setSelectedMajor }}>
       <Routes>
@@ -68,32 +82,29 @@ function AppRoutes({authenticated}: { authenticated: boolean }) {
         <Route
           path="/users"
           element={
-            authenticated ? (
-              isSuperUser() ? (
-                <UserManagementPage />
-              ) : (
-                <Navigate to="/" replace />
-              )
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            <AdminRoute>
+              <UserManagementPage />
+            </AdminRoute>
           }
         />
         <Route
           path="/students"
           element={
-            authenticated ? (
-              isSuperUser() ? (
-                <StudentSubjectManagementPage/>
-              ) : (
-                <Navigate to="/" replace />
-              )
-            ) : (
-              <Navigate to="/login" replace />
-            )
+            
+              <StudentSubjectManagementPage/>
+            
           }
         />
-        <Route path="/students-management" element={<StudentManagementPage />} />
+        <Route
+          path="/students-management"
+          element={
+            <AdminRoute>
+              <StudentManagementPage />
+            </AdminRoute>
+          }
+        />
+        {/* Ruta wildcard para cualquier otra URL que no coincida */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </MajorContext.Provider>
   );
