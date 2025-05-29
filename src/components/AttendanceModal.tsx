@@ -20,11 +20,9 @@ import {
   Alert,
 } from "@mui/material";
 import { Student, Attendance, ShortSubject } from "../types";
-import axios from "axios";
 import Form from "./Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faTrash,
   faTimes,
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
@@ -42,13 +40,15 @@ type Props = {
 };
 
 function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
-  const [checkedStudents, setCheckedStudents] = useState<Student[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string>(() => {
+  const getCurrentDate = (): string => {
     const today = new Date();
     const offset = today.getTimezoneOffset();
     const localDate = new Date(today.getTime() - offset * 60000);
-    return localDate.toISOString().split("T")[0]; // 'YYYY-MM-DD'
-  });
+    return localDate.toISOString().split("T")[0];
+  };
+
+  const [checkedStudents, setCheckedStudents] = useState<Student[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string>(getCurrentDate());
   const [isPlaceVisible, setIsPlaceVisible] = useState(false);
   const [studentsList, setStudentsList] = useState<Student[]>([]);
   const [section, setSection] = useState<string>("");
@@ -69,12 +69,13 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
     const emailSchema = z.string().email();
     const isValid = emailSchema.safeParse(email);
     return isValid.success;
-  }
+  };
 
   // Reinicia la vista cada vez que se abre el modal
   useEffect(() => {
     if (isOpen) {
       setIsPlaceVisible(false);
+      setSelectedDate(getCurrentDate()); // Actualiza la fecha cuando se abre el modal
     }
   }, [isOpen]);
 
@@ -177,7 +178,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
 
   // Limpieza del modal al cerrarlo
   function cleanup() {
-    setSelectedDate("");
     setCheckedStudents([]);
     setClassLink("");
     setSection("");
@@ -187,25 +187,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
   // Agrega nuevo estudiante a la lista visible
   const handleStudentAdded = (newStudent: Student) => {
     setStudentsList((prev) => [...prev, newStudent]);
-  };
-
-  // Elimina un estudiante individual
-  const handleStudentDelete = async (student: Student) => {
-    const confirmDelete = window.confirm(
-      `¿Estás seguro de que deseas eliminar al estudiante ${student.first_name} ${student.last_name}?`
-    );
-    if (!confirmDelete || !student.id) return;
-
-    const token = localStorage.getItem("Token");
-    try {
-      const url = import.meta.env.VITE_API_URL + "/api/students";
-      await axios.delete(`${url}/${student.id}/`, {
-        headers: { Authorization: `Token ${token}` },
-      });
-      setStudentsList((prev) => prev.filter((s) => s.id !== student.id));
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   return (
@@ -254,9 +235,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
               <TableCell sx={{ fontWeight: "bold" }}>
                 Segundo Apellido
               </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Eliminar
-              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -275,11 +253,6 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
                 <TableCell>{student.second_name}</TableCell>
                 <TableCell>{student.last_name}</TableCell>
                 <TableCell>{student.second_last_name}</TableCell>
-                <TableCell align="center">
-                  <IconButton onClick={() => handleStudentDelete(student)}>
-                    <FontAwesomeIcon icon={faTrash} color="#e53935" />
-                  </IconButton>
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>
