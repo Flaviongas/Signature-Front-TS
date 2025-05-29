@@ -20,10 +20,10 @@ function SideNav() {
   const [userMajors, setUserMajors] = useState<Major[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const userId = localStorage.getItem("UserId");
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const userId = localStorage.getItem("UserId");
       if (userId) {
         try {
           const response = await getUser(parseInt(userId));

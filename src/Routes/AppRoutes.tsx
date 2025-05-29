@@ -8,19 +8,17 @@ import MajorContext from "../contexts/MajorContext";
 import { useState, useEffect } from "react";
 import { MajorShort } from "../types";
 
-const isAuthenticated = () => {
-  return !!localStorage.getItem("Token");
-};
 
 const isSuperUser = () => {
   return localStorage.getItem("IsSuperUser") === "true";
 };
 
-function AppRoutes() {
+function AppRoutes({authenticated}: { authenticated: boolean }) {
   const [selectedMajor, setSelectedMajor] = useState<MajorShort>({
     id: 0,
     name: "",
   });
+
 
   useEffect(() => {
     const storedMajor = localStorage.getItem("SelectedMajor");
@@ -48,13 +46,13 @@ function AppRoutes() {
         <Route
           path="/"
           element={
-            isAuthenticated() ? <MainContent /> : <Navigate to="/login" replace />
+            authenticated ? <MainContent /> : <Navigate to="/login" replace />
           }
         />
         <Route
           path="/login"
           element={
-            isAuthenticated() ? (
+            authenticated ? (
               <Navigate to="/" replace />
             ) : (
               <Login
@@ -70,7 +68,7 @@ function AppRoutes() {
         <Route
           path="/users"
           element={
-            isAuthenticated() ? (
+            authenticated ? (
               isSuperUser() ? (
                 <UserManagementPage />
               ) : (
@@ -84,7 +82,7 @@ function AppRoutes() {
         <Route
           path="/students"
           element={
-            isAuthenticated() ? (
+            authenticated ? (
               isSuperUser() ? (
                 <StudentSubjectManagementPage/>
               ) : (
