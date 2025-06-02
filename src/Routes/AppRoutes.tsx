@@ -71,8 +71,10 @@ function AppRoutes({authenticated}: { authenticated: boolean }) {
             ) : (
               <Login
                 onLoginSuccess={(token: string) => {
-                  localStorage.setItem("Token", token);
-                  window.location.href = "/";
+                    localStorage.setItem("Token", token);
+                    console.log(window.location.pathname);
+                    window.location.href = "/signature"
+
                 }}
                 backLink={import.meta.env.VITE_API_URL}
               />
