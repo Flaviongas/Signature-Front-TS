@@ -13,12 +13,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import axios from 'axios';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import MajorContext from "../contexts/MajorContext";
+
+
+
 
 type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
-
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
 const StyledContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -36,6 +38,8 @@ const ProgressContainer = styled(Box)(({ theme }) => ({
 
 
 export default function FileUploader({ onClose, onSomethingCreated, uploadText, route }: { onClose: () => void; onSomethingCreated: () => void, uploadText: string, route: string }) {
+const { selectedMajor } = useContext(MajorContext);
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
   const [dragOver, setDragOver] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
@@ -102,6 +106,7 @@ export default function FileUploader({ onClose, onSomethingCreated, uploadText, 
 
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('major_id', selectedMajor?.id.toString() || '');
 
     try {
       await axios.post(BASE_URL + route, formData, {

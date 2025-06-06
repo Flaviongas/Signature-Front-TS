@@ -7,7 +7,7 @@ import FileUploader from "./FileUploader";
 interface UploadModalProps {
   open: boolean;
   onClose: () => void;
-  onStudentCreated: () => void;
+  onSomethingCreated: () => void;
   uploadText: string;
   route: string;
 }
@@ -15,7 +15,7 @@ interface UploadModalProps {
 export default function UploadModal({
   open,
   onClose,
-  onStudentCreated,
+  onSomethingCreated,
   uploadText,
   route
 }: UploadModalProps) {
@@ -29,7 +29,7 @@ export default function UploadModal({
       fullWidth
       maxWidth="sm"
     >
-      <FileUploader onClose={onClose} onSomethingCreated={onStudentCreated} uploadText={uploadText} route={route} />
+      <FileUploader onClose={onClose} onSomethingCreated={onSomethingCreated} uploadText={uploadText} route={route} />
     </Dialog >
   );
 }

@@ -42,15 +42,15 @@ function UserManagementPage() {
       const reponse = await deleteUser(userId);
 
       if (reponse.status === 200 || reponse.status === 204) {
-        setUsers((prevUsers) =>{
-        const userIndex = prevUsers.findIndex((u) => u.id === userId);
-        if (userIndex !== -1) {
-          const updatedUsers = [...prevUsers];
-          updatedUsers.splice(userIndex, 1);
-          return updatedUsers;
-        }
-        return prevUsers;
-      })
+        setUsers((prevUsers) => {
+          const userIndex = prevUsers.findIndex((u) => u.id === userId);
+          if (userIndex !== -1) {
+            const updatedUsers = [...prevUsers];
+            updatedUsers.splice(userIndex, 1);
+            return updatedUsers;
+          }
+          return prevUsers;
+        })
       } else {
         console.error("Error al eliminar el usuario:", reponse);
       }
@@ -139,7 +139,7 @@ function UserManagementPage() {
               Subir CSV con Usuarios
             </Button>
           </Box>
-          <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onStudentCreated={fetchUsers} uploadText="usuarios" route="uploadUserCSV/" />
+          <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onSomethingCreated={fetchUsers} uploadText="usuarios" route="uploadUserCSV/" />
           <CreateUserModal
             open={isOpen}
             onClose={() => setIsOpen(false)}
