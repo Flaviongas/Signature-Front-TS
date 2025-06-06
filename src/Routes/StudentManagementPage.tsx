@@ -9,6 +9,24 @@ import { getStudentsByMajor, deleteStudent } from "../services/studentService";
 import { useContext } from "react";
 import MajorContext from "../contexts/MajorContext";
 import UploadModal from "../components/UploadModal";
+import TemplateButton from "../components/TemplateButton";
+
+const templateData = [
+  {
+    "Rut": "Sin puntos ni DV (Elimina esta fila)",
+    "Nombre": "AAAA",
+    "Segundo_Nombre": "BBBB",
+    "Apellido": "CCCC",
+    "Segundo_Apellido": "DDDD",
+  },
+  {
+    "Rut": "Ejemplo: 12345678",
+    "Nombre": "Ejemplo: Pedro",
+    "Segundo_Nombre": "Ejemplo: Pablo",
+    "Apellido": "Ejemplo: Alvarez",
+    "Segundo_Apellido": "Ejemplo: Soto",
+  },
+]
 
 function StudentManagementPage() {
   const navigate = useNavigate();
@@ -121,13 +139,13 @@ function StudentManagementPage() {
             display: 'flex',
             justifyContent: 'center',
             width: '100%',
-            gap: 2
+            gap: 2,
+            my: 5,
           }}>
             <Button
               variant="contained"
               color="secondary"
               sx={{
-                my: 5,
                 fontWeight: "bold",
               }}
               onClick={() => {
@@ -143,15 +161,15 @@ function StudentManagementPage() {
               variant="contained"
               color="info"
               sx={{
-                my: 5,
                 fontWeight: "bold",
               }}
               onClick={() => {
                 setIsUserModalOpen(true)
               }}
             >
-              Subir estudiantes
+              Subir CSV con Estudiantes
             </Button>
+            <TemplateButton filename={"Plantilla para crear estudiantes"} data={templateData} />
           </Box>
 
           <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onSomethingCreated={fetchStudents} uploadText="estudiantes" route="uploadStudentCSV/" />

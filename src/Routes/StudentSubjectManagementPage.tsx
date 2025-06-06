@@ -26,6 +26,15 @@ import { getSubject } from "../services/subjectService";
 import { removeStudentSubject } from "../services/studentService";
 import AddStudentToSubjectModal from "../components/AddStudentToSubjectModal.js";
 import UploadModal from "../components/UploadModal.js";
+import TemplateButton from "../components/TemplateButton.js";
+const templateData = [
+  {
+    Rut: "Rut sin puntos ni DV (eliminar esta fila)",
+  },
+  {
+    Rut: "Ejemplo: 12345678",
+  }
+];
 
 function StudentSubjectManagentPage() {
   const location = useLocation();
@@ -183,6 +192,7 @@ function StudentSubjectManagentPage() {
         >
           Subir CSV con Alumnos
         </Button>
+        <TemplateButton filename={"Plantilla para asignar estudiantes a asignaturas"} data={templateData} />
       </Box>
 
       <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onSomethingCreated={getStudents} uploadText="alumnos" route="uploadStudentSubjectCSV/" subjectId={subjectId} />
