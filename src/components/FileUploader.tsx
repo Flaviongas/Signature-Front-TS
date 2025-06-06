@@ -36,10 +36,18 @@ const ProgressContainer = styled(Box)(({ theme }) => ({
   width: '25%',
 }));
 
+type FileUploaderProps = {
+  onClose: () => void;
+  onSomethingCreated: () => void;
+  uploadText: string;
+  route: string;
+  subjectId?: string;
+};
 
-export default function FileUploader({ onClose, onSomethingCreated, uploadText, route }: { onClose: () => void; onSomethingCreated: () => void, uploadText: string, route: string }) {
-const { selectedMajor } = useContext(MajorContext);
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+
+export default function FileUploader({ onClose, onSomethingCreated, uploadText, route, subjectId }: FileUploaderProps) {
+  const { selectedMajor } = useContext(MajorContext);
+  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
   const [dragOver, setDragOver] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
@@ -107,6 +115,9 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
     const formData = new FormData();
     formData.append('file', file);
     formData.append('major_id', selectedMajor?.id.toString() || '');
+    if (subjectId) {
+      formData.append('subject_id', subjectId);
+    }
 
     try {
       await axios.post(BASE_URL + route, formData, {

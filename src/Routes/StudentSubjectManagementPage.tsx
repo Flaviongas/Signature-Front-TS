@@ -1,16 +1,16 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  TextField, 
-  Paper, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
+import {
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
   TableRow,
   InputAdornment,
   Dialog,
@@ -25,10 +25,12 @@ import { Student } from "../types";
 import { getSubject } from "../services/subjectService";
 import { removeStudentSubject } from "../services/studentService";
 import AddStudentToSubjectModal from "../components/AddStudentToSubjectModal.js";
+import UploadModal from "../components/UploadModal.js";
 
 function StudentSubjectManagentPage() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const { majorId, subjectId, majorName, subjectName } = location.state || {};
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -38,10 +40,8 @@ function StudentSubjectManagentPage() {
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
-
-  useEffect(() => {
-    if (!subjectId) return;
-
+  console.log(location.state);
+  const getStudents = () => {
     getSubject(subjectId)
       .then((response) => {
         const data = response.data;
@@ -51,7 +51,13 @@ function StudentSubjectManagentPage() {
       .catch((error) => {
         console.error("Error fetching students:", error);
         setLoading(false);
-      });
+      })
+  };
+
+  useEffect(() => {
+    if (!subjectId) return;
+    getStudents();
+
   }, [subjectId]);
 
   useEffect(() => {
@@ -60,20 +66,20 @@ function StudentSubjectManagentPage() {
     } else {
       const lowercaseSearch = searchTerm.toLowerCase();
       const filtered = students.filter(
-        (student) => 
-          student.first_name.toLowerCase().includes(lowercaseSearch) || 
+        (student) =>
+          student.first_name.toLowerCase().includes(lowercaseSearch) ||
           student.last_name?.toLowerCase().includes(lowercaseSearch) ||
           student.rut?.toLowerCase().includes(lowercaseSearch)
       );
       setFilteredStudents(filtered);
     }
   }, [searchTerm, students]);
-  
-  
+
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
-  
+
   // Nueva función para eliminar estudiante de la asignatura
   const handleRemoveStudent = (studentId: number) => {
     setSelectedStudentId(studentId);
@@ -90,12 +96,12 @@ function StudentSubjectManagentPage() {
         student_id: selectedStudentId,
         subject_id: subjectId
       });
-      
+
       // Actualizar el estado después de eliminar el estudiante
-      setStudents(prevStudents => 
+      setStudents(prevStudents =>
         prevStudents.filter(student => student.id !== selectedStudentId)
       );
-      
+
       setIsRemoveDialogOpen(false);
       setSelectedStudentId(null);
     } catch (error) {
@@ -111,7 +117,7 @@ function StudentSubjectManagentPage() {
   };
   const refreshStudents = () => {
     if (!subjectId) return;
-    
+
     setLoading(true);
     getSubject(subjectId)
       .then((response) => {
@@ -152,17 +158,34 @@ function StudentSubjectManagentPage() {
       <Typography variant="subtitle1" gutterBottom sx={{ mb: 4 }}>
         Carrera: {majorName}
       </Typography>
-      
+
       {/* Botón para añadir nuevos estudiantes */}
-      <Button 
-        variant="contained" 
-        color="secondary" 
-        onClick={handleAddStudent}
-        sx={{ mb: 3 }}
-      >
-        Añadir estudiantes
-      </Button>
-      
+      <Box sx={{ display: "flex", justifyContent: "center", gap: 2, my: 2 }}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleAddStudent}
+          sx={{
+            fontWeight: "bold",
+          }}
+        >
+          Añadir estudiantes
+        </Button>
+        <Button
+          variant="contained"
+          color="info"
+          sx={{
+            fontWeight: "bold",
+          }}
+          onClick={() => {
+            setIsUserModalOpen(true);
+          }}
+        >
+          Subir CSV con Alumnos
+        </Button>
+      </Box>
+
+      <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onSomethingCreated={getStudents} uploadText="alumnos" route="uploadStudentSubjectCSV/" subjectId={subjectId} />
       {/* Search bar */}
       <TextField
         fullWidth
@@ -179,7 +202,7 @@ function StudentSubjectManagentPage() {
           ),
         }}
       />
-      
+
       {/* Students table */}
       <TableContainer component={Paper} sx={{ mt: 2 }}>
         <Table>
@@ -211,15 +234,15 @@ function StudentSubjectManagentPage() {
                   <TableCell>{student.last_name}</TableCell>
                   <TableCell>{student.rut}</TableCell>
                   <TableCell>
-                    <Button 
-                      variant="contained" 
+                    <Button
+                      variant="contained"
                       size="small"
                       color="error"
                       onClick={() => handleRemoveStudent(student.id)}
                       sx={{ mr: 1 }}
                     >
                       Quitar
-                    </Button>                  
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))
@@ -227,7 +250,7 @@ function StudentSubjectManagentPage() {
           </TableBody>
         </Table>
       </TableContainer>
-      
+
       {!loading && (
         <Typography variant="body2" sx={{ mt: 2 }}>
           Total de estudiantes: {filteredStudents.length}
@@ -246,15 +269,15 @@ function StudentSubjectManagentPage() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button 
-            onClick={() => setIsRemoveDialogOpen(false)} 
+          <Button
+            onClick={() => setIsRemoveDialogOpen(false)}
             disabled={actionLoading}
           >
             Cancelar
           </Button>
-          <Button 
-            onClick={confirmRemoveStudent} 
-            color="error" 
+          <Button
+            onClick={confirmRemoveStudent}
+            color="error"
             variant="contained"
             disabled={actionLoading}
           >

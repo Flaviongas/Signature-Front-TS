@@ -190,7 +190,7 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
 
   return (
     <Dialog open={open} onClose={handleCloseModal}>
-      <DialogTitle sx= {{background:theme.palette.secondary.main, color:"white", fontWeight:"bold"}}>
+      <DialogTitle sx={{ background: theme.palette.secondary.main, color: "white", fontWeight: "bold" }}>
         {editingUser ? "Editar usuario" : "Crear nuevo usuario"}
       </DialogTitle>
       <DialogContent>
@@ -253,13 +253,17 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
           value={selectedMajors}
           onChange={(_, newValue) => setSelectedMajors(newValue)}
           renderTags={(value, getTagProps) =>
-            value.map((option, index) => (
-              <Chip
-                label={option.name}
-                {...getTagProps({ index })}
-                variant="outlined"
-              />
-            ))
+            value.map((option, index) => {
+              const { key, ...otherProps } = getTagProps({ index });
+              return (
+                <Chip
+                  key={key}
+                  label={option.name}
+                  {...otherProps}
+                  variant="outlined"
+                />
+              );
+            })
           }
           renderInput={(params) => (
             <TextField
@@ -275,7 +279,7 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
         <Button
-          variant="outlined" 
+          variant="outlined"
           color="secondary"
           onClick={handleCloseModal}
           disabled={loading}

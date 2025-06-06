@@ -10,6 +10,7 @@ interface UploadModalProps {
   onSomethingCreated: () => void;
   uploadText: string;
   route: string;
+  subjectId?: string;
 }
 
 export default function UploadModal({
@@ -17,7 +18,9 @@ export default function UploadModal({
   onClose,
   onSomethingCreated,
   uploadText,
-  route
+  route,
+  subjectId,
+
 }: UploadModalProps) {
 
 
@@ -29,7 +32,7 @@ export default function UploadModal({
       fullWidth
       maxWidth="sm"
     >
-      <FileUploader onClose={onClose} onSomethingCreated={onSomethingCreated} uploadText={uploadText} route={route} />
+      <FileUploader onClose={onClose} onSomethingCreated={onSomethingCreated} uploadText={uploadText} route={route} subjectId={subjectId} />
     </Dialog >
   );
 }
