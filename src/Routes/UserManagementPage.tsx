@@ -151,7 +151,7 @@ function UserManagementPage() {
                 setIsUserModalOpen(true);
               }}
             >
-              Subir CSV con Usuarios
+              Subir CSV
             </Button>
             <TemplateButton filename={"Plantilla para crear usuarios"} data={templateData} />
           </Box>

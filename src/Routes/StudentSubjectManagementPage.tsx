@@ -190,7 +190,7 @@ function StudentSubjectManagentPage() {
             setIsUserModalOpen(true);
           }}
         >
-          Subir CSV con Alumnos
+          Subir CSV
         </Button>
         <TemplateButton filename={"Plantilla para asignar estudiantes a asignaturas"} data={templateData} />
       </Box>

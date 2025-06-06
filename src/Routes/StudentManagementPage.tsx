@@ -167,7 +167,7 @@ function StudentManagementPage() {
                 setIsUserModalOpen(true)
               }}
             >
-              Subir CSV con Estudiantes
+              Subir CSV
             </Button>
             <TemplateButton filename={"Plantilla para crear estudiantes"} data={templateData} />
           </Box>
