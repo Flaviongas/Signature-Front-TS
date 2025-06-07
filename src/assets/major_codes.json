@@ -1,0 +1,152 @@
+{
+	"codes": [
+		{
+			"major_name": "ARQUITECTURA",
+			"code": "ARQUI_111"
+		},
+		{
+			"major_name": "AUD. E ING EN CONTROL DE GEST.",
+			"code": "AUDIT_111"
+		},
+		{
+			"major_name": "AUD. E ING EN CONTROL DE GEST.",
+			"code": "AUDIT_211"
+		},
+		{
+			"major_name": "DERECHO",
+			"code": "DEREC_111"
+		},
+		{
+			"major_name": "DERECHO",
+			"code": "DEREC_211"
+		},
+		{
+			"major_name": "DERECHO",
+			"code": "DERET_211"
+		},
+		{
+			"major_name": "ENFERMERÍA",
+			"code": "ENFER_111"
+		},
+		{
+			"major_name": "FONOAUDIOLOGÍA",
+			"code": "FONOA_111"
+		},
+		{
+			"major_name": "ING. EN CONTROL DE GESTIÓN",
+			"code": "IECDG_111"
+		},
+		{
+			"major_name": "INGENIERÍA CIVIL INDUSTRIAL",
+			"code": "ICIND_111"
+		},
+		{
+			"major_name": "INGENIERÍA CIVIL INDUSTRIAL",
+			"code": "ICINT_211"
+		},
+		{
+			"major_name": "INGENIERÍA CIVIL INFORMÁTICA",
+			"code": "ICINF_111"
+		},
+		{
+			"major_name": "INGENIERÍA COMERCIAL",
+			"code": "INCOM_111"
+		},
+		{
+			"major_name": "INGENIERÍA COMERCIAL",
+			"code": "INCOM_211"
+		},
+		{
+			"major_name": "INGENIERÍA COMERCIAL",
+			"code": "INCOT_211"
+		},
+		{
+			"major_name": "INGENIERÍA EN ADMINISTRACIÓN",
+			"code": "IADMI_111"
+		},
+		{
+			"major_name": "INGENIERÍA EN ADMINISTRACIÓN",
+			"code": "IADMI_231"
+		},
+		{
+			"major_name": "INGENIERÍA EN ADMINISTRACIÓN",
+			"code": "IADMI_211"
+		},
+		{
+			"major_name": "INGENIERÍA EN ADMINISTRACIÓN",
+			"code": "IADMI_131"
+		},
+		{
+			"major_name": "INGENIERÍA EN ADMINISTRACIÓN",
+			"code": "IADMT_211"
+		},
+		{
+			"major_name": "INGENIERÍA EN CONSTRUCCIÓN",
+			"code": "ICONS_111"
+		},
+		{
+			"major_name": "KINESIOLOGÍA",
+			"code": "KINES_111"
+		},
+		{
+			"major_name": "NUTRICIÓN Y DIETÉTICA",
+			"code": "NUTRI_111"
+		},
+		{
+			"major_name": "ODONTOLOGÍA",
+			"code": "ODONT_111"
+		},
+		{
+			"major_name": "PED. EN EDUCACIÓN PARVULARIA",
+			"code": "PPARV_111"
+		},
+		{
+			"major_name": "PEDAGOGÍA EN ED. DIFERENCIAL",
+			"code": "PEDIF_111"
+		},
+		{
+			"major_name": "PEDAGOGÍA EN EDUCACIÓN BÁSICA",
+			"code": "PBASI_111"
+		},
+		{
+			"major_name": "PEDAGOGÍA EN EDUCACIÓN FÍSICA",
+			"code": "PEFIS_111"
+		},
+		{
+			"major_name": "PEDAGOGÍA EN INGLÉS",
+			"code": "PINGL_111"
+		},
+		{
+			"major_name": "PERIODISMO",
+			"code": "PERIO_111"
+		},
+		{
+			"major_name": "PROG. ESP. DE INTERCAMBIO INT.",
+			"code": "PEINT_121"
+		},
+		{
+			"major_name": "PSICOLOGÍA",
+			"code": "PSICO_111"
+		},
+		{
+			"major_name": "PSICOLOGÍA",
+			"code": "PSICT_211"
+		},
+		{
+			"major_name": "QUÍMICA Y FARMACIA",
+			"code": "QYFAR_111"
+		},
+		{
+			"major_name": "RELACIONES PÚBLICAS",
+			"code": "RPUBL_111"
+		},
+		{
+			"major_name": "TERAPIA OCUPACIONAL",
+			"code": "TOCUP_111"
+		},
+		{
+			"major_name": "TRABAJO SOCIAL",
+			"code": "TRSOC_111"
+		}
+	]
+}

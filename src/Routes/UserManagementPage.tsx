@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { getUsers, deleteUser } from "../services/userService";
 import UploadModal from "../components/UploadModal";
 import TemplateButton from "../components/TemplateButton";
+import TableModal from "../components/TableModal";
 
 const templateData = [
   {
@@ -153,7 +154,9 @@ function UserManagementPage() {
             >
               Subir CSV
             </Button>
+
             <TemplateButton filename={"Plantilla para crear usuarios"} data={templateData} />
+            <TableModal />
           </Box>
           <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onSomethingCreated={fetchUsers} uploadText="usuarios" route="uploadUserCSV/" />
           <CreateUserModal
