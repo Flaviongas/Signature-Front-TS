@@ -49,7 +49,7 @@ function StudentSubjectManagentPage() {
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
-  console.log(location.state);
+  
   const getStudents = () => {
     getSubject(subjectId)
       .then((response) => {
@@ -102,7 +102,7 @@ function StudentSubjectManagentPage() {
     setActionLoading(true);
     try {
       await removeStudentSubject({
-        student_id: selectedStudentId,
+        student_ids: [selectedStudentId],
         subject_id: subjectId
       });
 

@@ -15,6 +15,10 @@ interface SubjectData {
     student_ids: number[];
     subject_id: number;
 }
+
+interface SubjectWithName extends SubjectData {
+    name: string;
+}
 interface MajorData {
   major_id: number;
 }
@@ -56,4 +60,4 @@ export const updateStudent = (data: UpdateStudentData) => api.put(`/students/upd
 export const deleteStudent = (data: DeleteStudentData) => api.delete(`/students/delete-student/`, { data });
 
 
-export type {SubjectData};
+export type {SubjectData, SubjectWithName};
