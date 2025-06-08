@@ -29,6 +29,7 @@ export type Subject = {
   major: MajorShort["id"][];
   students: Student[];
 };
+
 export type Attendance = {
   fecha: string;
   students: Student[];

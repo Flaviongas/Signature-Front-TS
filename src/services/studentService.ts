@@ -12,10 +12,9 @@ const api = axios.create({
 });
 
 interface SubjectData {
-    student_id: number;
+    student_ids: number[];
     subject_id: number;
 }
-
 interface MajorData {
   major_id: number;
 }
@@ -45,18 +44,16 @@ interface DeleteStudentData{
   student_id: number;
 }
 
+
 // Operaciones existentes
 export const assignSubjectToStudent = (data: SubjectData) => api.post(`/students/add-subject/`, data);
-export const removeStudentSubject = (data: SubjectData) => api.delete(`/students/remove-subject/`, { 
-  data: {
-    student_id: data.student_id,
-    subject_id: data.subject_id
-  } 
-});
-
+export const removeStudentSubject = (data: SubjectData) => api.delete(`/students/remove-subject/`, { data });
 
 // Nuevas operaciones para la gestión de estudiantes
 export const getStudentsByMajor = (data: MajorData) => api.post('/students/get-student-bymajor/', data);
 export const createStudent = (data: StudentData) => api.post('/students/create-student/', data);
 export const updateStudent = (data: UpdateStudentData) => api.put(`/students/update-student/`, data);
 export const deleteStudent = (data: DeleteStudentData) => api.delete(`/students/delete-student/`, { data });
+
+
+export type {SubjectData};
