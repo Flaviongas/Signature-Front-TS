@@ -1,31 +1,32 @@
-import { useContext, useState } from "react";
-import { Box, Typography, Card, Button, Container } from "@mui/material";
+import { useContext, useState, useEffect, useCallback } from "react";
+import { Box, Typography, Card, Button, Container, CircularProgress } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import MajorContext from "../contexts/MajorContext";
 import { ShortSubject, Student, Subject } from "../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import useGetData from "../hooks/useGetData";
-
 import { useNavigate } from "react-router-dom";
 import AttendanceModal from "./AttendanceModal";
-import AddMajorModal from "./AddMajorModal";
-
+import AddMajorModal from "./AddMajorModal"; 
 import useIsSuperUser from "../hooks/useIsSuperUser";
-import { deleteSubject } from "../services/subjectService";
 import theme from "../theme";
+import { getSubjectsByMajor } from "../services/subjectService";
+import { removeStudentSubject } from "../services/studentService";
+
+// Helper para localStorage
+const getLocalStorageKey = (majorId: number) => `displayed_subjects_${majorId}`;
 
 function SubjectsGrid() {
   const { selectedMajor } = useContext(MajorContext);
   const navigate = useNavigate();
   const isSuperUser = useIsSuperUser();
 
-  const apiUrl = import.meta.env.VITE_API_URL + "/api/subjects/";
-
-  const [shouldRefresh, setShouldRefresh] = useState(false);
-
-  // Obtiene datos de materias desde la API
-  const { loading, data } = useGetData<Subject>(apiUrl, shouldRefresh);
+  // Estado para todas las materias asociadas a la carrera (según el backend)
+  const [backendAssociatedSubjects, setBackendAssociatedSubjects] = useState<Subject[]>([]);
+  // Estado para los IDs de las materias que el usuario ha elegido mostrar en la UI
+  const [displayedSubjectIds, setDisplayedSubjectIds] = useState<Set<number>>(new Set());
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [currentShortSubject, setCurrentShortSubject] = useState<ShortSubject>({
     id: 0,
@@ -33,21 +34,122 @@ function SubjectsGrid() {
   });
 
   const [isAssistanceModalOpen, setIsAssistanceModalOpen] = useState(false);
-  const [isMajorModalOpen, setIsMajorModalOpen] = useState(false);
+  const [isAddSubjectDisplayModalOpen, setIsAddSubjectDisplayModalOpen] = useState(false); 
 
   const openModal = () => setIsAssistanceModalOpen(true);
   const closeModal = () => setIsAssistanceModalOpen(false);
-  const openMajorModal = () => setIsMajorModalOpen(true);
-  const closeMajorModal = () => setIsMajorModalOpen(false);
+  const openAddSubjectDisplayModal = () => setIsAddSubjectDisplayModalOpen(true);
+  const closeAddSubjectDisplayModal = () => setIsAddSubjectDisplayModalOpen(false);
 
   const [modalStudents, setModalStudents] = useState<Student[]>([]);
 
-  // Filtra materias según la carrera seleccionada
-  const filteredSubjects = data.filter((subject) =>
-    subject.major.includes(selectedMajor.id)
-  );
+  // Lógica de carga y persistencia en localStorage
+  useEffect(() => {
+    const loadSubjectsAndDisplayState = async () => {
+      if (!selectedMajor.id) {
+        setBackendAssociatedSubjects([]);
+        setDisplayedSubjectIds(new Set());
+        setLoading(false);
+        setError(null);
+        return;
+      }
 
-  // Abre el modal con estudiantes de una materia específica
+      setLoading(true);
+      setError(null);
+
+      try {
+        // 1. Obtener todas las materias asociadas a esta carrera desde el backend
+        const response = await getSubjectsByMajor({ major_id: selectedMajor.id });
+        const fetchedSubjects = response.data;
+        setBackendAssociatedSubjects(fetchedSubjects);
+
+        // 2. Cargar el estado de visualización desde localStorage
+        const storedIdsJson = localStorage.getItem(getLocalStorageKey(selectedMajor.id));
+        let storedIds: number[] = [];
+        try {
+          if (storedIdsJson) {
+            storedIds = JSON.parse(storedIdsJson);
+            if (!Array.isArray(storedIds)) { 
+              storedIds = [];
+            }
+          }
+        } catch (e) {
+          console.error("Error al parsear IDs de materias guardados de localStorage:", e);
+          storedIds = [];
+        }
+        
+        // 3. Lógica para inicializar `displayedSubjectIds`
+        let newDisplayedIds = new Set(storedIds);
+        const allFetchedIds = new Set(fetchedSubjects.map((s: Subject) => s.id));
+        newDisplayedIds = new Set(Array.from(newDisplayedIds).filter(id => allFetchedIds.has(id)));
+        
+
+        setDisplayedSubjectIds(newDisplayedIds);
+        localStorage.setItem(getLocalStorageKey(selectedMajor.id), JSON.stringify(Array.from(newDisplayedIds)));
+
+      } catch (err: any) {
+        console.error("Error al cargar asignaturas asociadas y su estado de visualización:", err);
+        setError("Error al cargar las materias. Por favor, inténtalo de nuevo.");
+        setBackendAssociatedSubjects([]);
+        setDisplayedSubjectIds(new Set());
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSubjectsAndDisplayState();
+  }, [selectedMajor.id]); 
+
+  // Función para agregar un ID de materia a la lista de "mostradas"
+  const addSubjectToDisplay = useCallback((subjectId: number) => {
+    setDisplayedSubjectIds(prev => {
+      const newSet = new Set(prev);
+      newSet.add(subjectId);
+      localStorage.setItem(getLocalStorageKey(selectedMajor.id), JSON.stringify(Array.from(newSet)));
+      return newSet;
+    });
+  }, [selectedMajor.id]);
+
+  // Función para remover un ID de materia de la lista de "mostradas" (solo visual y con desenrollado de estudiantes)
+  const removeSubjectFromDisplay = useCallback(async (subjectId: number, subjectName: string) => {
+    const confirmRemove = window.confirm(
+      `¿Estás seguro de que deseas ocultar la asignatura "${subjectName}"? Esto también desenrolará a todos los estudiantes asociados a ella.`
+    );
+    if (!confirmRemove) return;
+
+    // Buscar la materia completa para obtener sus estudiantes
+    const subjectToHide = backendAssociatedSubjects.find(s => s.id === subjectId);
+
+    if (!subjectToHide) {
+      alert("Error: No se encontró la asignatura para desenrolar estudiantes.");
+      return;
+    }
+
+    const studentsToUnenroll = subjectToHide.students?.map(s => s.id) || [];
+
+    try {
+      // 1. Llamar al backend para desenrolar a los estudiantes
+      if (studentsToUnenroll.length > 0) {
+        await removeStudentSubject({ subject_id: subjectId, student_ids: studentsToUnenroll });
+        alert(`Se desenrolaron ${studentsToUnenroll.length} estudiantes de la asignatura "${subjectName}".`);
+      } 
+
+      // 2. Ocultar la materia de la grilla del frontend (actualizar localStorage)
+      setDisplayedSubjectIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(subjectId);
+        localStorage.setItem(getLocalStorageKey(selectedMajor.id), JSON.stringify(Array.from(newSet)));
+        return newSet;
+      });
+
+    } catch (err: any) {
+      console.error("Error al ocultar asignatura o desenrolar estudiantes:", err);
+      // Manejar el error y mostrar un mensaje al usuario
+      alert(`Error al realizar la operación: ${err.response?.data?.detail || err.message}. Por favor, inténtalo de nuevo.`);
+    }
+  }, [selectedMajor.id, backendAssociatedSubjects]); 
+
+
   const handleOpenModal = (
     students: Student[],
     subjectId: number,
@@ -58,43 +160,27 @@ function SubjectsGrid() {
     openModal();
   };
 
-  const handleOpenMajorModal = () => {
-    openMajorModal();
+  const handleOpenAddSubjectDisplayModal = () => { 
+    openAddSubjectDisplayModal();
   };
 
-  const handleRefresh = () => {
-    setShouldRefresh((prev) => !prev);
+  const refreshAndCloseAddSubjectDisplayModal = () => { 
+    closeAddSubjectDisplayModal();
   };
 
-  const refreshAndCloseMajorModal = () => {
-    handleRefresh();
-    closeMajorModal();
-  };
+  const subjectsToDisplay = backendAssociatedSubjects.filter(subject => 
+    displayedSubjectIds.has(subject.id)
+  );
 
-  const handleDeleteSubject = async (id: number, name: string) => {
-    const confirmDelete = window.confirm(
-      `¿Estás seguro de que deseas eliminar la asignatura ${name}?`
-    );
-    if (!confirmDelete) return;
-    try {
-      await deleteSubject(id);
-      handleRefresh();
-    } catch (error) {
-      console.error("Error al eliminar la asignatura:", error);
-      alert("Error al eliminar la asignatura. Por favor, inténtalo de nuevo.");
-    }
-  };
   const cardStyles = {
     display: "flex",
-    minHeight: 215,
+    minHeight: 215, 
     width: 270,
     boxShadow: 3,
-
-    cursor: "pointer",
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
-    p: 2,
+    p: 2, 
   };
 
   const content =
@@ -129,26 +215,15 @@ function SubjectsGrid() {
           ></Box>
         </Typography>
 
-        {filteredSubjects.length === 0 && !loading ? (
-          <>
-            <Typography variant="body1" fontWeight="bold" mb={2}>
-              No hay materias disponibles para esta carrera.
-            </Typography>
-            <Box key="add">
-              <Card sx={{ ...cardStyles, cursor: "pointer" }} onClick={handleOpenMajorModal}>
-                <FontAwesomeIcon
-                  style={{
-                    color: "black",
-                    margin: "auto",
-                    padding: "16px",
-                    borderRadius: "4px",
-                  }}
-                  fontSize={50}
-                  icon={faPlus}
-                />
-              </Card>
-            </Box>
-          </>
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+            <CircularProgress color="secondary" />
+            <Typography ml={2}>Cargando materias...</Typography>
+          </Box>
+        ) : error ? (
+          <Typography color="error" align="center" variant="h6">
+            {error}
+          </Typography>
         ) : (
           <Box
             display="flex"
@@ -156,10 +231,18 @@ function SubjectsGrid() {
             flexWrap="wrap"
             justifyContent="center"
           >
-            {filteredSubjects.map((subject) => {
-              const filteredStudents = subject.students.filter(
-                (student) => student.major === selectedMajor.id
-              );
+            {subjectsToDisplay.length === 0 && (
+              <Typography variant="body1" fontWeight="bold" mb={2} sx={{ width: '100%', textAlign: 'center' }}>
+                No hay materias visibles para esta carrera. Añade una para comenzar.
+              </Typography>
+            )}
+
+            {subjectsToDisplay.map((subject) => {
+              const studentsForSubject = subject.students?.filter(
+                (student) => {
+                  return student.major === selectedMajor.id;
+                }
+              ) || [];
 
               return (
                 <Box
@@ -201,9 +284,7 @@ function SubjectsGrid() {
                           top: 8,
                           right: 3,
                         }}
-                        onClick={() =>
-                          handleDeleteSubject(subject.id, subject.name)
-                        }
+                        onClick={() => removeSubjectFromDisplay(subject.id, subject.name)}
                       />
                     )}
 
@@ -211,18 +292,22 @@ function SubjectsGrid() {
                       variant="h6"
                       align="center"
                       sx={{
-                        my: "auto",
                         overflow: "hidden",
                         maxWidth: "98%",
-                        display: "-webkit-box",
                         WebkitLineClamp: 2,
                         WebkitBoxOrient: "vertical",
+                        minHeight: '2.8em', // Asegura un espacio mínimo para 2 líneas (aprox. 1.4em por línea)
+                        lineHeight: '1.4em', // Mantiene la altura de línea consistente
+                        flexGrow: 1, // Permite que ocupe el espacio disponible
+                        display: 'flex', // Necesario para centrar verticalmente con alignItems
+                        alignItems: 'center', // Centra el texto verticalmente dentro de su minHeight
+                        justifyContent: 'center', // Centra el texto horizontalmente
                       }}
                     >
                       {subject.name}
                     </Typography>
                     <Typography align="center" sx={{ mb: 4 }}>
-                      Cantidad de Alumnos: {filteredStudents.length}
+                      Cantidad de Alumnos: {studentsForSubject.length}
                     </Typography>
                     <Button
                       variant="contained"
@@ -235,7 +320,7 @@ function SubjectsGrid() {
                       }}
                       onClick={() =>
                         handleOpenModal(
-                          filteredStudents,
+                          studentsForSubject, // Pasamos los estudiantes ya filtrados
                           subject.id,
                           subject.name
                         )
@@ -273,14 +358,23 @@ function SubjectsGrid() {
               }}
             >
               {isSuperUser && (
-                <Card sx={cardStyles} onClick={handleOpenMajorModal}>
+                <Card sx={{ ...cardStyles, cursor: "pointer", position: 'relative' }} onClick={handleOpenAddSubjectDisplayModal}>
+                  <Box sx={{ minHeight: '2.8em', lineHeight: '1.4em', flexGrow: 1 }} /> 
+                  <Box sx={{ height: '1.5em', mb: 4 }} /> 
+                  <Box sx={{ height: '40px', mb: 1 }} />
+                  <Box sx={{ height: '40px' }} />
+
                   <FontAwesomeIcon
                     style={{
-                      margin: "auto",
+                      position: "absolute", // Posicionar absolutamente para que los espaciadores manejen el flujo
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      fontSize: 50,
+                      color: "black",
                       padding: "16px",
                       borderRadius: "4px",
                     }}
-                    fontSize={50}
                     icon={faPlus}
                   />
                 </Card>
@@ -295,9 +389,21 @@ function SubjectsGrid() {
           onClose={closeModal}
           shortSubject={currentShortSubject}
         />
-        <AddMajorModal
-          isOpen={isMajorModalOpen}
-          onClose={refreshAndCloseMajorModal}
+        <AddMajorModal 
+          isOpen={isAddSubjectDisplayModalOpen}
+          onClose={refreshAndCloseAddSubjectDisplayModal}
+          majorId={selectedMajor.id}
+          majorName={selectedMajor.name}
+          // Pasamos la lista completa de materias asociadas a esta carrera (desde backend)
+          backendAssociatedSubjects={backendAssociatedSubjects.map(subject => ({
+            subject_id: subject.id,
+            name: subject.name,
+            student_ids: subject.students?.map(student => student.id) || []
+          }))}
+          // Pasamos el Set de IDs de materias actualmente visibles
+          currentlyDisplayedSubjectIds={displayedSubjectIds}
+          // Pasamos la función callback para añadir una materia a la lista de "mostradas"
+          onAddSubjectToDisplay={addSubjectToDisplay}
         />
       </Box>
     ) : (
@@ -352,10 +458,7 @@ function SubjectsGrid() {
           >
             Gestionar usuarios
           </Button>
-
-
         </Box>
-
       )}
       {content}
     </Container>
