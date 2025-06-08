@@ -95,13 +95,13 @@ function AddStudentToSubjectModal({
       // Añadir cada estudiante seleccionado a la asignatura
       const promises = selectedStudents.map((studentId) =>
         assignSubjectToStudent({
-          student_id: studentId,
+          student_ids: [studentId],
           subject_id: subjectId,
         })
       );
 
       await Promise.all(promises);
-      onStudentsAdded(); // Actualizar la lista de estudiantes en el componente padre
+      onStudentsAdded(); 
       onClose();
     } catch (error) {
       console.error("Error al añadir estudiantes a la asignatura:", error);
