@@ -266,7 +266,7 @@ function StudentModal({
             />
           </DialogContent>
 
-          <DialogActions sx={{ px: 3, pb: 3 }}>
+          <DialogActions sx={{ p: 3 }}>
             <Button
               onClick={handleClose}
               variant="outlined"

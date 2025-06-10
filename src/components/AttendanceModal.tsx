@@ -19,18 +19,17 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { Student, Attendance, ShortSubject } from "../types";
 import Form from "./Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faTimes,
-  faEnvelope,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import MajorContext from "../contexts/MajorContext";
 import previewExcel from "../hooks/previewExcel";
 import downloadExcel from "../hooks/downloadExcel";
 import sendExcel from "../hooks/sendExcel";
 import theme from "../theme.ts";
+import buttonClickEffect from "../styles/buttonClickEffect.ts";
 
 type Props = {
   isOpen: boolean;
@@ -111,12 +110,12 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
 
   const areStudentsChecked = () => {
     if (checkedStudents.length === 0) {
-    setErrorMessage("Debes seleccionar al menos un estudiante.");
-    setOpenSnackbar(true);
-    return false;
+      setErrorMessage("Debes seleccionar al menos un estudiante.");
+      setOpenSnackbar(true);
+      return false;
     }
     return true;
-  }
+  };
 
   const sendEmail = async () => {
     if (!areStudentsChecked()) return;
@@ -204,14 +203,16 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
     <Dialog open={isOpen} onClose={cleanup} maxWidth="xl" fullWidth>
       <DialogTitle
         sx={{
+          bgcolor: "secondary.main",
+          color: "white",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
         }}
       >
         {shortSubject.name}
-        <IconButton onClick={cleanup}>
-          <FontAwesomeIcon icon={faTimes} />
+        <IconButton onClick={cleanup} color="inherit" aria-label="close">
+          <CloseIcon />
         </IconButton>
       </DialogTitle>
 
@@ -236,7 +237,7 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
           <TableHead>
             <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                ¿Asistió?
+                Asistió
               </TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Rut</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>DV</TableCell>
@@ -343,15 +344,16 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
             color="secondary"
             variant="contained"
             loading={loading}
-            disabled={loading || !isValidEmail(email) || checkedStudents.length === 0}
+            disabled={
+              loading || !isValidEmail(email) || checkedStudents.length === 0
+            }
             onClick={sendEmail}
             sx={{
-              bgcolor: theme.palette.secondary.dark,
-              "&:hover": { bgcolor: theme.palette.secondary.main },
               fontSize: {
                 xs: "0.6rem",
                 sm: "0.875rem",
               },
+              ...buttonClickEffect,
             }}
           >
             <FontAwesomeIcon icon={faEnvelope} />
@@ -359,13 +361,13 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
           <Button
             variant="contained"
             onClick={previewAttendance}
+            color="secondary"
             sx={{
-              bgcolor: theme.palette.secondary.main,
-              "&:hover": { bgcolor: theme.palette.secondary.dark },
               fontSize: {
                 xs: "0.6rem",
                 sm: "0.875rem",
               },
+              ...buttonClickEffect,
             }}
           >
             Previsualizar
@@ -373,16 +375,17 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
           <Button
             variant="contained"
             onClick={handleSubmitAttendance}
+            color="primary"
             sx={{
               bgcolor: theme.palette.primary.main,
               "&:hover": {
                 bgcolor: theme.palette.primary.dark,
               },
-              fontWeight: "bold",
               fontSize: {
                 xs: "0.6rem",
                 sm: "0.875rem",
               },
+              ...buttonClickEffect,
             }}
             disabled={checkedStudents.length === 0}
           >

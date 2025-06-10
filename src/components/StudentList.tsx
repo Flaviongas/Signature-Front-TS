@@ -23,15 +23,15 @@ interface Props {
 
 // Definir estilos reutilizables para las celdas y el encabezado
 const headerCellStyle = {
-  backgroundColor: theme.palette.secondary.main,
+  backgroundColor: "secondary.main",
   color: "#fff",
   fontWeight: "bold",
   fontSize: "1rem",
   textAlign: "center",
+  textTransform: "uppercase",
 };
 
 const bodyCellStyle = {
-  padding: "16px",
   fontSize: "1rem",
   textAlign: "center",
   textTransform: "uppercase",

@@ -14,15 +14,17 @@ import {
   Typography,
   Box,
   InputAdornment,
+  IconButton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
 import { Student } from "../types";
 import {
   getStudentsByMajor,
   assignSubjectToStudent,
 } from "../services/studentService";
 
-import theme from "../theme";
+import buttonClickEffect from "../styles/buttonClickEffect";
 interface AddStudentToSubjectModalProps {
   open: boolean;
   onClose: () => void;
@@ -101,7 +103,7 @@ function AddStudentToSubjectModal({
       );
 
       await Promise.all(promises);
-      onStudentsAdded(); 
+      onStudentsAdded();
       onClose();
     } catch (error) {
       console.error("Error al añadir estudiantes a la asignatura:", error);
@@ -117,7 +119,22 @@ function AddStudentToSubjectModal({
       maxWidth="sm"
       fullWidth
     >
-      <DialogTitle>Añadir Estudiantes a la Asignatura</DialogTitle>
+      <DialogTitle
+        sx={{
+          bgcolor: "secondary.main",
+          color: "white",
+          fontWeight: "bold",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
+        Añadir Estudiantes
+        <IconButton edge="end" color="inherit" aria-label="close">
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <TextField
           fullWidth
@@ -172,15 +189,23 @@ function AddStudentToSubjectModal({
           </List>
         )}
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="secondary" variant="outlined" disabled={submitting}>
+      <DialogActions sx={{ p: 3 }}>
+        <Button
+          onClick={onClose}
+          color="secondary"
+          variant="outlined"
+          disabled={submitting}
+          sx={{ ...buttonClickEffect }}
+        >
           Cancelar
         </Button>
         <Button
           onClick={handleSubmit}
           variant="contained"
-          sx = {{
-            backgroundColor: theme.palette.secondary.main,}}
+          color="secondary"
+          sx={{
+            ...buttonClickEffect,
+          }}
           disabled={selectedStudents.length === 0 || submitting}
         >
           {submitting ? "Añadiendo..." : "Añadir seleccionados"}

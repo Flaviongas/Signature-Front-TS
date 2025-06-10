@@ -393,9 +393,9 @@ function SubjectsGrid() {
                       color="secondary"
                       fullWidth
                       sx={{
-                        fontWeight: "bold",
                         mb: 1,
                         width: "100%",
+                        ...buttonClickEffect,
                       }}
                       onClick={() =>
                         handleOpenModal(

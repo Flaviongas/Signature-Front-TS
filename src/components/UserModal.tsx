@@ -299,7 +299,7 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
           fullWidth
         />
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 3 }}>
+      <DialogActions sx={{ p: 3 }}>
         <Button
           variant="outlined"
           color="secondary"

@@ -15,33 +15,34 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { SubjectWithName } from "../services/studentService.ts";
 import { useEffect, useState } from "react";
 
-import theme from "../theme.ts";
+import buttonClickEffect from "../styles/buttonClickEffect.ts";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  majorId: number; 
+  majorId: number;
   majorName: string;
   backendAssociatedSubjects: SubjectWithName[];
   currentlyDisplayedSubjectIds: Set<number>;
   // Callback para que SubjectsGrid sepa qué materia añadir a la visualización
-  onAddSubjectToDisplay: (subjectId: number) => void; 
+  onAddSubjectToDisplay: (subjectId: number) => void;
 };
 
-export default function AddMajorModal({ 
-  isOpen, 
-  onClose, 
-  majorName, 
-  backendAssociatedSubjects, 
-  currentlyDisplayedSubjectIds, 
-  onAddSubjectToDisplay 
+export default function AddMajorModal({
+  isOpen,
+  onClose,
+  backendAssociatedSubjects,
+  currentlyDisplayedSubjectIds,
+  onAddSubjectToDisplay,
 }: Props) {
-  
-  const [selectableSubjects, setSelectableSubjects] = useState<SubjectWithName[]>([]);
-  const [selectedSubject, setSelectedSubject] = useState<SubjectWithName | null>(null);
+  const [selectableSubjects, setSelectableSubjects] = useState<
+    SubjectWithName[]
+  >([]);
+  const [selectedSubject, setSelectedSubject] =
+    useState<SubjectWithName | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false); 
-
+  const [loading, setLoading] = useState(false);
+  console.log(backendAssociatedSubjects, "backendAssociatedSubjects");
   // Filtra las materias cada vez que cambian las props
   useEffect(() => {
     if (isOpen) {
@@ -63,7 +64,7 @@ export default function AddMajorModal({
       return;
     }
 
-    setLoading(true); 
+    setLoading(true);
     try {
       onAddSubjectToDisplay(selectedSubject.subject_id); // Llama al callback en el padre
       onClose(); // Cerrar el modal
@@ -86,7 +87,7 @@ export default function AddMajorModal({
           color: "white",
         }}
       >
-        Añadir Asignatura a {majorName}
+        Añadir Asignatura
         <IconButton edge="end" onClick={onClose} color="inherit">
           <FontAwesomeIcon icon={faTimes} />
         </IconButton>
@@ -94,8 +95,14 @@ export default function AddMajorModal({
 
       <DialogContent dividers sx={{ pt: 3 }}>
         {selectableSubjects.length === 0 && !loading && !error ? (
-          <Typography variant="body1" color="textSecondary" align="center" sx={{ py: 2 }}>
-            Todas las asignaturas asociadas a esta carrera ya están mostrándose en la grilla.
+          <Typography
+            variant="body1"
+            color="textSecondary"
+            align="center"
+            sx={{ py: 2 }}
+          >
+            Todas las asignaturas asociadas a esta carrera ya están mostrándose
+            en la grilla.
           </Typography>
         ) : error ? (
           <Typography color="error" align="center">
@@ -103,16 +110,14 @@ export default function AddMajorModal({
           </Typography>
         ) : (
           <>
-            <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-              Seleccione una asignatura para añadir a {majorName}.
-            </Typography>
-
             <Autocomplete
               options={selectableSubjects}
               getOptionLabel={(option) => option.name}
               value={selectedSubject}
               onChange={(_, newValue) => setSelectedSubject(newValue)}
-              isOptionEqualToValue={(option, value) => option.subject_id === value.subject_id}
+              isOptionEqualToValue={(option, value) =>
+                option.subject_id === value.subject_id
+              }
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -123,22 +128,17 @@ export default function AddMajorModal({
                 />
               )}
               noOptionsText="No se encontraron asignaturas disponibles"
-              loading={loading} 
+              loading={loading}
             />
           </>
         )}
       </DialogContent>
-      <DialogActions sx={{ p: 2 }}>
-         <Button
+      <DialogActions sx={{ p: 3 }}>
+        <Button
           color="primary"
           onClick={onClose}
           variant="contained"
-          sx={{
-            bgcolor: theme.palette.primary.main,
-            "&:hover": {
-              backgroundColor: theme.palette.primary.dark,
-            },
-          }}
+          sx={{ ...buttonClickEffect }}
         >
           Cancelar
         </Button>
@@ -146,17 +146,15 @@ export default function AddMajorModal({
           color="secondary"
           onClick={handleSubmit}
           variant="contained"
-          disabled={!selectedSubject || loading || selectableSubjects.length === 0}
+          disabled={
+            !selectedSubject || loading || selectableSubjects.length === 0
+          }
           sx={{
-            bgcolor: theme.palette.secondary.main,
-            "&:hover": {
-              backgroundColor: theme.palette.secondary.dark,
-            },
+            ...buttonClickEffect,
           }}
         >
           {loading ? <CircularProgress size={24} color="inherit" /> : "Añadir"}
         </Button>
-       
       </DialogActions>
     </Dialog>
   );

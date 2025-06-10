@@ -3,11 +3,13 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     mode: "light",
-    primary: { // Color rojo
+    primary: {
+      // Color rojo
       main: "#e53935",
       dark: "#C12141",
     },
-    secondary: { // Color gris
+    secondary: {
+      // Color gris
       main: "#3D3935",
       dark: "#1C1916",
     },
