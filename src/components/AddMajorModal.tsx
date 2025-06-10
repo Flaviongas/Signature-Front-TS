@@ -41,7 +41,7 @@ export default function AddMajorModal({
   const [selectedSubject, setSelectedSubject] = useState<SubjectWithName | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false); 
-console.log(backendAssociatedSubjects, "backendAssociatedSubjects");
+
   // Filtra las materias cada vez que cambian las props
   useEffect(() => {
     if (isOpen) {
