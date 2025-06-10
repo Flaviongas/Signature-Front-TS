@@ -10,7 +10,7 @@ import { useContext } from "react";
 import MajorContext from "../contexts/MajorContext";
 import UploadModal from "../components/UploadModal";
 import TemplateButton from "../components/TemplateButton";
-
+import ConfirmModal from "../components/helpers/ConfirmModal";
 import buttonClickEffect from "../styles/buttonClickEffect";
 
 const templateData = [
@@ -38,6 +38,8 @@ function StudentManagementPage() {
   const [editStudent, setEditStudent] = useState<Student | null>(null);
   const [loading, setLoading] = useState(true);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<number | null>(null);
   const { selectedMajor } = useContext(MajorContext);
 
   const fetchStudents = () => {
@@ -69,20 +71,22 @@ function StudentManagementPage() {
   };
 
   const handleDeleteStudent = async (studentId: number) => {
-    try {
-      const confirmDelete = window.confirm(
-        "¿Estás seguro de que deseas eliminar este estudiante? Esta acción no se puede deshacer."
-      );
-      if (!confirmDelete) return;
+    setStudentToDelete(studentId);
+    setIsConfirmModalOpen(true);
+  };
 
-      const response = await deleteStudent({ student_id: studentId });
+  const confirmDeleteStudent = async () => {
+    if (!studentToDelete) return;
+
+    try {
+      const response = await deleteStudent({ student_id: studentToDelete });
 
       if (response.status !== (200 | 204)) {
         console.error("Error al eliminar el estudiante:", response);
         return;
       }
       setStudents((prevStudents) => {
-        const studentIndex = prevStudents.findIndex((s) => s.id === studentId);
+        const studentIndex = prevStudents.findIndex((s) => s.id === studentToDelete);
         if (studentIndex !== -1) {
           const updatedStudents = [...prevStudents];
           updatedStudents.splice(studentIndex, 1);
@@ -92,7 +96,14 @@ function StudentManagementPage() {
       });
     } catch (error) {
       console.error("Error eliminando el estudiante:", error);
+    } finally {
+      setStudentToDelete(null);
     }
+  };
+
+  const closeConfirmModal = () => {
+    setIsConfirmModalOpen(false);
+    setStudentToDelete(null);
   };
 
   return (
@@ -186,11 +197,20 @@ function StudentManagementPage() {
             uploadText="estudiantes"
             route="uploadStudentCSV/"
           />
+          
           <StudentModal
             open={isOpen}
             onClose={() => setIsOpen(false)}
             onStudentCreated={fetchStudents}
             studentToEdit={editStudent}
+          />
+
+          <ConfirmModal
+            isOpen={isConfirmModalOpen}
+            onClose={closeConfirmModal}
+            onConfirm={confirmDeleteStudent}
+            title="Eliminar Estudiante"
+            message="¿Estás seguro de que deseas eliminar este estudiante? Esta acción no se puede deshacer."
           />
 
           {loading ? (

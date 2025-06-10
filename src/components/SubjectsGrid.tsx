@@ -19,9 +19,8 @@ import useIsSuperUser from "../hooks/useIsSuperUser";
 import theme from "../theme";
 import { getSubjectsByMajor } from "../services/subjectService";
 import { removeStudentSubject } from "../services/studentService";
-
+import ConfirmModal from "./helpers/ConfirmModal";
 import buttonClickEffect from "../styles/buttonClickEffect";
-
 // Helper para localStorage
 const getLocalStorageKey = (majorId: number) => `displayed_subjects_${majorId}`;
 
@@ -29,6 +28,15 @@ function SubjectsGrid() {
   const { selectedMajor } = useContext(MajorContext);
   const navigate = useNavigate();
   const isSuperUser = useIsSuperUser();
+
+  const [isAssistanceModalOpen, setIsAssistanceModalOpen] = useState(false);
+  const [isAddSubjectDisplayModalOpen, setIsAddSubjectDisplayModalOpen] =
+    useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [subjectToRemove, setSubjectToRemove] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
 
   // Estado para todas las materias asociadas a la carrera (según el backend)
   const [backendAssociatedSubjects, setBackendAssociatedSubjects] = useState<
@@ -46,8 +54,6 @@ function SubjectsGrid() {
     name: "",
   });
 
-  const [isAssistanceModalOpen, setIsAssistanceModalOpen] = useState(false);
-  const [isAddSubjectDisplayModalOpen, setIsAddSubjectDisplayModalOpen] =
     useState(false);
 
   const openModal = () => setIsAssistanceModalOpen(true);
@@ -152,62 +158,70 @@ function SubjectsGrid() {
   // Función para remover un ID de materia de la lista de "mostradas" (solo visual y con desenrollado de estudiantes)
   const removeSubjectFromDisplay = useCallback(
     async (subjectId: number, subjectName: string) => {
-      const confirmRemove = window.confirm(
-        `¿Estás seguro de que deseas ocultar la asignatura "${subjectName}"? Esto también desenrolará a todos los estudiantes asociados a ella.`
-      );
-      if (!confirmRemove) return;
-
-      // Buscar la materia completa para obtener sus estudiantes
-      const subjectToHide = backendAssociatedSubjects.find(
-        (s) => s.id === subjectId
-      );
-
-      if (!subjectToHide) {
-        alert(
-          "Error: No se encontró la asignatura para desenrolar estudiantes."
-        );
-        return;
-      }
-
-      const studentsToUnenroll = subjectToHide.students?.map((s) => s.id) || [];
-
-      try {
-        // 1. Llamar al backend para desenrolar a los estudiantes
-        if (studentsToUnenroll.length > 0) {
-          await removeStudentSubject({
-            subject_id: subjectId,
-            student_ids: studentsToUnenroll,
-          });
-          alert(
-            `Se desenrolaron ${studentsToUnenroll.length} estudiantes de la asignatura "${subjectName}".`
-          );
-        }
-
-        // 2. Ocultar la materia de la grilla del frontend (actualizar localStorage)
-        setDisplayedSubjectIds((prev) => {
-          const newSet = new Set(prev);
-          newSet.delete(subjectId);
-          localStorage.setItem(
-            getLocalStorageKey(selectedMajor.id),
-            JSON.stringify(Array.from(newSet))
-          );
-          return newSet;
-        });
-      } catch (err: any) {
-        console.error(
-          "Error al ocultar asignatura o desenrolar estudiantes:",
-          err
-        );
-        // Manejar el error y mostrar un mensaje al usuario
-        alert(
-          `Error al realizar la operación: ${
-            err.response?.data?.detail || err.message
-          }. Por favor, inténtalo de nuevo.`
-        );
-      }
+      setSubjectToRemove({ id: subjectId, name: subjectName });
+      setIsConfirmModalOpen(true);
     },
-    [selectedMajor.id, backendAssociatedSubjects]
+    []
   );
+
+  const confirmRemoveSubject = async () => {
+    if (!subjectToRemove) return;
+
+    const { id: subjectId} = subjectToRemove;
+
+    // Buscar la materia completa para obtener sus estudiantes
+    const subjectToHide = backendAssociatedSubjects.find(
+      (s) => s.id === subjectId
+    );
+
+    if (!subjectToHide) {
+      alert(
+        "Error: No se encontró la asignatura para desenrolar estudiantes."
+      );
+      return;
+    }
+
+    const studentsToUnenroll = subjectToHide.students?.map((s) => s.id) || [];
+
+    try {
+      // 1. Llamar al backend para desenrolar a los estudiantes
+      if (studentsToUnenroll.length > 0) {
+        await removeStudentSubject({
+          subject_id: subjectId,
+          student_ids: studentsToUnenroll,
+        });
+
+      }
+
+      setDisplayedSubjectIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(subjectId);
+        localStorage.setItem(
+          getLocalStorageKey(selectedMajor.id),
+          JSON.stringify(Array.from(newSet))
+        );
+        return newSet;
+      });
+    } catch (err: any) {
+      console.error(
+        "Error al borrar asignatura o desenrolar estudiantes:",
+        err
+      );
+      // Manejar el error y mostrar un mensaje al usuario
+      alert(
+        `Error al realizar la operación: ${
+          err.response?.data?.detail || err.message
+        }. Por favor, inténtalo de nuevo.`
+      );
+    } finally {
+      setSubjectToRemove(null);
+    }
+  };
+
+  const closeConfirmModal = () => {
+    setIsConfirmModalOpen(false);
+    setSubjectToRemove(null);
+  };
 
   const handleOpenModal = (
     students: Student[],
@@ -486,6 +500,18 @@ function SubjectsGrid() {
           currentlyDisplayedSubjectIds={displayedSubjectIds}
           // Pasamos la función callback para añadir una materia a la lista de "mostradas"
           onAddSubjectToDisplay={addSubjectToDisplay}
+        />
+
+        <ConfirmModal
+          isOpen={isConfirmModalOpen}
+          onClose={closeConfirmModal}
+          onConfirm={confirmRemoveSubject}
+          title="Borrar Asignatura"
+          message={
+            subjectToRemove
+              ? `¿Estás seguro de que deseas borrar la asignatura "${subjectToRemove.name}"? Esto también desenrolará a todos los estudiantes asociados a ella.`
+              : ""
+          }
         />
       </Box>
     ) : (

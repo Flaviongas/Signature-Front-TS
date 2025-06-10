@@ -10,6 +10,7 @@ import UploadModal from "../components/UploadModal";
 import TemplateButton from "../components/TemplateButton";
 import TableModal from "../components/TableModal";
 import buttonClickEffect from "../styles/buttonClickEffect";
+import ConfirmModal from "../components/helpers/ConfirmModal";
 
 const templateData = [
   {
@@ -32,6 +33,8 @@ function UserManagementPage() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<number | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [editUser, setEditUser] = useState<User | null>(null);
 
@@ -40,7 +43,6 @@ function UserManagementPage() {
       .then((res) => {
         setUsers(res.data);
       })
-
       .catch((err) => console.error("Error al obtener usuarios:", err));
   };
 
@@ -54,19 +56,19 @@ function UserManagementPage() {
   };
 
   const handleDeleteUser = async (userId: number) => {
-    try {
-      if (
-        !window.confirm(
-          "¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."
-        )
-      ) {
-        return;
-      }
-      const reponse = await deleteUser(userId);
+    setUserToDelete(userId);
+    setIsConfirmModalOpen(true);
+  };
 
-      if (reponse.status === 200 || reponse.status === 204) {
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
+
+    try {
+      const response = await deleteUser(userToDelete);
+
+      if (response.status === 200 || response.status === 204) {
         setUsers((prevUsers) => {
-          const userIndex = prevUsers.findIndex((u) => u.id === userId);
+          const userIndex = prevUsers.findIndex((u) => u.id === userToDelete);
           if (userIndex !== -1) {
             const updatedUsers = [...prevUsers];
             updatedUsers.splice(userIndex, 1);
@@ -75,11 +77,18 @@ function UserManagementPage() {
           return prevUsers;
         });
       } else {
-        console.error("Error al eliminar el usuario:", reponse);
+        console.error("Error al eliminar el usuario:", response);
       }
     } catch (error) {
       console.error("Error eliminando el usuario:", error);
+    } finally {
+      setUserToDelete(null);
     }
+  };
+
+  const closeConfirmModal = () => {
+    setIsConfirmModalOpen(false);
+    setUserToDelete(null);
   };
 
   return (
@@ -168,6 +177,7 @@ function UserManagementPage() {
             />
             <TableModal />
           </Box>
+
           <UploadModal
             open={isUserModalOpen}
             onClose={() => setIsUserModalOpen(false)}
@@ -175,11 +185,20 @@ function UserManagementPage() {
             uploadText="usuarios"
             route="uploadUserCSV/"
           />
+
           <CreateUserModal
             open={isOpen}
             onClose={() => setIsOpen(false)}
             onUserCreated={fetchUsers}
             userToEdit={editUser}
+          />
+
+          <ConfirmModal
+            isOpen={isConfirmModalOpen}
+            onClose={closeConfirmModal}
+            onConfirm={confirmDeleteUser}
+            title="Eliminar Usuario"
+            message="¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."
           />
 
           <UserList
