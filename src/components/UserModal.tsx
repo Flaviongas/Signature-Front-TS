@@ -9,13 +9,17 @@ import {
   Alert,
   Autocomplete,
   Chip,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+
 import { useState } from "react";
 import { createUser, updateUser } from "../services/userService";
 import { getMajors } from "../services/majorService";
 import { createUserPayload, User } from "../types";
 import { useEffect } from "react";
-import theme from "../theme";
+
+import buttonClickEffect from "../styles/buttonClickEffect";
 
 type Props = {
   open: boolean;
@@ -190,9 +194,27 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
 
   return (
     <Dialog open={open} onClose={handleCloseModal}>
-      <DialogTitle sx={{ background: theme.palette.secondary.main, color: "white", fontWeight: "bold" }}>
+      <DialogTitle
+        sx={{
+          bgcolor: "secondary.main",
+          color: "white",
+          fontWeight: "bold",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         {editingUser ? "Editar usuario" : "Crear nuevo usuario"}
+        <IconButton
+          edge="end"
+          color="inherit"
+          onClick={handleCloseModal}
+          aria-label="close"
+        >
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
+
       <DialogContent>
         <TextField
           fullWidth
@@ -206,8 +228,8 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
             errorMessage && !username
               ? "El nombre de usuario es obligatorio."
               : errorMessage && !validateUsername(username)
-                ? "El nombre de usuario solo puede contener letras y números."
-                : ""
+              ? "El nombre de usuario solo puede contener letras y números."
+              : ""
           }
         />
         <TextField
@@ -277,15 +299,14 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
           fullWidth
         />
       </DialogContent>
-      <DialogActions sx={{ p: 2 }}>
+      <DialogActions sx={{ px: 3, pb: 3 }}>
         <Button
           variant="outlined"
           color="secondary"
           onClick={handleCloseModal}
           disabled={loading}
           sx={{
-            color: theme.palette.secondary.dark,
-            backgroundColor: "transparent",
+            ...buttonClickEffect,
           }}
         >
           Cancelar
@@ -296,12 +317,11 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
           onClick={handleCreateUser}
           disabled={loading}
           sx={{
-            fontWeight: "bold",
+            ...buttonClickEffect,
           }}
         >
           {editingUser ? "Guardar cambios" : "Crear usuario"}
         </Button>
-
       </DialogActions>
       <Snackbar
         open={openSnackbar}

@@ -9,11 +9,13 @@ import { getUsers, deleteUser } from "../services/userService";
 import UploadModal from "../components/UploadModal";
 import TemplateButton from "../components/TemplateButton";
 import TableModal from "../components/TableModal";
+import buttonClickEffect from "../styles/buttonClickEffect";
 
 const templateData = [
   {
     Usuario: "Solo letras y números (eliminar esta fila)",
-    Contraseña: "Más de 8 carácteres, una mayúscula y un número  (eliminar esta fila)",
+    Contraseña:
+      "Más de 8 carácteres, una mayúscula y un número  (eliminar esta fila)",
     Nombre_Carrera: "Nombre de la carrera (eliminar esta fila)",
     Codigo_Carrera: "Código de la carrera (eliminar esta fila)",
   },
@@ -53,7 +55,11 @@ function UserManagementPage() {
 
   const handleDeleteUser = async (userId: number) => {
     try {
-      if (!window.confirm("¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer.")) {
+      if (
+        !window.confirm(
+          "¿Estás seguro de que deseas eliminar este usuario? Esta acción no se puede deshacer."
+        )
+      ) {
         return;
       }
       const reponse = await deleteUser(userId);
@@ -67,7 +73,7 @@ function UserManagementPage() {
             return updatedUsers;
           }
           return prevUsers;
-        })
+        });
       } else {
         console.error("Error al eliminar el usuario:", reponse);
       }
@@ -102,7 +108,7 @@ function UserManagementPage() {
             sx={{
               textTransform: "none",
               ml: 3,
-              fontWeight: "bold",
+              ...buttonClickEffect,
             }}
           >
             Volver
@@ -120,19 +126,20 @@ function UserManagementPage() {
             Gestión de Usuarios
           </Typography>
 
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-            gap: 2,
-            my: 5,
-          }}>
-
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+              gap: 2,
+              my: 5,
+            }}
+          >
             <Button
               variant="contained"
               color="secondary"
               sx={{
-                fontWeight: "bold",
+                ...buttonClickEffect,
               }}
               onClick={() => {
                 setEditUser(null);
@@ -146,7 +153,7 @@ function UserManagementPage() {
               variant="contained"
               color="info"
               sx={{
-                fontWeight: "bold",
+                ...buttonClickEffect,
               }}
               onClick={() => {
                 setIsUserModalOpen(true);
@@ -155,10 +162,19 @@ function UserManagementPage() {
               Subir CSV
             </Button>
 
-            <TemplateButton filename={"Plantilla para crear usuarios"} data={templateData} />
+            <TemplateButton
+              filename={"Plantilla para crear usuarios"}
+              data={templateData}
+            />
             <TableModal />
           </Box>
-          <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onSomethingCreated={fetchUsers} uploadText="usuarios" route="uploadUserCSV/" />
+          <UploadModal
+            open={isUserModalOpen}
+            onClose={() => setIsUserModalOpen(false)}
+            onSomethingCreated={fetchUsers}
+            uploadText="usuarios"
+            route="uploadUserCSV/"
+          />
           <CreateUserModal
             open={isOpen}
             onClose={() => setIsOpen(false)}
@@ -172,8 +188,8 @@ function UserManagementPage() {
             onEdit={handleEditUser}
           />
         </Box>
-      </Container >
-    </Box >
+      </Container>
+    </Box>
   );
 }
 

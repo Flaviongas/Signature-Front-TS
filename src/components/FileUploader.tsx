@@ -6,34 +6,29 @@ import {
   LinearProgress,
   Snackbar,
   Typography,
-  styled
-} from '@mui/material';
-import {
-  faTimes,
-} from "@fortawesome/free-solid-svg-icons";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import axios from 'axios';
-import { ChangeEvent, useContext, useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+  styled,
+} from "@mui/material";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import axios from "axios";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MajorContext from "../contexts/MajorContext";
 
-
-
-
-type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
+type UploadStatus = "idle" | "uploading" | "success" | "error";
 
 const StyledContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing(2),
-  width: '100%',
+  width: "100%",
 }));
 
 const ProgressContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing(2),
-  width: '25%',
+  width: "25%",
 }));
 
 type FileUploaderProps = {
@@ -44,8 +39,13 @@ type FileUploaderProps = {
   subjectId?: string;
 };
 
-
-export default function FileUploader({ onClose, onSomethingCreated, uploadText, route, subjectId }: FileUploaderProps) {
+export default function FileUploader({
+  onClose,
+  onSomethingCreated,
+  uploadText,
+  route,
+  subjectId,
+}: FileUploaderProps) {
   const { selectedMajor } = useContext(MajorContext);
   const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
   const [dragOver, setDragOver] = useState(false);
@@ -53,7 +53,7 @@ export default function FileUploader({ onClose, onSomethingCreated, uploadText, 
   const [successMessage, setSuccessMessage] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState<UploadStatus>('idle');
+  const [status, setStatus] = useState<UploadStatus>("idle");
   const [uploadProgress, setUploadProgress] = useState(0);
 
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
@@ -61,18 +61,17 @@ export default function FileUploader({ onClose, onSomethingCreated, uploadText, 
   }
 
   function showSnackBarError(message: string) {
-    setStatus('error');
+    setStatus("error");
     setErrorMessage(message);
     setOpenSnackbar(true);
   }
   function showSnackBarSuccess(message: string) {
-    setStatus('success');
+    setStatus("success");
     setSuccessMessage(message);
     setOpenSnackbar(true);
   }
 
-  useEffect(() => {
-  }, [file]);
+  useEffect(() => {}, [file]);
 
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
@@ -83,14 +82,25 @@ export default function FileUploader({ onClose, onSomethingCreated, uploadText, 
     setDragOver(false);
   }
 
-  function checkFileTypeCSV(e: ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLDivElement>) {
-    if ('dataTransfer' in e && e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+  function checkFileTypeCSV(
+    e: ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLDivElement>
+  ) {
+    if (
+      "dataTransfer" in e &&
+      e.dataTransfer?.files &&
+      e.dataTransfer.files.length > 0
+    ) {
       if (e.dataTransfer.files[0].type === "text/csv") {
         setFile(e.dataTransfer.files[0]);
         return;
       }
-    }
-    else if ('target' in e && e.target && 'files' in e.target && e.target.files && e.target.files.length > 0) {
+    } else if (
+      "target" in e &&
+      e.target &&
+      "files" in e.target &&
+      e.target.files &&
+      e.target.files.length > 0
+    ) {
       if (e.target.files[0].type === "text/csv") {
         setFile(e.target.files[0]);
         return;
@@ -109,21 +119,21 @@ export default function FileUploader({ onClose, onSomethingCreated, uploadText, 
   async function handleFileUpload() {
     if (!file) return;
 
-    setStatus('uploading');
+    setStatus("uploading");
     setUploadProgress(0);
 
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('major_id', selectedMajor?.id.toString() || '');
+    formData.append("file", file);
+    formData.append("major_id", selectedMajor?.id.toString() || "");
     if (subjectId) {
-      formData.append('subject_id', subjectId);
+      formData.append("subject_id", subjectId);
     }
 
     try {
       await axios.post(BASE_URL + route, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Token ${localStorage.getItem('Token')}`,
+          "Content-Type": "multipart/form-data",
+          Authorization: `Token ${localStorage.getItem("Token")}`,
         },
         onUploadProgress: (progressEvent) => {
           const progress = progressEvent.total
@@ -132,95 +142,122 @@ export default function FileUploader({ onClose, onSomethingCreated, uploadText, 
           setUploadProgress(progress);
         },
       });
-      setStatus('success');
+      setStatus("success");
       setUploadProgress(100);
       setFile(null);
       showSnackBarSuccess(`Archivo ${file.name} subido exitosamente.`);
       onSomethingCreated();
-      onClose()
+      onClose();
     } catch (error: any) {
       console.error("Error uploading file:", error);
-      showSnackBarError(error.response?.data?.error || "Error al subir el archivo. Por favor, inténtalo de nuevo.");
+      showSnackBarError(
+        error.response?.data?.error ||
+          "Error al subir el archivo. Por favor, inténtalo de nuevo."
+      );
       setUploadProgress(0);
     }
   }
 
   return (
     <StyledContainer>
-      <IconButton
+      <Box
         sx={{
-          position: 'absolute',
-          top: 3,
-          right: 16,
-          fontSize: 30,
-          color: 'text.secondary',
+          width: "100%",
+          bgcolor: "secondary.main",
+          color: "#fff",
+          position: "relative",
+          p: 1,
         }}
-        onClick={() => {
-          onClose();
-          setTimeout(() => {
-
-            setFile(null);
-            setStatus('idle');
-            setUploadProgress(0);
-          }, 300);
-        }}>
-        <FontAwesomeIcon icon={faTimes} />
-      </IconButton>
-      <Typography variant="h5" fontWeight="bold" mt={2} textAlign="center">
-        Agregar {uploadText}
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-
+      >
+        <IconButton
+          sx={{
+            position: "absolute",
+            top: 6,
+            right: 15,
+            color: "#fff",
+          }}
+          onClick={() => {
+            onClose();
+            setTimeout(() => {
+              setFile(null);
+              setStatus("idle");
+              setUploadProgress(0);
+            }, 300);
+          }}
+        >
+          <FontAwesomeIcon icon={faTimes} />
+        </IconButton>
+        <Typography variant="h5" textAlign="center" sx={{ pt: 1, mb: 1 }}>
+          Agregar {uploadText}
+        </Typography>
+      </Box>
+      <Box
+        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      >
         {file ? (
-          <Box sx={{ textAlign: 'center', width: '80%', display: 'flex', flexDirection: 'column', alignItems: 'center', marginY: 1 }}>
+          <Box
+            sx={{
+              textAlign: "center",
+              width: "80%",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginY: 1,
+            }}
+          >
             <Typography variant="subtitle1">{file.name}</Typography>
-            {
-              file && status !== 'uploading' && (
-                <Button
-                  variant="contained"
-                  color='success'
-                  onClick={handleFileUpload}
-                  disabled={status === 'success'}
-                  sx={{ width: '50%', marginX: 'auto', fontWeight: 'bold', mt: 2 }}
-                >
-                  Subir {uploadText}
-                </Button>
-              )
-            }
-            {
-              status === 'uploading' && (
-                <ProgressContainer>
-                  <LinearProgress
-                    variant="determinate"
-                    value={uploadProgress}
-                    sx={{
-                      height: 10,
+            {file && status !== "uploading" && (
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleFileUpload}
+                disabled={status === "success"}
+                sx={{
+                  width: "50%",
+                  marginX: "auto",
+                  fontWeight: "bold",
+                  mt: 2,
+                }}
+              >
+                Subir {uploadText}
+              </Button>
+            )}
+            {status === "uploading" && (
+              <ProgressContainer>
+                <LinearProgress
+                  variant="determinate"
+                  value={uploadProgress}
+                  sx={{
+                    height: 10,
+                    borderRadius: 5,
+                    backgroundColor: "grey.200",
+                    "& .MuiLinearProgress-bar": {
                       borderRadius: 5,
-                      backgroundColor: 'grey.200',
-                      '& .MuiLinearProgress-bar': {
-                        borderRadius: 5,
-                        backgroundColor: 'primary.main',
-                        transition: 'all 0.3s ease'
-                      }
-                    }}
-                  />
-                  <Typography variant="body2" color="text.secondary">
-                    {uploadProgress}%
-                  </Typography>
-                </ProgressContainer>
-              )
-            }
-            <Button variant="contained" onClick={() => setFile(null)} sx={{ mt: 2, width: '50%' }}>
+                      backgroundColor: "primary.main",
+                      transition: "all 0.3s ease",
+                    },
+                  }}
+                />
+                <Typography variant="body2" color="text.secondary">
+                  {uploadProgress}%
+                </Typography>
+              </ProgressContainer>
+            )}
+            <Button
+              variant="contained"
+              onClick={() => setFile(null)}
+              sx={{ mt: 2, width: "50%" }}
+            >
               Eliminar archivo
             </Button>
           </Box>
         ) : (
           <Box
             sx={{
-              width: '80%',
-              height: '350px',
-              marginX: 'auto',
-              position: 'relative'
+              width: "80%",
+              height: "350px",
+              marginX: "auto",
+              position: "relative",
             }}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -230,30 +267,33 @@ export default function FileUploader({ onClose, onSomethingCreated, uploadText, 
               variant="outlined"
               component="label"
               sx={{
-                width: '100%',
-                height: '300px',
+                width: "100%",
+                height: "300px",
                 color: "secondary.main",
-                marginX: 'auto',
-                fontWeight: 'bold',
-                borderStyle: 'dashed',
-                backgroundColor: dragOver ? 'action.hover' : 'background.paper',
-                '&:hover': {
-                  borderStyle: 'dashed',
-                  backgroundColor: 'action.hover'
-                }
+                marginX: "auto",
+                fontWeight: "bold",
+                borderStyle: "dashed",
+                backgroundColor: dragOver ? "action.hover" : "background.paper",
+                "&:hover": {
+                  borderStyle: "dashed",
+                  backgroundColor: "action.hover",
+                },
               }}
-
             >
-              <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
                 <CloudUploadIcon sx={{ fontSize: 60, mb: 2 }} />
                 <Typography variant="h6">Sube tu archivo aqui</Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>Haz click o arrastra</Typography>
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  Haz click o arrastra
+                </Typography>
               </Box>
-              <input
-                type="file"
-                hidden
-                onChange={handleFileChange}
-              />
+              <input type="file" hidden onChange={handleFileChange} />
             </Button>
           </Box>
         )}
@@ -273,8 +313,7 @@ export default function FileUploader({ onClose, onSomethingCreated, uploadText, 
             {errorMessage || successMessage}
           </Alert>
         </Snackbar>
-
       }
-    </StyledContainer >
+    </StyledContainer>
   );
 }

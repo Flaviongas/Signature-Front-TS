@@ -11,22 +11,24 @@ import MajorContext from "../contexts/MajorContext";
 import UploadModal from "../components/UploadModal";
 import TemplateButton from "../components/TemplateButton";
 
+import buttonClickEffect from "../styles/buttonClickEffect";
+
 const templateData = [
   {
-    "Rut": "Sin puntos ni DV (Elimina esta fila)",
-    "Nombre": "AAAA",
-    "Segundo_Nombre": "BBBB",
-    "Apellido": "CCCC",
-    "Segundo_Apellido": "DDDD",
+    Rut: "Sin puntos ni DV (Elimina esta fila)",
+    Nombre: "AAAA",
+    Segundo_Nombre: "BBBB",
+    Apellido: "CCCC",
+    Segundo_Apellido: "DDDD",
   },
   {
-    "Rut": "Ejemplo: 12345678",
-    "Nombre": "Ejemplo: Pedro",
-    "Segundo_Nombre": "Ejemplo: Pablo",
-    "Apellido": "Ejemplo: Alvarez",
-    "Segundo_Apellido": "Ejemplo: Soto",
+    Rut: "Ejemplo: 12345678",
+    Nombre: "Ejemplo: Pedro",
+    Segundo_Nombre: "Ejemplo: Pablo",
+    Apellido: "Ejemplo: Alvarez",
+    Segundo_Apellido: "Ejemplo: Soto",
   },
-]
+];
 
 function StudentManagementPage() {
   const navigate = useNavigate();
@@ -50,7 +52,6 @@ function StudentManagementPage() {
       .then((res) => {
         setStudents(res.data);
         setLoading(false);
-
       })
       .catch((err) => {
         console.error("Error al obtener estudiantes:", err);
@@ -69,7 +70,9 @@ function StudentManagementPage() {
 
   const handleDeleteStudent = async (studentId: number) => {
     try {
-      const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este estudiante? Esta acción no se puede deshacer.");
+      const confirmDelete = window.confirm(
+        "¿Estás seguro de que deseas eliminar este estudiante? Esta acción no se puede deshacer."
+      );
       if (!confirmDelete) return;
 
       const response = await deleteStudent({ student_id: studentId });
@@ -118,7 +121,7 @@ function StudentManagementPage() {
             sx={{
               textTransform: "none",
               ml: 3,
-              fontWeight: "bold",
+              ...buttonClickEffect,
             }}
           >
             Volver
@@ -135,18 +138,20 @@ function StudentManagementPage() {
           <Typography variant="h4" fontWeight="bold" mb={2} textAlign="center">
             Gestión de Estudiantes
           </Typography>
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            width: '100%',
-            gap: 2,
-            my: 5,
-          }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+              gap: 2,
+              my: 5,
+            }}
+          >
             <Button
               variant="contained"
               color="secondary"
               sx={{
-                fontWeight: "bold",
+                ...buttonClickEffect,
               }}
               onClick={() => {
                 setEditStudent(null);
@@ -156,23 +161,31 @@ function StudentManagementPage() {
               Crear Estudiante
             </Button>
 
-
             <Button
               variant="contained"
               color="info"
               sx={{
-                fontWeight: "bold",
+                ...buttonClickEffect,
               }}
               onClick={() => {
-                setIsUserModalOpen(true)
+                setIsUserModalOpen(true);
               }}
             >
               Subir CSV
             </Button>
-            <TemplateButton filename={"Plantilla para crear estudiantes"} data={templateData} />
+            <TemplateButton
+              filename={"Plantilla para crear estudiantes"}
+              data={templateData}
+            />
           </Box>
 
-          <UploadModal open={isUserModalOpen} onClose={() => setIsUserModalOpen(false)} onSomethingCreated={fetchStudents} uploadText="estudiantes" route="uploadStudentCSV/" />
+          <UploadModal
+            open={isUserModalOpen}
+            onClose={() => setIsUserModalOpen(false)}
+            onSomethingCreated={fetchStudents}
+            uploadText="estudiantes"
+            route="uploadStudentCSV/"
+          />
           <StudentModal
             open={isOpen}
             onClose={() => setIsOpen(false)}
@@ -190,8 +203,8 @@ function StudentManagementPage() {
             />
           )}
         </Box>
-      </Container >
-    </Box >
+      </Container>
+    </Box>
   );
 }
 

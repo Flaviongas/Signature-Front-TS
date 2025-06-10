@@ -14,12 +14,14 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useContext, useEffect, useState } from "react";
 import { Student } from "../types";
-import { createStudent, updateStudent} from "../services/studentService";
+import { createStudent, updateStudent } from "../services/studentService";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { studentValidationSchema, studentFormSchema } from "../schemas/student";
 import MajorContext from "../contexts/MajorContext";
 import axios, { AxiosError } from "axios";
+
+import buttonClickEffect from "../styles/buttonClickEffect";
 
 interface StudentModalProps {
   open: boolean;
@@ -70,7 +72,7 @@ function StudentModal({
     setLoading(true);
     setErrorMessage(null);
     setSuccessMessage(null);
-    
+
     try {
       if (studentToEdit) {
         await updateStudent({
@@ -81,7 +83,7 @@ function StudentModal({
           second_last_name: data.second_last_name,
           rut: data.rut,
           dv: data.dv,
-          major_id: selectedMajor.id
+          major_id: selectedMajor.id,
         });
         setSuccessMessage("Estudiante actualizado correctamente.");
       } else {
@@ -92,7 +94,7 @@ function StudentModal({
           second_last_name: data.second_last_name,
           rut: data.rut,
           dv: data.dv,
-          major_id: selectedMajor.id
+          major_id: selectedMajor.id,
         });
         setSuccessMessage("Estudiante creado correctamente.");
       }
@@ -105,10 +107,16 @@ function StudentModal({
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const axiosError = err as AxiosError;
-        if (axiosError.response?.data && typeof axiosError.response.data === 'object') {
+        if (
+          axiosError.response?.data &&
+          typeof axiosError.response.data === "object"
+        ) {
           // Manejo de errores del serializer
-          const errorData = axiosError.response.data as Record<string, string[]>;
-          
+          const errorData = axiosError.response.data as Record<
+            string,
+            string[]
+          >;
+
           if (errorData.non_field_errors) {
             setErrorMessage(errorData.non_field_errors[0]);
           } else if (errorData.rut) {
@@ -122,11 +130,15 @@ function StudentModal({
           } else {
             // Si hay otros errores que no hemos manejado específicamente
             const firstErrorField = Object.keys(errorData)[0];
-            setErrorMessage(`${firstErrorField}: ${errorData[firstErrorField][0]}`);
+            setErrorMessage(
+              `${firstErrorField}: ${errorData[firstErrorField][0]}`
+            );
           }
         } else {
           // Error general de la API
-          setErrorMessage(axiosError.message || "Error en la comunicación con el servidor");
+          setErrorMessage(
+            axiosError.message || "Error en la comunicación con el servidor"
+          );
         }
       } else {
         // Otro tipo de error
@@ -149,7 +161,7 @@ function StudentModal({
 
   // Función para obtener el mensaje de error de validación del formulario
   const getErrorMessage = (fieldName: string) => {
-    return formErrors[fieldName as keyof studentFormSchema]?.message || '';
+    return formErrors[fieldName as keyof studentFormSchema]?.message || "";
   };
 
   return (
@@ -170,12 +182,13 @@ function StudentModal({
           sx={{
             bgcolor: "secondary.main",
             color: "white",
+            fontWeight: "bold",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
           }}
         >
-          {studentToEdit ? "Editar Estudiante" : "Crear Nuevo Estudiante"}
+          {studentToEdit ? "Editar Estudiante" : "Crear nuevo estudiante"}
           <IconButton
             edge="end"
             color="inherit"
@@ -186,9 +199,7 @@ function StudentModal({
           </IconButton>
         </DialogTitle>
 
-        <Box 
-          component="form"
-          onSubmit={handleSubmit(handleCreateStudent)}>
+        <Box component="form" onSubmit={handleSubmit(handleCreateStudent)}>
           <DialogContent sx={{ pt: 3 }}>
             <TextField
               autoFocus
@@ -256,7 +267,12 @@ function StudentModal({
           </DialogContent>
 
           <DialogActions sx={{ px: 3, pb: 3 }}>
-            <Button onClick={handleClose} variant="outlined" color="secondary">
+            <Button
+              onClick={handleClose}
+              variant="outlined"
+              color="secondary"
+              sx={{ ...buttonClickEffect }}
+            >
               Cancelar
             </Button>
             <Button
@@ -264,6 +280,7 @@ function StudentModal({
               variant="contained"
               color="secondary"
               disabled={loading}
+              sx={{ ...buttonClickEffect }}
             >
               {loading ? (
                 <CircularProgress size={24} color="inherit" />

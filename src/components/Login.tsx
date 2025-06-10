@@ -6,6 +6,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import theme from "../theme.ts";
+import buttonClickEffect from "../styles/buttonClickEffect.ts";
 type LoginProps = {
   onLoginSuccess: (token: string) => void;
   // backLink: "https://signature.gidua.xyz" | "http://localhost:8000";
@@ -129,16 +130,13 @@ function LoginForm({ onLoginSuccess, backLink }: LoginProps) {
             sx={{
               my: 2,
               p: 1,
-              backgroundColor: theme.palette.primary.main,
               borderRadius: 2,
-              fontWeight: 600,
               fontSize: "1rem",
-              transition: "background-color 0.3s",
-              "&:hover": {
-                backgroundColor: theme.palette.primary.dark,
-              },
-              "&:disabled": {
-                opacity: 0.5,
+              ...buttonClickEffect,
+              "&.Mui-disabled": {
+                backgroundColor: "primary.dark",
+                color: "white",
+                opacity: 0.7,
               },
             }}
           >

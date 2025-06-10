@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 import SideNav from "../components/SideNav";
 import Dashboard from "../components/Dashboard";
 import { MajorShort } from "../types";
-
 
 import logo from "../assets/signature.svg";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import theme from "../theme.ts"
-
+import theme from "../theme.ts";
+import buttonClickEffect from "../styles/buttonClickEffect.ts";
 
 function MainContent() {
   const [selectedMajor, setSelectedMajor] = useState<MajorShort>({
@@ -61,6 +60,7 @@ function MainContent() {
           color="primary"
           onClick={logOut}
           fullWidth
+          sx={{ ...buttonClickEffect }}
         >
           Cerrar sesión
         </Button>
@@ -70,10 +70,7 @@ function MainContent() {
 
   return (
     <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
-      <Box
-        component="nav"
-        sx={{ width: { md: 288 }, flexShrink: { md: 0 } }}
-      >
+      <Box component="nav" sx={{ width: { md: 288 }, flexShrink: { md: 0 } }}>
         {/* Drawer para móviles */}
         <Drawer
           variant="temporary"

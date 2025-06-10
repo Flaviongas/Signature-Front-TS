@@ -1,44 +1,59 @@
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    IconButton,
-  } from "@mui/material";
-  import DeleteIcon from "@mui/icons-material/Delete";
-  import EditIcon from "@mui/icons-material/Edit";
-  import { Student } from "../types";
-  import theme from "../theme.ts";
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Pagination,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { Student } from "../types";
+import theme from "../theme.ts";
+import { useState } from "react";
 
-  
-  interface Props {
-    students: Student[];
-    onDelete: (studentId: number) => void;
-    onEdit: (student: Student) => void;
-  }
-  
-  // Definir estilos reutilizables para las celdas y el encabezado
-  const headerCellStyle = {
-    backgroundColor: theme.palette.secondary.main,
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: "1rem",
-    textAlign: "center",
-    borderBottom: "2px solid #fff",
-  };
-  
-  const bodyCellStyle = {
-    padding: "12px",
-    borderBottom: "1px solid #ddd",
-    fontSize: "1rem",
-  };
-  
-  function StudentList({ students, onDelete, onEdit }: Props) {
+interface Props {
+  students: Student[];
+  onDelete: (studentId: number) => void;
+  onEdit: (student: Student) => void;
+}
 
-     return (
+// Definir estilos reutilizables para las celdas y el encabezado
+const headerCellStyle = {
+  backgroundColor: theme.palette.secondary.main,
+  color: "#fff",
+  fontWeight: "bold",
+  fontSize: "1rem",
+  textAlign: "center",
+};
+
+const bodyCellStyle = {
+  padding: "16px",
+  fontSize: "1rem",
+  textAlign: "center",
+  textTransform: "uppercase",
+};
+
+const hoverRowStyle = {
+  "&:hover": {
+    background: "rgba(0,0,0,0.05)",
+  },
+};
+
+function StudentList({ students, onDelete, onEdit }: Props) {
+  const [page, setPage] = useState(1);
+  const rowsPerPage = 10;
+
+  const paginatedStudents = students.slice(
+    (page - 1) * rowsPerPage,
+    page * rowsPerPage
+  );
+
+  return (
+    <>
       <TableContainer
         component={Paper}
         sx={{
@@ -47,10 +62,9 @@ import {
           height: "70vh",
           overflowY: "auto",
           overflowX: "auto",
-          // Estilos para la barra de desplazamiento vertical
           "&::-webkit-scrollbar": {
             width: "5px",
-            height: "5px", // Añadido para la barra horizontal
+            height: "5px",
           },
           "&::-webkit-scrollbar-track": {
             backgroundColor: "#f1f1f1",
@@ -59,7 +73,6 @@ import {
             backgroundColor: theme.palette.secondary.main,
             borderRadius: "10px",
           },
-
         }}
       >
         <Table sx={{ minWidth: 650 }} aria-label="Lista de Estudiantes">
@@ -80,8 +93,8 @@ import {
                 </TableCell>
               </TableRow>
             ) : (
-              students.map((student) => (
-                <TableRow key={student.id}>
+              paginatedStudents.map((student) => (
+                <TableRow key={student.id} sx={hoverRowStyle}>
                   <TableCell sx={bodyCellStyle}>{student.first_name}</TableCell>
                   <TableCell sx={bodyCellStyle}>{student.last_name}</TableCell>
                   <TableCell sx={bodyCellStyle}>{student.rut}</TableCell>
@@ -125,7 +138,15 @@ import {
           </TableBody>
         </Table>
       </TableContainer>
-    );
-  }
-  
-  export default StudentList;
+      <Pagination
+        shape="rounded"
+        count={Math.ceil(students.length / rowsPerPage)}
+        page={page}
+        onChange={(_, value) => setPage(value)}
+        sx={{ mt: 2, display: "flex", justifyContent: "center" }}
+      />
+    </>
+  );
+}
+
+export default StudentList;
