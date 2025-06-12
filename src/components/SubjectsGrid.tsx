@@ -54,7 +54,7 @@ function SubjectsGrid() {
     name: "",
   });
 
-    useState(false);
+  useState(false);
 
   const openModal = () => setIsAssistanceModalOpen(true);
   const closeModal = () => setIsAssistanceModalOpen(false);
@@ -167,7 +167,7 @@ function SubjectsGrid() {
   const confirmRemoveSubject = async () => {
     if (!subjectToRemove) return;
 
-    const { id: subjectId} = subjectToRemove;
+    const { id: subjectId } = subjectToRemove;
 
     // Buscar la materia completa para obtener sus estudiantes
     const subjectToHide = backendAssociatedSubjects.find(
@@ -176,7 +176,7 @@ function SubjectsGrid() {
 
     if (!subjectToHide) {
       alert(
-        "Error: No se encontró la asignatura para desenrolar estudiantes."
+        "Error: No se encontró la asignatura para borrar estudiantes."
       );
       return;
     }
@@ -204,13 +204,12 @@ function SubjectsGrid() {
       });
     } catch (err: any) {
       console.error(
-        "Error al borrar asignatura o desenrolar estudiantes:",
+        "Error al borrar asignatura o borrar estudiantes:",
         err
       );
       // Manejar el error y mostrar un mensaje al usuario
       alert(
-        `Error al realizar la operación: ${
-          err.response?.data?.detail || err.message
+        `Error al realizar la operación: ${err.response?.data?.detail || err.message
         }. Por favor, inténtalo de nuevo.`
       );
     } finally {
@@ -509,7 +508,7 @@ function SubjectsGrid() {
           title="Borrar Asignatura"
           message={
             subjectToRemove
-              ? `¿Estás seguro de que deseas borrar la asignatura "${subjectToRemove.name}"? Esto también desenrolará a todos los estudiantes asociados a ella.`
+              ? <>¿Estás seguro de que deseas borrar <strong>{subjectToRemove.name}</strong>? Esto también anulará la inscripción de todos sus estudiantes.</>
               : ""
           }
         />
