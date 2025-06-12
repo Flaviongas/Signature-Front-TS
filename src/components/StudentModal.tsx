@@ -268,14 +268,6 @@ function StudentModal({
 
           <DialogActions sx={{ p: 3 }}>
             <Button
-              onClick={handleClose}
-              variant="outlined"
-              color="secondary"
-              sx={{ ...buttonClickEffect }}
-            >
-              Cancelar
-            </Button>
-            <Button
               type="submit"
               variant="contained"
               color="secondary"
@@ -289,6 +281,14 @@ function StudentModal({
               ) : (
                 "Crear Estudiante"
               )}
+            </Button>
+            <Button
+              onClick={handleClose}
+              variant="outlined"
+              color="secondary"
+              sx={{ ...buttonClickEffect }}
+            >
+              Cancelar
             </Button>
           </DialogActions>
         </Box>

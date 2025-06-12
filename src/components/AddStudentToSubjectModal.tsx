@@ -74,11 +74,11 @@ function AddStudentToSubjectModal({
 
   const filteredStudents = searchTerm
     ? availableStudents.filter(
-        (student) =>
-          student.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          student.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          student.rut.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      (student) =>
+        student.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.rut.toLowerCase().includes(searchTerm.toLowerCase())
+    )
     : availableStudents;
 
   const handleToggleStudent = (studentId: number) => {
@@ -191,15 +191,6 @@ function AddStudentToSubjectModal({
       </DialogContent>
       <DialogActions sx={{ p: 3 }}>
         <Button
-          onClick={onClose}
-          color="secondary"
-          variant="outlined"
-          disabled={submitting}
-          sx={{ ...buttonClickEffect }}
-        >
-          Cancelar
-        </Button>
-        <Button
           onClick={handleSubmit}
           variant="contained"
           color="secondary"
@@ -209,6 +200,15 @@ function AddStudentToSubjectModal({
           disabled={selectedStudents.length === 0 || submitting}
         >
           {submitting ? "Añadiendo..." : "Añadir seleccionados"}
+        </Button>
+        <Button
+          onClick={onClose}
+          color="secondary"
+          variant="outlined"
+          disabled={submitting}
+          sx={{ ...buttonClickEffect }}
+        >
+          Cancelar
         </Button>
       </DialogActions>
     </Dialog>

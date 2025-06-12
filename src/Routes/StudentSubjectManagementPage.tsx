@@ -357,15 +357,6 @@ function StudentSubjectManagentPage() {
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
           <Button
-            color="secondary"
-            variant="outlined"
-            onClick={() => setIsRemoveDialogOpen(false)}
-            disabled={actionLoading}
-            sx={{ ...buttonClickEffect }}
-          >
-            Cancelar
-          </Button>
-          <Button
             onClick={confirmRemoveStudent}
             color="primary"
             variant="contained"
@@ -373,6 +364,15 @@ function StudentSubjectManagentPage() {
             sx={{ ...buttonClickEffect }}
           >
             {actionLoading ? "Procesando..." : "Confirmar"}
+          </Button>
+          <Button
+            color="secondary"
+            variant="outlined"
+            onClick={() => setIsRemoveDialogOpen(false)}
+            disabled={actionLoading}
+            sx={{ ...buttonClickEffect }}
+          >
+            Cancelar
           </Button>
         </DialogActions>
       </Dialog>

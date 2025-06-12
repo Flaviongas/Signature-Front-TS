@@ -62,20 +62,6 @@ export default function ConfirmModal({
 
       <DialogActions sx={{ p: 2 }}>
         <Button
-          color="primary"
-          onClick={handleCancel}
-          variant="contained"
-          sx={{
-            bgcolor: theme.palette.primary.main,
-            "&:hover": {
-              backgroundColor: theme.palette.primary.dark,
-            },
-            ...buttonClickEffect,
-          }}
-        >
-          Cancelar
-        </Button>
-        <Button
           color="secondary"
           onClick={handleConfirm}
           variant="contained"
@@ -88,6 +74,20 @@ export default function ConfirmModal({
           }}
         >
           Aceptar
+        </Button>
+        <Button
+          color="primary"
+          onClick={handleCancel}
+          variant="contained"
+          sx={{
+            bgcolor: theme.palette.primary.main,
+            "&:hover": {
+              backgroundColor: theme.palette.primary.dark,
+            },
+            ...buttonClickEffect,
+          }}
+        >
+          Cancelar
         </Button>
       </DialogActions>
     </Dialog>

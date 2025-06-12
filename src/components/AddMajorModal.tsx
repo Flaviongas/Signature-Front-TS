@@ -135,14 +135,6 @@ export default function AddMajorModal({
       </DialogContent>
       <DialogActions sx={{ p: 3 }}>
         <Button
-          color="primary"
-          onClick={onClose}
-          variant="contained"
-          sx={{ ...buttonClickEffect }}
-        >
-          Cancelar
-        </Button>
-        <Button
           color="secondary"
           onClick={handleSubmit}
           variant="contained"
@@ -154,6 +146,14 @@ export default function AddMajorModal({
           }}
         >
           {loading ? <CircularProgress size={24} color="inherit" /> : "Añadir"}
+        </Button>
+        <Button
+          color="primary"
+          onClick={onClose}
+          variant="contained"
+          sx={{ ...buttonClickEffect }}
+        >
+          Cancelar
         </Button>
       </DialogActions>
     </Dialog>
