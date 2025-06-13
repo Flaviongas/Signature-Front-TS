@@ -11,13 +11,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import theme from "../../theme.ts";
 import buttonClickEffect from "../../styles/buttonClickEffect.ts";
+import { ReactNode } from "react";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
   title?: string;
-  message: string;
+  message: string | ReactNode;
 
 };
 
@@ -38,7 +39,7 @@ export default function ConfirmModal({
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={isOpen} onClose={onClose} maxWidth="sm">
       <DialogTitle
         sx={{
           display: "flex",
@@ -62,6 +63,20 @@ export default function ConfirmModal({
 
       <DialogActions sx={{ p: 2 }}>
         <Button
+          color="secondary"
+          onClick={handleConfirm}
+          variant="contained"
+          sx={{
+            bgcolor: theme.palette.info.main,
+            "&:hover": {
+              backgroundColor: theme.palette.secondary.dark,
+            },
+            ...buttonClickEffect,
+          }}
+        >
+          Aceptar
+        </Button>
+        <Button
           color="primary"
           onClick={handleCancel}
           variant="contained"
@@ -74,20 +89,6 @@ export default function ConfirmModal({
           }}
         >
           Cancelar
-        </Button>
-        <Button
-          color="secondary"
-          onClick={handleConfirm}
-          variant="contained"
-          sx={{
-            bgcolor: theme.palette.secondary.main,
-            "&:hover": {
-              backgroundColor: theme.palette.secondary.dark,
-            },
-            ...buttonClickEffect,
-          }}
-        >
-          Aceptar
         </Button>
       </DialogActions>
     </Dialog>

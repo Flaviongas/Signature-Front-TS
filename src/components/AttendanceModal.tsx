@@ -273,6 +273,11 @@ function AttendanceModal({ isOpen, onClose, data, shortSubject }: Props) {
       <DialogActions sx={{ justifyContent: "space-between", p: 2, gap: 1 }}>
         <Box sx={{ display: "flex", gap: "1rem" }}>
           <Input
+            onKeyDown={(event) => {
+              if (!/[0-9]/.test(event.key)) {
+                event.preventDefault();
+              }
+            }}
             onChange={(e) => setSection(e.currentTarget.value)}
             sx={{
               bgcolor: "#f5f5f5",

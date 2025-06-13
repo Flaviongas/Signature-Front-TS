@@ -228,8 +228,8 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
             errorMessage && !username
               ? "El nombre de usuario es obligatorio."
               : errorMessage && !validateUsername(username)
-              ? "El nombre de usuario solo puede contener letras y números."
-              : ""
+                ? "El nombre de usuario solo puede contener letras y números."
+                : ""
           }
         />
         <TextField
@@ -301,17 +301,6 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
       </DialogContent>
       <DialogActions sx={{ p: 3 }}>
         <Button
-          variant="outlined"
-          color="secondary"
-          onClick={handleCloseModal}
-          disabled={loading}
-          sx={{
-            ...buttonClickEffect,
-          }}
-        >
-          Cancelar
-        </Button>
-        <Button
           variant="contained"
           color="secondary"
           onClick={handleCreateUser}
@@ -321,6 +310,17 @@ function CreateUserModal({ open, onClose, onUserCreated, userToEdit }: Props) {
           }}
         >
           {editingUser ? "Guardar cambios" : "Crear usuario"}
+        </Button>
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={handleCloseModal}
+          disabled={loading}
+          sx={{
+            ...buttonClickEffect,
+          }}
+        >
+          Cancelar
         </Button>
       </DialogActions>
       <Snackbar

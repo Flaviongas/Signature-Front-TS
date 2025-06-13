@@ -26,6 +26,7 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
+            echo '${{ secrets.PASSWORD}}' | sudo -S chmod -R 777 /var/www 
             cd /var/www/example.org/ 
             cd Signature-Front-TS 
             git pull
