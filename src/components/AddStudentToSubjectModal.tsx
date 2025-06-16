@@ -131,7 +131,10 @@ function AddStudentToSubjectModal({
         }}
       >
         Añadir Estudiantes
-        <IconButton edge="end" color="inherit" aria-label="close">
+        <IconButton edge="end" color="inherit" aria-label="close" onClick={() => {
+            if (!submitting) onClose();
+          }}
+      > 
           <CloseIcon />
         </IconButton>
       </DialogTitle>

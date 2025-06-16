@@ -41,6 +41,14 @@ function StudentModal({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const { selectedMajor } = useContext(MajorContext);
+  // const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  // const [actionLoading, setActionLoading] = useState(false);
+
+  // const handleClose = () => {
+  //   if (!actionLoading) {
+  //     setIsEditModalOpen(false);
+  //   }
+  // };
 
   const {
     register,
@@ -156,6 +164,9 @@ function StudentModal({
     setErrorMessage(null);
     setSuccessMessage(null);
     setOpenSnackbar(false);
+    // if (!actionLoading) {
+    //   setIsEditModalOpen(false);
+    // }
     onClose();
   };
 

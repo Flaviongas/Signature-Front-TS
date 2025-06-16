@@ -2,13 +2,10 @@ import { useEffect, useState } from "react";
 import SideNav from "../components/SideNav";
 import Dashboard from "../components/Dashboard";
 import { MajorShort } from "../types";
+import ResponsiveAppBar from "../components/navbar/Navbar";
 
-import logo from "../assets/signature.svg";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import theme from "../theme.ts";
-import buttonClickEffect from "../styles/buttonClickEffect.ts";
 
 function MainContent() {
   const [selectedMajor, setSelectedMajor] = useState<MajorShort>({
@@ -27,49 +24,22 @@ function MainContent() {
     }
   }, []);
 
-  const logOut = () => {
-    localStorage.setItem("Token", "");
-    location.reload();
-  };
-
   const [mobileOpen, setMobileOpen] = useState(false);
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
   const drawerContent = (
     <Box
       sx={{
-        backgroundColor: theme.palette.secondary.main,
-        height: "100%",
+       background: 'linear-gradient(to top, #3058c3, #5075db)' ,
       }}
     >
-      {/* logo */}
-      <Box display="flex" justifyContent="center">
-        <Box
-          component="img"
-          src={logo}
-          alt="Logo"
-          sx={{ width: 160, height: 160, objectFit: "contain" }}
-        />
-      </Box>
-
       <SideNav />
-
-      <Box p={2} mt={1}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={logOut}
-          fullWidth
-          sx={{ ...buttonClickEffect }}
-        >
-          Cerrar sesión
-        </Button>
-      </Box>
     </Box>
   );
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
+    <Box sx={{ display: "flex",flexDirection:"column", height: "100vh", width: "100%" }}>
+      <ResponsiveAppBar/>
       <Box component="nav" sx={{ width: { md: 288 }, flexShrink: { md: 0 } }}>
         {/* Drawer para móviles */}
         <Drawer
@@ -82,6 +52,8 @@ function MainContent() {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: 240,
+              top: "64px",
+              height: "calc(100vh - 64px)",
             },
           }}
         >
@@ -91,12 +63,16 @@ function MainContent() {
         {/* Drawer permanente para desktop */}
         <Drawer
           variant="permanent"
-          open
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }}
           sx={{
             display: { xs: "none", md: "block" },
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: 288,
+              top: "64px",
+              height: "calc(100vh - 64px)",
             },
           }}
         >
@@ -105,7 +81,7 @@ function MainContent() {
       </Box>
 
       {/* Contenido principal */}
-      <Box sx={{ flex: 1, bgcolor: "#EFEFEF", overflowY: "auto" }}>
+      <Box sx={{ flex: 1, bgcolor: "#f8f9fc", overflowY: "auto" }}>
         <Dashboard onDrawerToggle={handleDrawerToggle} />
       </Box>
     </Box>

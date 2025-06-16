@@ -79,6 +79,12 @@ function StudentSubjectManagentPage() {
   );
   const [actionLoading, setActionLoading] = useState(false);
 
+  const handleCloseModal = () => {
+    if (!actionLoading) {
+      setIsRemoveDialogOpen(false);
+    }
+  };
+
   const getStudents = () => {
     getSubject(subjectId)
       .then((response) => {
@@ -331,7 +337,7 @@ function StudentSubjectManagentPage() {
       {/* Diálogo de confirmación para eliminar estudiante */}
       <Dialog
         open={isRemoveDialogOpen}
-        onClose={() => !actionLoading && setIsRemoveDialogOpen(false)}
+        onClose={handleCloseModal} 
       >
         <DialogTitle
           sx={{
@@ -345,12 +351,12 @@ function StudentSubjectManagentPage() {
           }}
         >
           Confirmar eliminación
-          <IconButton edge="end" color="inherit" aria-label="close">
+          <IconButton edge="end" color="inherit" aria-label="close" onClick={handleCloseModal}>
             <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{color: 'black'}}>
             ¿Estás seguro de que deseas quitar a este estudiante de la
             asignatura {subjectName}?
           </DialogContentText>

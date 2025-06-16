@@ -10,8 +10,6 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import MajorContext from "../contexts/MajorContext";
 import { ShortSubject, Student, Subject } from "../types";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import AttendanceModal from "./AttendanceModal";
 import AddMajorModal from "./AddMajorModal";
@@ -21,6 +19,7 @@ import { getSubjectsByMajor } from "../services/subjectService";
 import { removeStudentSubject } from "../services/studentService";
 import ConfirmModal from "./helpers/ConfirmModal";
 import buttonClickEffect from "../styles/buttonClickEffect";
+import AddIcon from "@mui/icons-material/Add";
 // Helper para localStorage
 const getLocalStorageKey = (majorId: number) => `displayed_subjects_${majorId}`;
 
@@ -431,48 +430,6 @@ function SubjectsGrid() {
               );
             })}
 
-            <Box
-              key="add"
-              sx={{
-                m: 2,
-              }}
-            >
-              {isSuperUser && (
-                <Card
-                  sx={{
-                    ...cardStyles,
-                    cursor: "pointer",
-                    position: "relative",
-                  }}
-                  onClick={handleOpenAddSubjectDisplayModal}
-                >
-                  <Box
-                    sx={{
-                      minHeight: "2.8em",
-                      lineHeight: "1.4em",
-                      flexGrow: 1,
-                    }}
-                  />
-                  <Box sx={{ height: "1.5em", mb: 4 }} />
-                  <Box sx={{ height: "40px", mb: 1 }} />
-                  <Box sx={{ height: "40px" }} />
-
-                  <FontAwesomeIcon
-                    style={{
-                      position: "absolute", // Posicionar absolutamente para que los espaciadores manejen el flujo
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      fontSize: 50,
-                      color: "black",
-                      padding: "16px",
-                      borderRadius: "4px",
-                    }}
-                    icon={faPlus}
-                  />
-                </Card>
-              )}
-            </Box>
           </Box>
         )}
 
@@ -534,37 +491,43 @@ function SubjectsGrid() {
         <Box
           sx={{
             display: "flex",
-            justifyContent: { xs: "center", md: "space-between" },
-            flexDirection: { xs: "column", md: "row" },
-            alignSelf: { xs: "center" },
-            gap: 2,
-            width: "100%",
+            justifyContent: {
+              xs: "center",  
+              md: "center", 
+              lg: "flex-end" 
+            },
           }}
         >
-          <Button
-            variant="contained"
-            color="secondary"
-            sx={{
-              minWidth: "150px",
-              px: 5,
-              ...buttonClickEffect,
-            }}
-            onClick={() => navigate("/students-management")}
-          >
-            Gestionar estudiantes
-          </Button>
-          <Button
-            variant="contained"
-            color="secondary"
-            sx={{
-              minWidth: "150px",
-              px: 5,
-              ...buttonClickEffect,
-            }}
-            onClick={() => navigate("/users")}
-          >
-            Gestionar usuarios
-          </Button>
+            <Card
+              onClick={handleOpenAddSubjectDisplayModal}
+              sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "10px 16px",
+                  borderRadius: 2,
+                  cursor: "pointer",
+                  transition: "all 0.2s ease-in-out",
+                  boxShadow: 1,
+                  "&:hover": {
+                    backgroundColor: "#1C1916",
+                    transform: "scale(1.02)",
+                    boxShadow: 3,
+                    color: '#ffffff',
+                    "& svg": {
+                      color: "#ffffff", 
+                    },
+
+                  },
+                }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <AddIcon sx={{ color: "black" }} />
+                <Typography sx={{ fontWeight:'bold', textTransform:'uppercase' }}>
+                  Agregar Asignatura
+                </Typography>
+              </Box>
+            </Card>
         </Box>
       )}
       {content}
