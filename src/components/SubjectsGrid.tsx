@@ -20,6 +20,7 @@ import { removeStudentSubject } from "../services/studentService";
 import ConfirmModal from "./helpers/ConfirmModal";
 import buttonClickEffect from "../styles/buttonClickEffect";
 import AddIcon from "@mui/icons-material/Add";
+import { transformer } from "zod";
 // Helper para localStorage
 const getLocalStorageKey = (majorId: number) => `displayed_subjects_${majorId}`;
 
@@ -174,9 +175,7 @@ function SubjectsGrid() {
     );
 
     if (!subjectToHide) {
-      alert(
-        "Error: No se encontró la asignatura para borrar estudiantes."
-      );
+      alert("Error: No se encontró la asignatura para borrar estudiantes.");
       return;
     }
 
@@ -189,7 +188,6 @@ function SubjectsGrid() {
           subject_id: subjectId,
           student_ids: studentsToUnenroll,
         });
-
       }
 
       setDisplayedSubjectIds((prev) => {
@@ -202,13 +200,11 @@ function SubjectsGrid() {
         return newSet;
       });
     } catch (err: any) {
-      console.error(
-        "Error al borrar asignatura o borrar estudiantes:",
-        err
-      );
+      console.error("Error al borrar asignatura o borrar estudiantes:", err);
       // Manejar el error y mostrar un mensaje al usuario
       alert(
-        `Error al realizar la operación: ${err.response?.data?.detail || err.message
+        `Error al realizar la operación: ${
+          err.response?.data?.detail || err.message
         }. Por favor, inténtalo de nuevo.`
       );
     } finally {
@@ -252,6 +248,11 @@ function SubjectsGrid() {
     justifyContent: "space-between",
     alignItems: "center",
     p: 2,
+    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    "&:hover": {
+      transform: "translate(2px, -3px)",
+      boxShadow: 8,
+    },
   };
 
   const content =
@@ -268,28 +269,42 @@ function SubjectsGrid() {
           variant="h5"
           component="h1"
           sx={{
+            position: "relative",
             mb: 3,
             fontWeight: "bold",
             display: "flex",
-            flexDirection: {
-              xs: "column-reverse",
-              sm: "row",
+            textTransform: "uppercase",
+            letterSpacing: 1,
+            color: "secondary.dark",
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              bottom: 0,
+              left: "50%",
+              transform: "translateX(-50%)",
+              height: "4px",
+              width: "90%",
+              borderRadius: 2,
+              alignItems: "center",
+              background: (theme) =>
+                `linear-gradient(to right, ${theme.palette.info.dark},${theme.palette.primary.dark}, ${theme.palette.secondary.dark})`,
             },
-            alignItems: "center",
+            fontSize: {
+              xs: "2rem",
+              sm: "2.1rem",
+              md: "2.2rem",
+              lg: "2.5rem",
+            },
+
+            pb: 0.5,
           }}
         >
           {selectedMajor.name}
-          <Box
-            sx={{
-              ml: { xs: 0, md: 2 },
-            }}
-          ></Box>
         </Typography>
 
         {loading ? (
           <Box sx={{ display: "flex", justifyContent: "center", p: 4 }}>
             <CircularProgress color="secondary" />
-            <Typography ml={2}>Cargando materias...</Typography>
           </Box>
         ) : error ? (
           <Typography color="error" align="center" variant="h6">
@@ -429,7 +444,6 @@ function SubjectsGrid() {
                 </Box>
               );
             })}
-
           </Box>
         )}
 
@@ -464,9 +478,15 @@ function SubjectsGrid() {
           onConfirm={confirmRemoveSubject}
           title="Borrar Asignatura"
           message={
-            subjectToRemove
-              ? <>¿Estás seguro de que deseas borrar <strong>{subjectToRemove.name}</strong>? Esto también anulará la inscripción de todos sus estudiantes.</>
-              : ""
+            subjectToRemove ? (
+              <>
+                ¿Estás seguro de que deseas borrar{" "}
+                <strong>{subjectToRemove.name}</strong>? Esto también anulará la
+                inscripción de todos sus estudiantes.
+              </>
+            ) : (
+              ""
+            )
           }
         />
       </Box>
@@ -480,6 +500,7 @@ function SubjectsGrid() {
 
   return (
     <Container
+      maxWidth="xl"
       sx={{
         position: "relative",
         padding: 3,
@@ -491,43 +512,57 @@ function SubjectsGrid() {
         <Box
           sx={{
             display: "flex",
-            justifyContent: {
-              xs: "center",  
-              md: "center", 
-              lg: "flex-end" 
+            flexDirection: "column",
+            alignItems: {
+              xs: "center",
+              md: "center",
+              lg: "flex-end",
             },
+            gap: 2,
+            my: 2,
+            width: "100%",
           }}
         >
-            <Card
-              onClick={handleOpenAddSubjectDisplayModal}
-              sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: "10px 16px",
-                  borderRadius: 2,
-                  cursor: "pointer",
-                  transition: "all 0.2s ease-in-out",
-                  boxShadow: 1,
-                  "&:hover": {
-                    backgroundColor: "#1C1916",
-                    transform: "scale(1.02)",
-                    boxShadow: 3,
-                    color: '#ffffff',
-                    "& svg": {
-                      color: "#ffffff", 
-                    },
+          <Button
+            color="secondary"
+            sx={{
+              fontWeight: "bold",
+            }}
+            onClick={() => navigate("/students-management")}
+          >
+            Gestionar estudiantes
+          </Button>
 
-                  },
-                }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <AddIcon sx={{ color: "black" }} />
-                <Typography sx={{ fontWeight:'bold', textTransform:'uppercase' }}>
-                  Agregar Asignatura
-                </Typography>
-              </Box>
-            </Card>
+          <Card
+            onClick={handleOpenAddSubjectDisplayModal}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "10px 16px",
+              borderRadius: 2,
+              cursor: "pointer",
+              transition: "all 0.2s ease-in-out",
+              boxShadow: 1,
+              "&:hover": {
+                backgroundColor: "secondary.main",
+                transform: "scale(1.02)",
+                color: "#ffffff",
+                "& svg": {
+                  color: "#ffffff",
+                },
+              },
+            }}
+          >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <AddIcon />
+              <Typography
+                sx={{ fontWeight: "bold", textTransform: "uppercase" }}
+              >
+                Agregar Asignatura
+              </Typography>
+            </Box>
+          </Card>
         </Box>
       )}
       {content}
