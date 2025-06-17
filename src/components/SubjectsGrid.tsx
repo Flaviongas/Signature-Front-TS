@@ -20,7 +20,7 @@ import { removeStudentSubject } from "../services/studentService";
 import ConfirmModal from "./helpers/ConfirmModal";
 import buttonClickEffect from "../styles/buttonClickEffect";
 import AddIcon from "@mui/icons-material/Add";
-import { transformer } from "zod";
+
 // Helper para localStorage
 const getLocalStorageKey = (majorId: number) => `displayed_subjects_${majorId}`;
 
@@ -203,8 +203,7 @@ function SubjectsGrid() {
       console.error("Error al borrar asignatura o borrar estudiantes:", err);
       // Manejar el error y mostrar un mensaje al usuario
       alert(
-        `Error al realizar la operación: ${
-          err.response?.data?.detail || err.message
+        `Error al realizar la operación: ${err.response?.data?.detail || err.message
         }. Por favor, inténtalo de nuevo.`
       );
     } finally {
