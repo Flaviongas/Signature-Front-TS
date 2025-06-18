@@ -71,7 +71,7 @@ export default function FileUploader({
     setOpenSnackbar(true);
   }
 
-  useEffect(() => {}, [file]);
+  useEffect(() => { }, [file]);
 
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
@@ -130,7 +130,7 @@ export default function FileUploader({
     }
 
     try {
-      await axios.post(BASE_URL + route, formData, {
+      await axios.post(BASE_URL + `/${route}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Token ${localStorage.getItem("Token")}`,
@@ -152,7 +152,7 @@ export default function FileUploader({
       console.error("Error uploading file:", error);
       showSnackBarError(
         error.response?.data?.error ||
-          "Error al subir el archivo. Por favor, inténtalo de nuevo."
+        "Error al subir el archivo. Por favor, inténtalo de nuevo."
       );
       setUploadProgress(0);
     }
