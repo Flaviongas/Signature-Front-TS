@@ -63,14 +63,10 @@ export default function ConfirmModal({
 
       <DialogActions sx={{ p: 2 }}>
         <Button
-          color="secondary"
+          color="info"
           onClick={handleConfirm}
           variant="contained"
           sx={{
-            bgcolor: theme.palette.info.main,
-            "&:hover": {
-              backgroundColor: theme.palette.secondary.dark,
-            },
             ...buttonClickEffect,
           }}
         >
